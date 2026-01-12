@@ -102,7 +102,7 @@ class UserDetailsController extends Controller
 
         $userAddress = UserDetails::where('idno', $idno)->firstOrFail();
         $userAddress->update($validatedData);
-        return redirect()->route('education.index')->with('success', 'User details saved successfully.');
+        return redirect()->route('background.index')->with('success', 'User details saved successfully.');
 
     }
     /**

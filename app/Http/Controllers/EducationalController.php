@@ -30,9 +30,11 @@ class EducationalController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreeducationalRequest $request)
+    public function store(StoreEducationalRequest $request)
     {
-        //
+        $idno = auth()->user()->idno;
+        Educational::create(array_merge($request->validated(), ['idno' => $idno]));
+        return redirect()->route('background.index')->with('success', 'User details saved successfully.');
     }
 
     /**

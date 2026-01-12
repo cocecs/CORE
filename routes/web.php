@@ -5,7 +5,7 @@ use App\Http\Controllers\UserAboutController;
 use App\Http\Controllers\UserSexController;
 use App\Http\Controllers\UserAddressController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\EducationalController;
+use App\Http\Controllers\WorkDetailsController;
 use Illuminate\Support\Facades\Route;
 
 //landing page
@@ -42,9 +42,9 @@ Route::middleware('auth')->group(function () {
     //store user about route
     Route::put('/user/{idno}/about', [UserDetailsController::class, 'updateAbout'])->name('about.update');
     //educational background route
-    Route::get('/user/education', [EducationalController::class, 'index'])->name('background.index');
+    Route::get('/education', [WorkDetailsController::class, 'index'])->name('background.index');
     //store educational background route
-    Route::post('/user/education', [EducationalController::class, 'store'])->name('background.store');
+    Route::post('/education', [WorkDetailsController::class, 'store'])->name('background.store');
 
     //profile management routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

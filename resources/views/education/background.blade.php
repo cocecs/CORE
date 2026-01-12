@@ -19,13 +19,12 @@
         <div class="p-6">
             <form action="{{ route('background.store') }}" method="POST">
                 @csrf
-                @method('PUT')
                 <div class="flex items-center justify-center mb-6">
                     <div class="mx-auto max-w-6xl px-12">
                         <div class="grid grid-cols-1 gap-6">
                             <div class="flex flex-wrap gap-3">
                                 <label class="cursor-pointer">
-                                    <input type="radio" class="peer sr-only" name="level" value="elementary"/>
+                                    <input type="radio" class="peer sr-only" name="educational_level" value="elementary"/>
                                     <div class="w-60 max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
                                     <div class="flex flex-col gap-1">
                                         <div class="flex items-center justify-between">
@@ -38,7 +37,7 @@
                                     </div>
                                 </label>
                                 <label class="cursor-pointer">
-                                    <input type="radio" class="peer sr-only" name="level" value="highschool" />
+                                    <input type="radio" class="peer sr-only" name="educational_level" value="highschool" />
                                     <div class="w-60 max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
                                     <div class="flex flex-col gap-1">
                                         <div class="flex items-center justify-between">
@@ -51,7 +50,7 @@
                                     </div>
                                 </label>
                                 <label class="cursor-pointer">
-                                    <input type="radio" class="peer sr-only" name="level" value="vocational"/>
+                                    <input type="radio" class="peer sr-only" name="educational_level" value="vocational"/>
                                     <div class="w-60 max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
                                     <div class="flex flex-col gap-1">
                                         <div class="flex items-center justify-between">
@@ -64,7 +63,7 @@
                                     </div>
                                 </label>
                                 <label class="cursor-pointer">
-                                    <input type="radio" class="peer sr-only" name="level" value="asso_degree" />
+                                    <input type="radio" class="peer sr-only" name="educational_level" value="asso_degree" />
                                     <div class="w-60 max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
                                     <div class="flex flex-col gap-1">
                                         <div class="flex items-center justify-between">
@@ -77,7 +76,7 @@
                                     </div>
                                 </label>
                                 <label class="cursor-pointer">
-                                    <input type="radio" class="peer sr-only" name="level" value="bachelor"/>
+                                    <input type="radio" class="peer sr-only" name="educational_level" value="bachelor"/>
                                     <div class="w-60 max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
                                     <div class="flex flex-col gap-1">
                                         <div class="flex items-center justify-between">
@@ -90,7 +89,7 @@
                                     </div>
                                 </label>
                                 <label class="cursor-pointer">
-                                    <input type="radio" class="peer sr-only" name="level" value="master" />
+                                    <input type="radio" class="peer sr-only" name="educational_level" value="master" />
                                     <div class="w-60 max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
                                     <div class="flex flex-col gap-1">
                                         <div class="flex items-center justify-between">
@@ -103,7 +102,7 @@
                                     </div>
                                 </label>
                                 <label class="cursor-pointer">
-                                    <input type="radio" class="peer sr-only" name="level" value="doctorate"/>
+                                    <input type="radio" class="peer sr-only" name="educational_level    " value="doctorate"/>
                                     <div class="w-60 max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
                                     <div class="flex flex-col gap-1">
                                         <div class="flex items-center justify-between">
