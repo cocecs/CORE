@@ -6,6 +6,7 @@ use App\Http\Controllers\UserSexController;
 use App\Http\Controllers\UserAddressController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkDetailsController;
+use App\Http\Controllers\ProfessionalController;
 use Illuminate\Support\Facades\Route;
 
 //landing page
@@ -45,6 +46,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/education', [WorkDetailsController::class, 'index'])->name('background.index');
     //store educational background route
     Route::post('/education', [WorkDetailsController::class, 'store'])->name('background.store');
+    //professional or experience level route
+    Route::get('/professional', [ProfessionalController::class, 'index'])->name('exp.index');
+    //store professional or experience level route
+    Route::put('/professional/{idno}', [WorkDetailsController::class, 'update'])->name('exp.store');
 
     //profile management routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

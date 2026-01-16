@@ -10,16 +10,6 @@ class UserDetails extends Model
         'idno',
         'firstname',
         'lastname',
-        'middlename',
-        'ext',
         'date_of_birth',
-        'province',
-        'town',
-        'address',
-        'tel_no',
-        'mobile_no',
-        'sex',
-        'civil_status',
-        'about_me',
     ];
 }

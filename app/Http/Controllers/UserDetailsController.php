@@ -33,7 +33,12 @@ class UserDetailsController extends Controller
      */
     public function store(StoreUserDetailsRequest $request)
     {
-        UserDetails::create($request->validated());
+        $user = User::where('email', auth()->user()->email)->first();
+        UserDetails::create(array_merge($request->validated(), [
+            'idno' => $user->idno,
+            'firstname' => $user->firstname,
+            'lastname' => $user->lastname,
+        ]));
         return redirect()->route('address.index')->with('success', 'User details saved successfully.');
     }
 
@@ -88,7 +93,7 @@ class UserDetailsController extends Controller
 
         $userAddress = UserDetails::where('idno', $idno)->firstOrFail();
         $userAddress->update($validatedData);
-        return redirect()->route('about.index')->with('success', 'User detailssss saved successfully.');
+        return redirect()->route('background.index')->with('success', 'User detailssss saved successfully.');
 
     }
     public function updateAbout(UpdateUserAboutRequest $request, $idno)

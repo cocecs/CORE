@@ -11,7 +11,7 @@
         </div>
     @endif
     <div class="flex flex-col justify-between items-center mb-6">
-        <h2 class="text-1xl font-semibold text-blue-700">Yaayks! Your name has been verified. Now, let's proceed to you address and contact number. Don't worry, your data will be keep safely.</h2>
+        <h2 class="text-1xl font-semibold text-blue-700">Yaayks! Your date of birth has been verified. Now, let's proceed to you address and contact number. Don't worry, your data will be keep safely.</h2>
     </div>
     <div class="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
         <div class="p-6">
@@ -20,17 +20,6 @@
                 @method('PUT')
 
                 <div class="grid grid-cols-1 gap-6">
-                    {{-- <div>
-                        <label for="idno" class="block text-sm font-medium text-gray-700 mb-1">ID #</label>
-                        <input type="text" id="idno" name="idno" autofocus
-                            value="{{ old('idno', $user->idno ?? '') }}"
-                            class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500
-                            @error('idno') border-red-500 @enderror"
-                            readonly >
-                        @error('idno')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div> --}}
 
                     <!-- Province & Town (Alpine.js) -->
                     <div x-data="{
@@ -83,7 +72,7 @@
                     </div>
 
                     <!-- Two columns for Phone Numbers -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {{-- <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="tel" class="block text-sm font-medium text-gray-700 mb-1">Tel. # <span class="italic text-gray-400">(optional)</span></label>
                             <input type="text" id="tel" name="tel_no"
@@ -99,7 +88,7 @@
                                 placeholder="Enter your Mobile #"
                                 class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('mobile_no') border-red-500 @enderror">
                         </div>
-                    </div>
+                    </div> --}}
 
 
                 </div>
