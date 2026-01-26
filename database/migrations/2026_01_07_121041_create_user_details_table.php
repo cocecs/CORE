@@ -14,18 +14,19 @@ return new class extends Migration
         Schema::create('user_details', function (Blueprint $table) {
             $table->id();
             $table->string('idno')->unique();
-            $table->string('firstname');
-            $table->string('lastname');
-            $table->string('middlename')->nullable();
-            $table->string('ext')->nullable();
+            $table->string('firstname',50);
+            $table->string('lastname',50);
+            $table->string('middlename', 50)->nullable();
+            $table->string('ext', 2)->nullable();
             $table->date('date_of_birth');
-            $table->string('province')->nullable();
-            $table->string('town')->nullable();
-            $table->string('address')->nullable();
-            $table->string('tel_no')->nullable();
-            $table->string('mobile_no')->nullable();
-            $table->string('sex')->nullable();
-            $table->string('civil_status')->nullable();
+            $table->string('province',50)->nullable();
+            $table->string('town',50)->nullable();
+            $table->string('brgy',50)->nullable();
+            $table->string('address',50)->nullable();
+            $table->string('tel_no',15)->nullable();
+            $table->string('mobile_no',15)->nullable();
+            $table->string('sex',10)->nullable();
+            $table->string('civil_status',15)->nullable();
             $table->text('about_me')->nullable();
 
             $table->timestamps();

@@ -12,7 +12,15 @@
     @endif
     <div class="flex flex-col justify-between items-center mb-6">
         <h2 class="text-1xl font-semibold text-blue-700">Weew! Address confirmed. Alright, let's go to your other details.</h2>
+        @error('sex')
+            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+        @enderror
+        @error('civil_status')
+            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+        @enderror
     </div>
+
+
 </div>
 <form action="{{ route('sex.update', $user->idno) }}" method="POST">
 @csrf

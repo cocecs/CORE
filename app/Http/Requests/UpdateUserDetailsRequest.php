@@ -24,9 +24,8 @@ class UpdateUserDetailsRequest extends FormRequest
         return [
             'province' => 'nullable|string|max:255',
             'town' => 'nullable|string|max:255',
+            'brgy' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',
-            'tel_no' => 'nullable|string|max:15',
-            'mobile_no' => 'nullable|string|max:15',
         ];
     }
 }

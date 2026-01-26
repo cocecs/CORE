@@ -4,20 +4,28 @@ return [
         'mis_occ' => [
             'name' => 'Misamis Occidental',
             'towns' => [
-                "7206" => "Aloran",
-                "7211" => "Baliangao",
-                "7215" => "Bonifacio",
-                "7210" => "Calamba",
-                "7207" => "Oroquieta City",
-                "7200" => "Ozamiz City",
+                "7207" => [
+                    "name" => "Oroquieta City",
+                    "barangays" => ["Poblacion I", "Poblacion II", "Lower Lamac", "Taboc Norte"]
+                ],
+                "7200" => [
+                    "name" => "Ozamiz City",
+                    "barangays" => ["Aguada", "Bancasi", "Catadman", "Manabay"]
+                ],
+                // ... repeat for other towns
             ]
         ],
         'zambo_del_sur' => [
             'name' => 'Zamboanga del Sur',
             'towns' => [
-                "7016" => "Pagadian City",
-                "7023" => "Aurora",
-                "7011" => "Labangan",
+                "7023" => [
+                    "name" => "Aurora",
+                    "barangays" => ["Acad", "Alang-alang", "Alegria", "Anonang"]
+                ],
+                "7011" => [
+                    "name" => "Labangan",
+                    "barangays" => ["Bagalupa", "Balimbingan", "Binayan", "Bokong"]
+                ],
             ]
         ],
     ]

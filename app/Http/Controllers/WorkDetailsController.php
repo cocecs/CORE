@@ -16,7 +16,6 @@ class WorkDetailsController extends Controller
      */
     public function index()
     {
-        // return view('education.background');
         $user = User::where('idno', auth()->user()->idno)->first();
         return view('education.background', compact('user'));
     }
@@ -54,7 +53,64 @@ class WorkDetailsController extends Controller
 
         $professional_level = WorkDetails::where('idno', $idno)->firstOrFail();
         $professional_level->update($validatedData);
-        return redirect()->route('exp.index')->with('success', 'User details saved successfully.');
+        return redirect()->route('job.index')->with('success', 'User details saved successfully.');
+
+    }
+    public function updates(UpdateWorkDetailsRequest $request, $idno)
+    {
+        $validatedData = $request->validate([
+            'job_history' => '',
+        ]);
+
+        $job_history = WorkDetails::where('idno', $idno)->firstOrFail();
+        $job_history->update($validatedData);
+        return redirect()->route('expjob.index')->with('success', 'User details saved successfully.');
+
+    }
+    public function exp_job(UpdateWorkDetailsRequest $request, $idno)
+    {
+        $validatedData = $request->validate([
+            'exploring_job' => '',
+        ]);
+
+        $professional_level = WorkDetails::where('idno', $idno)->firstOrFail();
+        $professional_level->update($validatedData);
+        return redirect()->route('distance.index')->with('success', 'User details saved successfully.');
+
+    }
+    public function distance_job(UpdateWorkDetailsRequest $request, $idno)
+    {
+        $validatedData = $request->validate([
+            'distance_job' => '',
+        ]);
+
+        $distance_job = WorkDetails::where('idno', $idno)->firstOrFail();
+        $distance_job->update($validatedData);
+        return redirect()->route('roles.index')->with('success', 'User details saved successfully.');
+
+    }
+
+    public function job_roles(UpdateWorkDetailsRequest $request, $idno)
+    {
+        $validatedData = $request->validate([
+            'job_roles' => '',
+        ]);
+
+        $job_roles = WorkDetails::where('idno', $idno)->firstOrFail();
+        $job_roles->update($validatedData);
+        return redirect()->route('shift.index')->with('success', 'User details saved successfully.');
+
+    }
+
+    public function job_shift(UpdateWorkDetailsRequest $request, $idno)
+    {
+        $validatedData = $request->validate([
+            'job_shift' => '',
+        ]);
+
+        $job_roles = WorkDetails::where('idno', $idno)->firstOrFail();
+        $job_roles->update($validatedData);
+        return redirect()->route('shift.index')->with('success', 'User details saved successfully.');
 
     }
 }

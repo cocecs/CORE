@@ -7,6 +7,11 @@ use App\Http\Controllers\UserAddressController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkDetailsController;
 use App\Http\Controllers\ProfessionalController;
+use App\Http\Controllers\JobHistoryController;
+use App\Http\Controllers\ExploringJobController;
+use App\Http\Controllers\DistanceJobController;
+use App\Http\Controllers\JobRolesController;
+use App\Http\Controllers\JobShiftController;
 use Illuminate\Support\Facades\Route;
 
 //landing page
@@ -50,6 +55,26 @@ Route::middleware('auth')->group(function () {
     Route::get('/professional', [ProfessionalController::class, 'index'])->name('exp.index');
     //store professional or experience level route
     Route::put('/professional/{idno}', [WorkDetailsController::class, 'update'])->name('exp.store');
+    //job history route
+    Route::get('/job', [JobHistoryController::class, 'index'])->name('job.index');
+    //store job history route
+    Route::put('/job/{idno}', [WorkDetailsController::class, 'updates'])->name('job.store');
+    //exploring job route
+    Route::get('/job/expjob', [ExploringJobController::class, 'index'])->name('expjob.index');
+    //store exploring job route
+    Route::put('/job/{idno}/expjob', [WorkDetailsController::class, 'exp_job'])->name('expjob.store');
+    //distance job route
+    Route::get('/job/distance', [DistanceJobController::class, 'index'])->name('distance.index');
+    //store distance job route
+    Route::put('/job/{idno}/distance', [WorkDetailsController::class, 'distance_job'])->name('distance.store');
+    //distance job route
+    Route::get('/job/roles', [JobRolesController::class, 'index'])->name('roles.index');
+    //store distance job route
+    Route::put('/job/{idno}/roles', [WorkDetailsController::class, 'job_roles'])->name('roles.store');
+    //job Shift route
+    Route::get('/job/shift', [JobShiftController::class, 'index'])->name('shift.index');
+    //store distance job route
+    Route::put('/job/{idno}/shift', [WorkDetailsController::class, 'job_shift'])->name('shift.store');
 
     //profile management routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

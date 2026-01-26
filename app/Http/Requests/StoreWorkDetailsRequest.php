@@ -25,6 +25,7 @@ class StoreWorkDetailsRequest extends FormRequest
             'idno' => 'nullable|string|max:255',
             'educational_level' => 'nullable|string|max:255',
             'professional_level' => 'nullable|string|max:255',
+            'job_history' => 'nullable|string|max:255',
         ];
     }
 }

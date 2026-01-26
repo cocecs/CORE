@@ -69,12 +69,10 @@ class UserDetailsController extends Controller
         $validatedData = $request->validate([
             'province' => '',
             'town' => '',
+            'brgy' => '',
             'address' => '',
-            'tel_no' => '',
-            'mobile_no' => '',
-            'sex' => '',
-            'civil_status' => '',
         ]);
+
 
         $userAddress = UserDetails::where('idno', $idno)->firstOrFail();
         $userAddress->update($validatedData);

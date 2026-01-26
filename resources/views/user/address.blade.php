@@ -11,7 +11,7 @@
         </div>
     @endif
     <div class="flex flex-col justify-between items-center mb-6">
-        <h2 class="text-1xl font-semibold text-blue-700">Yaayks! Your date of birth has been verified. Now, let's proceed to you address and contact number. Don't worry, your data will be keep safely.</h2>
+        <h2 class="text-1xl font-semibold text-blue-700">Yaayks! Your date of birth has been verified. Now, let's proceed to you address. Don't worry, your data will be keep safely.</h2>
     </div>
     <div class="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
         <div class="p-6">
@@ -20,42 +20,54 @@
                 @method('PUT')
 
                 <div class="grid grid-cols-1 gap-6">
-
-                    <!-- Province & Town (Alpine.js) -->
                     <div x-data="{
                         selectedProvince: '',
+                        selectedTown: '',
                         allData: @js(config('locations.provinces')),
+
                         get towns() {
                             return this.selectedProvince ? this.allData[this.selectedProvince].towns : {};
+                        },
+
+                        get barangays() {
+                            if (this.selectedProvince && this.selectedTown) {
+                                return this.towns[this.selectedTown].barangays || [];
+                            }
+                            return [];
                         }
                     }" class="space-y-6">
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Province</label>
-                            <select name="province" x-model="selectedProvince"
-                                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('province') border-red-500 @enderror">
+                            <select name="province" x-model="selectedProvince" @change="selectedTown = ''"
+                                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
                                 <option value="">-- Select Province --</option>
                                 <template x-for="(data, key) in allData" :key="key">
                                     <option :value="key" x-text="data.name"></option>
                                 </template>
                             </select>
-                            @error('province')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Town</label>
-                            <select name="town" :disabled="!selectedProvince"
-                                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100 @error('town') border-red-500 @enderror">
+                            <select name="town" x-model="selectedTown" :disabled="!selectedProvince"
+                                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100">
                                 <option value="">-- Select Town --</option>
-                                <template x-for="(name, zip) in towns" :key="zip">
-                                    <option :value="zip" x-text="name"></option>
+                                <template x-for="(data, zip) in towns" :key="zip">
+                                    <option :value="zip" x-text="data.name"></option>
                                 </template>
                             </select>
-                            @error('town')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Barangay</label>
+                            <select name="brgy" :disabled="!selectedTown"
+                                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100">
+                                <option value="">-- Select Barangay --</option>
+                                <template x-for="brgy in barangays" :key="brgy">
+                                    <option :value="brgy" x-text="brgy"></option>
+                                </template>
+                            </select>
                         </div>
                     </div>
 
