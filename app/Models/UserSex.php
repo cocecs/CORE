@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class UserSex extends Model
 {
     protected $fillable = [
-        'sex',
+        'gender',
         'civil_status',
     ];
 }

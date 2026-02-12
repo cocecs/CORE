@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('address',50)->nullable();
             $table->string('tel_no',15)->nullable();
             $table->string('mobile_no',15)->nullable();
-            $table->string('sex',10)->nullable();
+            $table->string('gender',15)->nullable();
             $table->string('civil_status',15)->nullable();
             $table->text('about_me')->nullable();
 

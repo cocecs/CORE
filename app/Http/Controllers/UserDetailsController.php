@@ -8,6 +8,7 @@ use App\Http\Requests\StoreUserDetailsRequest;
 use App\Http\Requests\UpdateUserDetailsRequest;
 use App\Http\Requests\UpdateUserSexRequest;
 use App\Http\Requests\UpdateUserAboutRequest;
+use App\Http\Requests\UpdateUserCivilRequest;
 
 class UserDetailsController extends Controller
 {
@@ -81,17 +82,31 @@ class UserDetailsController extends Controller
     }
     public function updates(UpdateUserSexRequest $request, $idno)
     {
-        //dump and die request data for debugging
-        // dd($request->civil_status);
-        // dd($idno);
+        if ($request->filled('custom_gender')) {
+            $request->merge(['gender' => $request->custom_gender]);
+        }
+        
         $validatedData = $request->validate([
-            'sex' => 'required|string|max:255',
-            'civil_status' => 'required|string|max:255',
+            'gender' => 'required|string|max:15',
         ]);
 
         $userAddress = UserDetails::where('idno', $idno)->firstOrFail();
         $userAddress->update($validatedData);
-        return redirect()->route('background.index')->with('success', 'User detailssss saved successfully.');
+        return redirect()->route('civil.index')->with('success', 'User details saved successfully.');
+
+    }
+    public function updateCivil(UpdateUserCivilRequest $request, $idno)
+    {
+        //dump and die request data for debugging
+        // dd($request->civil_status);
+        // dd($idno);
+        $validatedData = $request->validate([
+            'civil_status' => 'required|string|max:15',
+        ]);
+
+        $userDetail = UserDetails::where('idno', $idno)->firstOrFail();
+        $userDetail->update($validatedData);
+        return redirect()->route('background.index')->with('success', 'User details saved successfully.');
 
     }
     public function updateAbout(UpdateUserAboutRequest $request, $idno)

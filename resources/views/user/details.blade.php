@@ -1,7 +1,7 @@
 <x-app-layout>
 <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-semibold text-gray-700">Hello {{ $user->firstname }}! Let's complete your details.</h2>
+        <h2 class="text-2xl font-semibold text-gray-700 mx-auto text-center">Hello {{ $user->firstname }}! Let's complete your details.</h2>
     </div>
 
     @if (session('success'))
@@ -21,58 +21,11 @@
                 @csrf
 
                 <div class="grid grid-cols-1 gap-6">
-                    {{-- <div>
-                        <label for="idno" class="block text-sm font-medium text-gray-700 mb-1">ID #</label>
-                        <input type="text" id="idno" name="idno" autofocus
-                            value="{{ old('idno', $user->idno ?? '') }}"
-                            class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500
-                            @error('idno') border-red-500 @enderror"
-                            readonly >
-                        @error('idno')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- First Name -->
-                    <div>
-                        <label for="firstname" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                        <input type="text" id="firstname" name="firstname" autofocus
-                            value="{{ old('firstname', $user->firstname ?? '') }}"
-                            placeholder="Enter your Firstname"
-                            class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('firstname') border-red-500 @enderror">
-                        @error('firstname')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Middle Name -->
-                    <div>
-                        <label for="middlename" class="block text-sm font-medium text-gray-700 mb-1">Middle Name <span class="italic text-gray-400">(optional)</span></label>
-                        <input type="text" id="middlename" name="middlename"
-                            value="{{ old('middlename', $post->middlename ?? '') }}"
-                            placeholder="Enter your Middle Name"
-                            class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('middlename') border-red-500 @enderror">
-                        @error('middlename')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Last Name -->
-                    <div>
-                        <label for="lastname" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                        <input type="text" id="lastname" name="lastname"
-                            value="{{ old('lastname', $user->lastname ?? '') }}"
-                            placeholder="Enter your Last Name"
-                            class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('lastname') border-red-500 @enderror">
-                        @error('lastname')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div> --}}
 
                     <!-- Date of Birth -->
                     <div>
                         <label for="date_of_birth" class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-                        <input type="date" id="date_of_birth" name="date_of_birth"
+                        <input type="date" id="date_of_birth" name="date_of_birth" required
                             value="{{ old('date_of_birth', $post->date_of_birth ?? '') }}"
                             class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('date_of_birth') border-red-500 @enderror">
                         @error('date_of_birth')

@@ -15,5 +15,6 @@ class WorkDetails extends Model
         'distance_job',
         'job_roles',
         'job_shift',
+        'expertise',
     ];
 }

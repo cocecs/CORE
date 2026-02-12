@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('work_details', function (Blueprint $table) {
             $table->id();
             $table->string('idno')->unique();
-            $table->string('educational_level',15)->nullable();
-            $table->string('professional_level', 15)->nullable();
+            $table->string('educational_level',1)->nullable();
+            $table->string('professional_level', 1)->nullable();
             $table->string('job_history',1)->nullable();
-            $table->string('exploring_job',1)->nullable();
+            $table->json('exploring_job')->nullable();
             $table->string('distance_job',1)->nullable();
             $table->string('job_roles',1)->nullable();
-            $table->string('job_shift',1)->nullable();
+            $table->json('job_shift')->nullable();
+            $table->string('expertise',2)->nullable();
             $table->timestamps();
         });
     }

@@ -19,7 +19,7 @@ class UserDetails extends Model
         'address',
         'tel_no',
         'mobile_no',
-        'sex',
+        'gender',
         'civil_status',
         'about_me',
     ];

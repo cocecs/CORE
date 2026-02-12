@@ -3,6 +3,7 @@
 use App\Http\Controllers\UserDetailsController;
 use App\Http\Controllers\UserAboutController;
 use App\Http\Controllers\UserSexController;
+use App\Http\Controllers\UserCivilController;
 use App\Http\Controllers\UserAddressController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkDetailsController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\ExploringJobController;
 use App\Http\Controllers\DistanceJobController;
 use App\Http\Controllers\JobRolesController;
 use App\Http\Controllers\JobShiftController;
+use App\Http\Controllers\ExpertiseController;
 use Illuminate\Support\Facades\Route;
 
 //landing page
@@ -43,6 +45,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/sex', [UserSexController::class, 'index'])->name('sex.index');
     //store user sex route
     Route::put('/user/{idno}/sex', [UserDetailsController::class, 'updates'])->name('sex.update');
+    //user civil route
+    Route::get('/user/civil', [UserCivilController::class, 'index'])->name('civil.index');
+    //store user civil route
+    Route::put('/user/{idno}/civil', [UserDetailsController::class, 'updateCivil'])->name('civil.update');
     //user about me route
     Route::get('/user/about', [UserAboutController::class, 'index'])->name('about.index');
     //store user about route
@@ -75,6 +81,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/job/shift', [JobShiftController::class, 'index'])->name('shift.index');
     //store distance job route
     Route::put('/job/{idno}/shift', [WorkDetailsController::class, 'job_shift'])->name('shift.store');
+    //expertise route
+    Route::get('/expertise', [ExpertiseController::class, 'index'])->name('expertise.index');
+    //store expertise route
+    Route::put('/expertise/{idno}', [WorkDetailsController::class, 'expertise'])->name('expertise.store');
 
     //profile management routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

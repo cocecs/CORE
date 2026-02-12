@@ -24,10 +24,11 @@ class UpdateWorkDetailsRequest extends FormRequest
         return [
             'professional_level' => 'nullable|string|max:255',
             'job_history' => 'nullable|string|max:255',
-            'exploring_job' => 'nullable|string|max:1',
+            'exploring_job' => 'nullable|array',
             'distance_job' => 'nullable|string|max:1',
             'job_roles' => 'nullable|string|max:1',
-            'job_shift' => 'nullable|string|max:1',
+            'job_shift' => 'nullable|array',
+            'expertise' => 'nullable|string|max:2',
         ];
     }
 }

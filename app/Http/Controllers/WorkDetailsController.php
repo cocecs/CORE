@@ -70,7 +70,7 @@ class WorkDetailsController extends Controller
     public function exp_job(UpdateWorkDetailsRequest $request, $idno)
     {
         $validatedData = $request->validate([
-            'exploring_job' => '',
+            'exploring_job' => 'array',
         ]);
 
         $professional_level = WorkDetails::where('idno', $idno)->firstOrFail();
@@ -105,12 +105,24 @@ class WorkDetailsController extends Controller
     public function job_shift(UpdateWorkDetailsRequest $request, $idno)
     {
         $validatedData = $request->validate([
-            'job_shift' => '',
+            'job_shift' => 'array',
         ]);
 
         $job_roles = WorkDetails::where('idno', $idno)->firstOrFail();
         $job_roles->update($validatedData);
-        return redirect()->route('shift.index')->with('success', 'User details saved successfully.');
+        return redirect()->route('expertise.index')->with('success', 'User details saved successfully.');
+
+    }
+
+    public function expertise(UpdateWorkDetailsRequest $request, $idno)
+    {
+        $validatedData = $request->validate([
+            'expertise' => '',
+        ]);
+
+        $expertise = WorkDetails::where('idno', $idno)->firstOrFail();
+        $expertise->update($validatedData);
+        return redirect()->route('expertise.index')->with('success', 'User details saved successfully.');
 
     }
 }

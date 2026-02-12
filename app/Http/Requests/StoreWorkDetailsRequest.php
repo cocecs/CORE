@@ -22,7 +22,7 @@ class StoreWorkDetailsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'idno' => 'nullable|string|max:255',
+            // 'idno' => 'required|string|max:255',
             'educational_level' => 'nullable|string|max:255',
             'professional_level' => 'nullable|string|max:255',
             'job_history' => 'nullable|string|max:255',
