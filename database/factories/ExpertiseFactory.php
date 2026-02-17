@@ -1,11 +1,12 @@
 <?php
 
 namespace Database\Factories;
-
+use App\Models\Expertise;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Expertise>
  */
 class ExpertiseFactory extends Factory
 {
@@ -16,23 +17,19 @@ class ExpertiseFactory extends Factory
      */
     public function definition(): array
     {
-        $expertises = [
-            'Technology & IT',
-            'Creative & Design',
-            'Business & Administration',
-            'Marketing & Sales',
-            'Healthcare & Life Sciences',
-            'Education & Training',
-            'Finance & Legal',
-            'Logistics & Supply Chain'
-        ];
-
         return [
-            // Generates a unique 2-digit code (e.g., "01", "42")
-            'exp_code' => $this->faker->unique(true)->randomElement(range(1, 99)),
-
-            // Picks a realistic name from the list above
-            'area_of_expertise' => $this->faker->unique()->randomElement($expertises),
+            'exp_code' => $this->faker->unique(),
+            // 'exp_code' => $this->generateUniqueSlug(),
+            'area_of_expertise' => $this->faker->unique(),
         ];
     }
+    private function generateUniqueSlug(): string
+    {
+        do {
+            $exp_code = Str::lower(Str::random(5));
+        } while (Expertise::where('exp_code', $exp_code)->exists());
+
+        return $exp_code;
+    }
+
 }

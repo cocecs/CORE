@@ -12,6 +12,8 @@ class UserDetails extends Model
         'lastname',
         'middlename',
         'ext',
+        'middlename',
+        'ext',
         'date_of_birth',
         'province',
         'town',
@@ -19,8 +21,10 @@ class UserDetails extends Model
         'address',
         'tel_no',
         'mobile_no',
+        'sex',
         'gender',
         'civil_status',
+        'educational_level',
         'about_me',
     ];
 }

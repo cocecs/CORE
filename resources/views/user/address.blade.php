@@ -1,5 +1,5 @@
 <x-app-layout>
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     {{-- @if (session('success'))
         <div x-data="{ show: true }" x-show="show" class="mb-4 flex items-center justify-between p-4 text-green-700 bg-green-100 border border-green-200 rounded-lg" role="alert">
             <div class="flex items-center">
@@ -10,8 +10,17 @@
             </button>
         </div>
     @endif --}}
-    <div class="flex flex-col justify-between items-center mb-6">
-            <h2 class="text-1xl font-semibold text-green-700">Yaayks! Your date of birth has been verified. Now, let's proceed to your address. Don't worry, your data will be keep safely.</h2>
+    <div class="flex flex-col justify-between items-center">
+        @if ($errors->has('province') || $errors->has('town') || $errors->has('brgy'))
+            {{-- This shows if any of the three fields fail validation --}}
+            <h2 class="text-1xl font-semibold text-red-600">
+                * Please check your details. Some required fields are missing.
+            </h2>
+        @else
+            <h2 class="text-1xl font-semibold text-blue-700">
+                Yaayks! Your date of birth has been verified. Now, let's proceed to your present address. Don't worry, your data will be keep safely.
+            </h2>
+        @endif
     </div>
     <div class="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
         <div class="p-6">
@@ -39,8 +48,9 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Province <span class="text-red-700">*</span></label>
-                            <select name="province" x-model="selectedProvince" required @change="selectedTown = ''"
-                                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                            <select name="province" x-model="selectedProvince" @change="selectedTown = ''"
+                                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+                                @error('province') border-red-500 @enderror>
                                 <option value=""></option>
                                 <template x-for="(data, key) in allData" :key="key">
                                     <option :value="key" x-text="data.name"></option>
@@ -50,8 +60,9 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Town <span class="text-red-700">*</span></label>
-                            <select name="town" x-model="selectedTown" required :disabled="!selectedProvince"
-                                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100">
+                            <select name="town" x-model="selectedTown" :disabled="!selectedProvince"
+                                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
+                                @error('town') border-red-500 @enderror>
                                 <option value=""></option>
                                 <template x-for="(data, zip) in towns" :key="zip">
                                     <option :value="zip" x-text="data.name"></option>
@@ -61,8 +72,9 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Barangay <span class="text-red-700">*</span></label>
-                            <select name="brgy" :disabled="!selectedTown" required
-                                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100">
+                            <select name="brgy" :disabled="!selectedTown"
+                                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
+                                @error('brgy') border-red-500 @enderror>
                                 <option value=""></option>
                                 <template x-for="brgy in barangays" :key="brgy">
                                     <option :value="brgy" x-text="brgy"></option>
@@ -73,34 +85,13 @@
 
                     <!-- Address -->
                     <div>
-                        <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Address <span class="italic text-gray-400">(bldg #, st.)</span></label>
+                        <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Address <span class="italic text-gray-400">(Bldg./House#/Street/Village)</span></label>
                         <input type="text" id="address" name="address"
                             value="{{ old('address', $post->address ?? '') }}"
                             placeholder="Enter your Address"
                             class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('address') border-red-500 @enderror">
-                        @error('address')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+
                     </div>
-
-                    <!-- Two columns for Phone Numbers -->
-                    {{-- <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="tel" class="block text-sm font-medium text-gray-700 mb-1">Tel. # <span class="italic text-gray-400">(optional)</span></label>
-                            <input type="text" id="tel" name="tel_no"
-                                value="{{ old('tel_no', $post->tel_no ?? '') }}"
-                                placeholder="Enter your Tel. #"
-                                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('tel_no') border-red-500 @enderror">
-                        </div>
-
-                        <div>
-                            <label for="mobile" class="block text-sm font-medium text-gray-700 mb-1">Mobile # <span class="italic text-gray-400">(optional)</span></label>
-                            <input type="text" id="mobile" name="mobile_no"
-                                value="{{ old('mobile_no', $post->mobile_no ?? '') }}"
-                                placeholder="Enter your Mobile #"
-                                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('mobile_no') border-red-500 @enderror">
-                        </div>
-                    </div> --}}
 
 
                 </div>

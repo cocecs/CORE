@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('expertises', function (Blueprint $table) {
             $table->id();
-            $table->string('exp_code', 2)->unique();
+            $table->string('exp_code', 5);
             $table->string('area_of_expertise', 50)->nullable();
+            $table->longText('skills')->nullable();
             $table->timestamps();
         });
     }

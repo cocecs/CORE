@@ -12,20 +12,17 @@
     @endif --}}
     <div class="flex flex-col justify-between items-center">
         @if ($errors->any())
-            @error('sex')
-                <h2 class="text-1xl font-semibold text-red-600">* {{ $message }}</h2>
-            @enderror
-            @error('civil_status')
+            @error('gender')
                 <h2 class="text-1xl font-semibold text-red-600">* {{ $message }}</h2>
             @enderror
         @else
-            <h2 class="text-1xl font-semibold text-blue-700">Weew! Address confirmed. Alright, let's go to your other details. What is your sex?</h2>
+            <h2 class="text-1xl font-semibold text-blue-700">Weew! Address confirmed. Alright, let's go to your other details. What is your gender?</h2>
         @endif
     </div>
 
 
 </div>
-<form action="{{ route('sex.update', $user->idno) }}" method="POST">
+<form action="{{ route('gender.update', $user->idno) }}" method="POST">
 @csrf
 @method('PUT')
 <div class="flex items-center justify-center mb-6">
@@ -33,24 +30,53 @@
     <div class="flex flex-col gap-4">
 
       <label class="cursor-pointer">
-        <input type="radio" class="peer sr-only" name="sex" value="M"/>
+        <input type="radio" class="peer sr-only" name="gender" value="W"/>
         <div class="w-full rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
           <div class="flex items-center justify-between">
-            <p class="text-sm font-semibold uppercase text-gray-500">Male</p>
+            <p class="text-sm font-semibold uppercase text-gray-500">Woman</p>
             <svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m10.6 13.8l-2.175-2.175q-.275-.275-.675-.275t-.7.3q-.275.275-.275.7q0 .425.275.7L9.9 15.9q.275.275.7.275q.425 0 .7-.275l5.675-5.675q.275-.275.275-.675t-.3-.7q-.275-.275-.7-.275q-.425 0-.7.275ZM12 22q-2.075 0-3.9-.788q-1.825-.787-3.175-2.137q-1.35-1.35-2.137-3.175Q2 14.075 2 12t.788-3.9q.787-1.825 2.137-3.175q1.35-1.35 3.175-2.138Q9.925 2 12 2t3.9.787q1.825.788 3.175 2.138q1.35 1.35 2.137 3.175Q22 9.925 22 12t-.788 3.9q-.787 1.825-2.137 3.175q-1.35 1.35-3.175 2.137Q14.075 22 12 22Z" /></svg>
           </div>
         </div>
       </label>
 
       <label class="cursor-pointer">
-        <input type="radio" class="peer sr-only" name="sex" value="F" />
+        <input type="radio" class="peer sr-only" name="gender" value="M" />
         <div class="w-full rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
           <div class="flex items-center justify-between">
-            <p class="text-sm font-semibold uppercase text-gray-500">Female</p>
+            <p class="text-sm font-semibold uppercase text-gray-500">Man</p>
             <svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m10.6 13.8l-2.175-2.175q-.275-.275-.675-.275t-.7.3q-.275.275-.275.7q0 .425.275.7L9.9 15.9q.275.275.7.275q.425 0 .7-.275l5.675-5.675q.275-.275.275-.675t-.3-.7q-.275-.275-.7-.275q-.425 0-.7.275ZM12 22q-2.075 0-3.9-.788q-1.825-.787-3.175-2.137q-1.35-1.35-2.137-3.175Q2 14.075 2 12t.788-3.9q.787-1.825 2.137-3.175q1.35-1.35 3.175-2.138Q9.925 2 12 2t3.9.787q1.825.788 3.175 2.138q1.35 1.35 2.137 3.175Q22 9.925 22 12t-.788 3.9q-.787 1.825-2.137 3.175q-1.35 1.35-3.175 2.137Q14.075 22 12 22Z" /></svg>
           </div>
         </div>
       </label>
+
+      <label class="cursor-pointer">
+        <input type="radio" class="peer sr-only" name="gender" value="N"/>
+        <div class="w-full rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
+          <div class="flex items-center justify-between">
+            <p class="text-sm font-semibold uppercase text-gray-500">Non-Binary</p>
+            <svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m10.6 13.8l-2.175-2.175q-.275-.275-.675-.275t-.7.3q-.275.275-.275.7q0 .425.275.7L9.9 15.9q.275.275.7.275q.425 0 .7-.275l5.675-5.675q.275-.275.275-.675t-.3-.7q-.275-.275-.7-.275q-.425 0-.7.275ZM12 22q-2.075 0-3.9-.788q-1.825-.787-3.175-2.137q-1.35-1.35-2.137-3.175Q2 14.075 2 12t.788-3.9q.787-1.825 2.137-3.175q1.35-1.35 3.175-2.138Q9.925 2 12 2t3.9.787q1.825.788 3.175 2.138q1.35 1.35 2.137 3.175Q22 9.925 22 12t-.788 3.9q-.787 1.825-2.137 3.175q-1.35 1.35-3.175 2.137Q14.075 22 12 22Z" /></svg>
+          </div>
+        </div>
+      </label>
+
+      <div class="relative w-full">
+        <input type="radio" id="custom-gender" class="peer sr-only"/>
+        <label for="custom-gender" class="block w-full cursor-text rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-focus:text-sky-600 peer-focus:ring-blue-400 peer-focus:ring-offset-2">
+          <p class="text-sm font-semibold uppercase text-gray-500 mb-1">Prefer to self-describe</p>
+          <input type="text" name="custom_gender" autocomplete="off" maxlength="15" class="w-full bg-transparent border-none p-0 focus:ring-0 text-blue-800 text-bold placeholder-gray-400" placeholder="Type here..."/>
+        </label>
+      </div>
+
+      <label class="cursor-pointer">
+        <input type="radio" class="peer sr-only" name="gender" value="PN" />
+        <div class="w-full rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
+          <div class="flex items-center justify-between">
+            <p class="text-sm font-semibold uppercase text-gray-500">Prefer Not to Say</p>
+            <svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m10.6 13.8l-2.175-2.175q-.275-.275-.675-.275t-.7.3q-.275.275-.275.7q0 .425.275.7L9.9 15.9q.275.275.7.275q.425 0 .7-.275l5.675-5.675q.275-.275.275-.675t-.3-.7q-.275-.275-.7-.275q-.425 0-.7.275ZM12 22q-2.075 0-3.9-.788q-1.825-.787-3.175-2.137q-1.35-1.35-2.137-3.175Q2 14.075 2 12t.788-3.9q.787-1.825 2.137-3.175q1.35-1.35 3.175-2.138Q9.925 2 12 2t3.9.787q1.825.788 3.175 2.138q1.35 1.35 2.137 3.175Q22 9.925 22 12t-.788 3.9q-.787 1.825-2.137 3.175q-1.35 1.35-3.175 2.137Q14.075 22 12 22Z" /></svg>
+          </div>
+        </div>
+      </label>
+
     </div>
   </div>
 </div>

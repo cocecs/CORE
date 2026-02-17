@@ -21,7 +21,7 @@
                 <h2 class="text-1xl font-semibold text-red-600">* {{ $message }}</h2>
             @enderror
         @else
-            <h2 class="text-1xl font-semibold text-green-700">What's your current professional level?</h2>
+            <h2 class="text-1xl font-semibold text-blue-700">What's your current professional level?</h2>
         @endif
     </div>
 </div>

@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Expertise extends Model
 {
+    protected static function newFactory()
+    {
+        return \Database\Factories\ExpertiseFactory::new();
+    }
     use HasFactory;
     protected $fillable = [
         'exp_code',

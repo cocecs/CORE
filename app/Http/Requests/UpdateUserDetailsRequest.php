@@ -22,9 +22,9 @@ class UpdateUserDetailsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'province' => 'nullable|string|max:255',
-            'town' => 'nullable|string|max:255',
-            'brgy' => 'nullable|string|max:255',
+            'province' => 'required|string|max:255',
+            'town' => 'required|string|max:255',
+            'brgy' => 'required|string|max:255',
             'address' => 'nullable|string|max:255',
         ];
     }

@@ -22,7 +22,7 @@ class UpdateUserSexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'gender' => 'required|string|max:15',
+            'sex' => 'required|string|max:1',
             // 'civil_status' => 'required|string|max:255',
         ];
     }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\UserDetailsController;
 use App\Http\Controllers\UserAboutController;
 use App\Http\Controllers\UserSexController;
+use App\Http\Controllers\UserGenderController;
 use App\Http\Controllers\UserCivilController;
 use App\Http\Controllers\UserAddressController;
 use App\Http\Controllers\ProfileController;
@@ -44,21 +45,27 @@ Route::middleware('auth')->group(function () {
     //user sex route
     Route::get('/user/sex', [UserSexController::class, 'index'])->name('sex.index');
     //store user sex route
-    Route::put('/user/{idno}/sex', [UserDetailsController::class, 'updates'])->name('sex.update');
+    Route::put('/user/{idno}/sex', [UserDetailsController::class, 'updatesex'])->name('sex.update');
+    //user gender route
+    Route::get('/user/gender', [UserGenderController::class, 'index'])->name('gender.index');
+    //store user gender route
+    Route::put('/user/{idno}/gender', [UserDetailsController::class, 'updateGender'])->name('gender.update');
     //user civil route
     Route::get('/user/civil', [UserCivilController::class, 'index'])->name('civil.index');
     //store user civil route
     Route::put('/user/{idno}/civil', [UserDetailsController::class, 'updateCivil'])->name('civil.update');
-    //user about me route
-    Route::get('/user/about', [UserAboutController::class, 'index'])->name('about.index');
-    //store user about route
-    Route::put('/user/{idno}/about', [UserDetailsController::class, 'updateAbout'])->name('about.update');
     //educational background route
     Route::get('/education', [WorkDetailsController::class, 'index'])->name('background.index');
     //store educational background route
-    Route::post('/education', [WorkDetailsController::class, 'store'])->name('background.store');
+    Route::put('/education/{idno}', [UserDetailsController::class, 'updateCourse'])->name('background.update');
+    // triger expertise
+    Route::get('/expertise', [ExpertiseController::class, 'processMatch'])->name('expertise.process');
+    // show expertise
+    Route::get('/expertise/{code}', [ExpertiseController::class, 'show'])->name('expertise.show');
+    // store expertise
+    Route::put('/expertise/{idno}/skills', [WorkDetailsController::class, 'store'])->name('skills.store');
     //professional or experience level route
-    Route::get('/professional', [ProfessionalController::class, 'index'])->name('exp.index');
+    Route::get('/professional', [ProfessionalController::class, 'index'])->name('professional.index');
     //store professional or experience level route
     Route::put('/professional/{idno}', [WorkDetailsController::class, 'update'])->name('exp.store');
     //job history route
@@ -81,10 +88,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/job/shift', [JobShiftController::class, 'index'])->name('shift.index');
     //store distance job route
     Route::put('/job/{idno}/shift', [WorkDetailsController::class, 'job_shift'])->name('shift.store');
-    //expertise route
-    Route::get('/expertise', [ExpertiseController::class, 'index'])->name('expertise.index');
-    //store expertise route
-    Route::put('/expertise/{idno}', [WorkDetailsController::class, 'expertise'])->name('expertise.store');
+
+    //user about me route
+    Route::get('/user/about', [UserAboutController::class, 'index'])->name('about.index');
+    //store user about route
+    Route::put('/user/{idno}/about', [UserDetailsController::class, 'updateAbout'])->name('about.update');
 
     //profile management routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

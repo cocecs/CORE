@@ -33,10 +33,9 @@ class WorkDetailsController extends Controller
      */
     public function store(StoreWorkDetailsRequest $request)
     {
-        // dd($request->all());
         $idno = auth()->user()->idno;
         WorkDetails::create(array_merge($request->validated(), ['idno' => $idno]));
-        return redirect()->route('exp.index')->with('success', 'Work details saved successfully.');
+        return redirect()->route('professional.index')->with('success', 'Work details saved successfully.');
     }
 
     /**

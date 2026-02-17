@@ -23,9 +23,11 @@ class StoreUserDetailsRequest extends FormRequest
     {
         return [
             'idno' => 'nullable|string|max:255',
-            'firstname' => 'nullable|string|max:255',
-            'lastname' => 'nullable|string|max:255',
-            'date_of_birth' => 'nullable|date',
+            'firstname' => 'required|string|max:50',
+            'middlename' => 'nullable|string|max:50',
+            'lastname' => 'required|string|max:50',
+            'ext' => 'nullable|string|max:10',
+            'date_of_birth' => 'required|date',
         ];
     }
 }

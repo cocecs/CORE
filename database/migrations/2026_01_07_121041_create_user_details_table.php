@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('firstname',50);
             $table->string('lastname',50);
             $table->string('middlename', 50)->nullable();
-            $table->string('ext', 2)->nullable();
+            $table->string('ext', 10)->nullable();
             $table->date('date_of_birth');
             $table->string('province',50)->nullable();
             $table->string('town',50)->nullable();
@@ -25,8 +25,10 @@ return new class extends Migration
             $table->string('address',50)->nullable();
             $table->string('tel_no',15)->nullable();
             $table->string('mobile_no',15)->nullable();
+            $table->string('sex',1)->nullable();
             $table->string('gender',15)->nullable();
             $table->string('civil_status',15)->nullable();
+            $table->string('educational_level',60)->nullable();
             $table->text('about_me')->nullable();
 
             $table->timestamps();
