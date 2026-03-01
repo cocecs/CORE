@@ -13,10 +13,10 @@
 <form action="{{ route('skills.store', $user->idno) }}" method="POST">
 @csrf
 @method('PUT')
-<div class="flex items-center justify-center mb-6">
-  <div class="mx-auto max-w-6xl px-12">
+<div class="flex items-center mb-6">
+  <div class="mx-auto max-w-6xl px-12 w-full">
     <div class="grid grid-cols-1 gap-6">
-        <div class="flex flex-wrap gap-3">
+        <div class="flex flex-wrap justify-center gap-3">
             @foreach($expertises as $expertise)
                 {{-- We break the string into an array and loop through each individual skill --}}
                 @foreach(explode(',', $expertise->skills) as $skill)

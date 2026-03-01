@@ -52,7 +52,7 @@ class WorkDetailsController extends Controller
 
         $professional_level = WorkDetails::where('idno', $idno)->firstOrFail();
         $professional_level->update($validatedData);
-        return redirect()->route('job.index')->with('success', 'User details saved successfully.');
+        return redirect()->route('status.index')->with('success', 'User details saved successfully.');
 
     }
     public function updates(UpdateWorkDetailsRequest $request, $idno)
@@ -124,4 +124,19 @@ class WorkDetailsController extends Controller
         return redirect()->route('expertise.index')->with('success', 'User details saved successfully.');
 
     }
+    public function employ_status(UpdateWorkDetailsRequest $request, $idno)
+    {
+        $validatedData = $request->validate([
+            'employment_status' => '',
+            'employment_type' => '',
+            'self_employed_spec' => 'array',
+            'others_specify' => '',
+        ]);
+
+        $expertise = WorkDetails::where('idno', $idno)->firstOrFail();
+        $expertise->update($validatedData);
+        return redirect()->route('status.index')->with('success', 'User details saved successfully.');
+
+    }
+
 }

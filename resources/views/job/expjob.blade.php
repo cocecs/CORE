@@ -10,7 +10,7 @@
         @endif
     </div>
 </div>
-<form action="{{ route('expjob.store', $user->idno) }}" method="POST">
+<form action="" method="POST">
 @csrf
 @method('PUT')
 <div class="flex items-center justify-center mb-6">

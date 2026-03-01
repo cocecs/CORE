@@ -22,7 +22,11 @@ class UpdateWorkDetailsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'professional_level' => 'nullable|string|max:255',
+            'professional_level' => 'nullable|string|max:1',
+            'employment_status' => 'nullable|string|max:1',
+            'employment_type' => 'nullable|string|max:1',
+            'self_employed_spec' => 'nullable|array',
+            'others_specify' => 'nullable|string|max:50',
             'job_history' => 'nullable|string|max:255',
             'exploring_job' => 'nullable|array',
             'distance_job' => 'nullable|string|max:1',

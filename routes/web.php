@@ -15,6 +15,7 @@ use App\Http\Controllers\DistanceJobController;
 use App\Http\Controllers\JobRolesController;
 use App\Http\Controllers\JobShiftController;
 use App\Http\Controllers\ExpertiseController;
+use App\Http\Controllers\EmploymentStatusController;
 use Illuminate\Support\Facades\Route;
 
 //landing page
@@ -68,14 +69,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/professional', [ProfessionalController::class, 'index'])->name('professional.index');
     //store professional or experience level route
     Route::put('/professional/{idno}', [WorkDetailsController::class, 'update'])->name('exp.store');
-    //job history route
-    Route::get('/job', [JobHistoryController::class, 'index'])->name('job.index');
+    //employment status route
+    Route::get('/job', [JobHistoryController::class, 'index'])->name('status.index');
+    //employed or unemployed route
+    Route::put('/job/{idno}', [WorkDetailsController::class, 'employ_status'])->name('job.employment');
+
     //store job history route
-    Route::put('/job/{idno}', [WorkDetailsController::class, 'updates'])->name('job.store');
+    //Route::put('/job/{idno}', [WorkDetailsController::class, 'updates'])->name('job.store');
     //exploring job route
     Route::get('/job/expjob', [ExploringJobController::class, 'index'])->name('expjob.index');
+
     //store exploring job route
-    Route::put('/job/{idno}/expjob', [WorkDetailsController::class, 'exp_job'])->name('expjob.store');
+    //Route::put('/job/{idno}/expjob', [WorkDetailsController::class, 'exp_job'])->name('expjob.store');
+
     //distance job route
     Route::get('/job/distance', [DistanceJobController::class, 'index'])->name('distance.index');
     //store distance job route

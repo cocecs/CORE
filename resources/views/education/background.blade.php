@@ -17,7 +17,7 @@
         <div class="mx-auto w-full max-w-md px-6">
             <div class="flex flex-col gap-4">
                 <label class="cursor-pointer">
-                    <input type="radio" class="peer sr-only" name="educational_level" value="0" />
+                    <input type="radio" class="peer sr-only" name="educational_level" value="N" />
                     <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
                     <div class="flex flex-col gap-1">
                         <div class="flex items-center justify-between">
