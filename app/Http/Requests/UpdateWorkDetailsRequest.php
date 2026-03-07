@@ -28,6 +28,8 @@ class UpdateWorkDetailsRequest extends FormRequest
             'self_employed_spec' => 'nullable|array',
             'others_specify' => 'nullable|string|max:50',
             'job_history' => 'nullable|string|max:255',
+            'specify_country' => 'nullable|string|max:60',
+            'other_specify' => 'nullable|string|max:60',
             'exploring_job' => 'nullable|array',
             'distance_job' => 'nullable|string|max:1',
             'job_roles' => 'nullable|string|max:1',

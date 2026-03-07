@@ -22,7 +22,9 @@ return new class extends Migration
             $table->string('employment_type', 1)->nullable();
             $table->json('self_employed_spec')->nullable();
             $table->string('others_specify',50)->nullable();
-            $table->string('job_history',1)->nullable();
+            $table->string('job_history',2)->nullable();
+            $table->string('specify_country',60)->nullable();
+            $table->string('other_specify',60)->nullable();
             $table->json('exploring_job')->nullable();
             $table->string('distance_job',1)->nullable();
             $table->string('job_roles',1)->nullable();

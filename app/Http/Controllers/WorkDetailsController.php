@@ -129,14 +129,35 @@ class WorkDetailsController extends Controller
         $validatedData = $request->validate([
             'employment_status' => '',
             'employment_type' => '',
-            'self_employed_spec' => 'array',
+            // 'self_employed_spec' => 'array',
+            'self_employed_spec' => '',
             'others_specify' => '',
         ]);
+        if ($validatedData['employment_type'] === '1' || $validatedData['employment_status'] === '0')
+        {
+            $validatedData['self_employed_spec'] = null; // Or [] if you prefer empty array
+        }
 
         $expertise = WorkDetails::where('idno', $idno)->firstOrFail();
         $expertise->update($validatedData);
-        return redirect()->route('status.index')->with('success', 'User details saved successfully.');
+
+        if ($validatedData['employment_status'] == '1') {
+            return redirect()->route('status.index')->with('success', 'User details saved successfully.');
+        } else {
+            return redirect()->route('employment.index')->with('success', 'User details saved successfully.');
+        }
+    }
+    public function unemployment(UpdateWorkDetailsRequest $request, $idno)
+    {
+        $validatedData = $request->validate([
+            'job_history' => '',
+            'specify_country' => '',
+            'other_specify' => '',
+        ]);
+
+        $unemployment = WorkDetails::where('idno', $idno)->firstOrFail();
+        $unemployment->update($validatedData);
+        return redirect()->route('expertise.index')->with('success', 'User details saved successfully.');
 
     }
-
 }

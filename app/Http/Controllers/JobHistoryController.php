@@ -13,7 +13,7 @@ class JobHistoryController extends Controller
     public function index()
     {
         $user = User::where('idno', auth()->user()->idno)->first();
-        return view('job.index', compact('user'));
+        return view('job.employment', compact('user'));
     }
 
     /**
