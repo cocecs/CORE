@@ -132,17 +132,19 @@ class WorkDetailsController extends Controller
             // 'self_employed_spec' => 'array',
             'self_employed_spec' => '',
             'others_specify' => '',
+            'job_history' => '',
         ]);
         if ($validatedData['employment_type'] === '1' || $validatedData['employment_status'] === '0')
         {
             $validatedData['self_employed_spec'] = null; // Or [] if you prefer empty array
+            $validatedData['job_history'] = null;
         }
 
         $expertise = WorkDetails::where('idno', $idno)->firstOrFail();
         $expertise->update($validatedData);
 
         if ($validatedData['employment_status'] == '1') {
-            return redirect()->route('status.index')->with('success', 'User details saved successfully.');
+            return redirect()->route('ofw.index')->with('success', 'User details saved successfully.');
         } else {
             return redirect()->route('employment.index')->with('success', 'User details saved successfully.');
         }
@@ -157,7 +159,33 @@ class WorkDetailsController extends Controller
 
         $unemployment = WorkDetails::where('idno', $idno)->firstOrFail();
         $unemployment->update($validatedData);
-        return redirect()->route('expertise.index')->with('success', 'User details saved successfully.');
+        return redirect()->route('ofw.index')->with('success', 'User details saved successfully.');
+
+    }
+    public function ofw_update(UpdateWorkDetailsRequest $request, $idno)
+    {
+        $validatedData = $request->validate([
+            'ofw' => '',
+            'ofw_specify_country' => '',
+            'latest_specify_country' => '',
+            'month_year_return' => '',
+        ]);
+
+        $ofw = WorkDetails::where('idno', $idno)->firstOrFail();
+        $ofw->update($validatedData);
+        return redirect()->route('fourps.index')->with('success', 'User details saved successfully.');
+
+    }
+    public function fourps(UpdateWorkDetailsRequest $request, $idno)
+    {
+        $validatedData = $request->validate([
+            'fourps' => '',
+            'fourps_houshold_id' => '',
+        ]);
+
+        $fourps = WorkDetails::where('idno', $idno)->firstOrFail();
+        $fourps->update($validatedData);
+        return redirect()->route('fourps.index')->with('success', 'User details saved successfully.');
 
     }
 }

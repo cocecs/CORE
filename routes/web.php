@@ -10,6 +10,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WorkDetailsController;
 use App\Http\Controllers\ProfessionalController;
 use App\Http\Controllers\JobHistoryController;
+use App\Http\Controllers\OfwController;
+use App\Http\Controllers\FourpsController;
 use App\Http\Controllers\ExploringJobController;
 use App\Http\Controllers\DistanceJobController;
 use App\Http\Controllers\JobRolesController;
@@ -77,6 +79,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/employment', [JobHistoryController::class, 'index'])->name('employment.index');
     //unemployed route
     Route::put('/employment/{idno}', [WorkDetailsController::class, 'unemployment'])->name('unemployment');
+    //ofw route
+    Route::get('/employment/ofw', [OfwController::class, 'index'])->name('ofw.index');
+    //ofw route
+    Route::put('/employment/{idno}/ofw', [WorkDetailsController::class, 'ofw_update'])->name('ofw_update');
+    //4Ps route
+    Route::get('/employment/fourps', [fourpsController::class, 'index'])->name('fourps.index');
+    //4Ps route
+    Route::put('/employment/{idno}/fourps', [WorkDetailsController::class, 'fourps'])->name('fourps');
 
     //store job history route
     //Route::put('/job/{idno}', [WorkDetailsController::class, 'updates'])->name('job.store');

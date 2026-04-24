@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('work_details', function (Blueprint $table) {
             $table->id();
             $table->string('idno')->unique();
+            $table->json('skills')->nullable();
             // professional level: 0=entry_level; 1=junior; 2=mid_level; 3=senior; 4=managerial
             $table->string('professional_level', 1)->nullable();
             // employment status: 1=employed; 0=unemployed
@@ -25,11 +26,16 @@ return new class extends Migration
             $table->string('job_history',2)->nullable();
             $table->string('specify_country',60)->nullable();
             $table->string('other_specify',60)->nullable();
+            $table->string('ofw', 1)->nullable();
+            $table->string('ofw_specify_country', 50)->nullable();
+            $table->string('latest_specify_country', 100)->nullable();
+            $table->string('month_year_return', 15)->nullable();
+            $table->string('fourps', 1)->nullable();
+            $table->string('fourps_houshold_id', 20)->nullable();
             $table->json('exploring_job')->nullable();
             $table->string('distance_job',1)->nullable();
             $table->string('job_roles',1)->nullable();
             $table->json('job_shift')->nullable();
-            $table->json('skills')->nullable();
             $table->timestamps();
         });
     }
