@@ -12,7 +12,7 @@ use App\Http\Controllers\ProfessionalController;
 use App\Http\Controllers\JobHistoryController;
 use App\Http\Controllers\OfwController;
 use App\Http\Controllers\FourpsController;
-use App\Http\Controllers\ExploringJobController;
+use App\Http\Controllers\JobPreferenceController;
 use App\Http\Controllers\DistanceJobController;
 use App\Http\Controllers\JobRolesController;
 use App\Http\Controllers\JobShiftController;
@@ -84,9 +84,17 @@ Route::middleware('auth')->group(function () {
     //ofw route
     Route::put('/employment/{idno}/ofw', [WorkDetailsController::class, 'ofw_update'])->name('ofw_update');
     //4Ps route
-    Route::get('/employment/fourps', [fourpsController::class, 'index'])->name('fourps.index');
+    Route::get('/employment/fourps', [FourpsController::class, 'index'])->name('fourps.index');
     //4Ps route
     Route::put('/employment/{idno}/fourps', [WorkDetailsController::class, 'fourps'])->name('fourps');
+    //4Ps route
+    Route::get('/job/prefocc', [JobPreferenceController::class, 'index'])->name('prefocc.index');
+    //4Ps route
+    Route::put('/job/{idno}/prefocc', [JobPreferenceController::class, 'prefocc'])->name('prefocc');
+    //distance job route
+    Route::get('/job/distance', [JobPreferenceController::class, 'distance'])->name('distance.index');
+    //store distance job route
+    Route::put('/job/{idno}/distance', [JobPreferenceController::class, 'work_location'])->name('work_location');
 
     //store job history route
     //Route::put('/job/{idno}', [WorkDetailsController::class, 'updates'])->name('job.store');
@@ -96,14 +104,8 @@ Route::middleware('auth')->group(function () {
     //store exploring job route
     //Route::put('/job/{idno}/expjob', [WorkDetailsController::class, 'exp_job'])->name('expjob.store');
 
-    //distance job route
-    // Route::get('/job/distance', [DistanceJobController::class, 'index'])->name('distance.index');
-    // //store distance job route
-    // Route::put('/job/{idno}/distance', [WorkDetailsController::class, 'distance_job'])->name('distance.store');
-    // //distance job route
+   // //distance job route
     // Route::get('/job/roles', [JobRolesController::class, 'index'])->name('roles.index');
-    // //store distance job route
-    // Route::put('/job/{idno}/roles', [WorkDetailsController::class, 'job_roles'])->name('roles.store');
     // //job Shift route
     // Route::get('/job/shift', [JobShiftController::class, 'index'])->name('shift.index');
     // //store distance job route

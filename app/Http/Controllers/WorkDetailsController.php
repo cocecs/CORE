@@ -185,7 +185,7 @@ class WorkDetailsController extends Controller
 
         $fourps = WorkDetails::where('idno', $idno)->firstOrFail();
         $fourps->update($validatedData);
-        return redirect()->route('fourps.index')->with('success', 'User details saved successfully.');
+        return redirect()->route('prefocc.index')->with('success', 'User details saved successfully.');
 
     }
 }
