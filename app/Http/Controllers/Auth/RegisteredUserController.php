@@ -43,6 +43,7 @@ class RegisteredUserController extends Controller
             // 'idno' => random_int(10000000, 99999999),
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'usertype' => 'user',
         ]);
 
         event(new Registered($user));
@@ -50,5 +51,30 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         return redirect(route('welcome1', absolute: false));
+    }
+
+    public function createemp(): View
+    {
+        return view('auth.registeremp');
+    }
+    public function storeemp(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            //'usertype' => ['required', 'string', 'in:employer'],
+        ]);
+
+        $user = User::create([
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'usertype' => 'employer',
+        ]);
+
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return redirect(route('welcome2', absolute: false));
     }
 }

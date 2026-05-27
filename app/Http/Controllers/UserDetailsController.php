@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Educational;
 use App\Models\User;
 use App\Models\UserDetails;
 use App\Http\Requests\StoreUserDetailsRequest;
@@ -107,28 +108,7 @@ class UserDetailsController extends Controller
         return redirect()->route('civil.index')->with('success', 'User details saved successfully.');
 
     }
-    public function updateCourse(UpdateUserCourseRequest $request, $idno)
-    {
-        // 1. Extract the string from the custom_course array
-        $customCourse = null;
-        if ($request->has('custom_course')) {
-            // Filter the array to find the index that isn't empty (e.g., "BACHELOR")
-            $customCourse = collect($request->custom_course)->filter()->first();
-        }
 
-        // 2. Determine what to save
-        // If a custom course was typed, use that. Otherwise, use the radio value.
-        $levelToSave = $customCourse ? strtoupper($customCourse) : $request->educational_level;
-
-        // 3. Find and Update
-        $userCourse = UserDetails::where('idno', $idno)->firstOrFail();
-
-        $userCourse->update([
-            'educational_level' => $levelToSave
-        ]);
-
-        return redirect()->route('expertise.process')->with('success', 'User details saved successfully.');
-    }
     public function updateCivil(UpdateUserCivilRequest $request, $idno)
     {
         //dump and die request data for debugging

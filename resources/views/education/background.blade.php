@@ -3,7 +3,7 @@
     <div class="flex flex-col justify-between items-center">
         @if ($errors->any())
             @error('educational_level')
-                <h2 class="text-1xl font-semibold text-red-600">* {{ $message }}</h2>
+                <h2 class="text-1xl font-semibold text-red-600">*ad {{ $message }}</h2>
             @enderror
         @else
             <h2 class="text-1xl font-semibold text-blue-700">Great {{ $user->firstname }}! Where now in the Stage 2. Let's identify your level of education.</h2>
@@ -112,6 +112,7 @@
                     <div class="relative w-full max-w-xl hidden peer-checked:block rounded-b-md ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
                         <label for="custom_course" class="block w-full cursor-text rounded-b-md bg-white p-2 pt-2 text-gray-600 ring-2 ring-transparent transition-all peer-checked:ring-blue-400 peer-checked:ring-offset-2 border-t-0">
                             <input type="text" id="custom_course" name="custom_course[]" autocomplete="off" maxlength="60" oninput="this.value = this.value.toUpperCase()" class="w-full bg-transparent border-none p-0 focus:ring-0 text-blue-800 font-bold placeholder-gray-400" placeholder="Type your degree course here..."/>
+
                         </label>
                     </div>
                 </label>

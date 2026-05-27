@@ -14,8 +14,8 @@ use App\Http\Controllers\OfwController;
 use App\Http\Controllers\FourpsController;
 use App\Http\Controllers\JobPreferenceController;
 use App\Http\Controllers\DistanceJobController;
-use App\Http\Controllers\JobRolesController;
-use App\Http\Controllers\JobShiftController;
+use App\Http\Controllers\EducationalController;
+use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\ExpertiseController;
 use App\Http\Controllers\EmploymentStatusController;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +29,11 @@ Route::get('/', function () {
 Route::get('welcome1', function () {
     return view('welcome1');
 })->middleware(['auth', 'verified'])->name('welcome1');
+
+//welcome page for employers after registeration
+Route::get('welcome2', function () {
+    return view('welcome2');
+})->middleware(['auth', 'verified'])->name('welcome2');
 
 //dashboard page
 Route::get('/dashboard', function () {
@@ -58,9 +63,9 @@ Route::middleware('auth')->group(function () {
     //store user civil route
     Route::put('/user/{idno}/civil', [UserDetailsController::class, 'updateCivil'])->name('civil.update');
     //educational background route
-    Route::get('/education', [WorkDetailsController::class, 'index'])->name('background.index');
+    Route::get('/education', [EducationalController::class, 'index'])->name('background.index');
     //store educational background route
-    Route::put('/education/{idno}', [UserDetailsController::class, 'updateCourse'])->name('background.update');
+    Route::put('/education/{idno}', [EducationalController::class, 'updateCourse'])->name('background.update');
     // triger expertise
     Route::get('/expertise', [ExpertiseController::class, 'processMatch'])->name('expertise.process');
     // show expertise
@@ -87,29 +92,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/employment/fourps', [FourpsController::class, 'index'])->name('fourps.index');
     //4Ps route
     Route::put('/employment/{idno}/fourps', [WorkDetailsController::class, 'fourps'])->name('fourps');
-    //4Ps route
+    //parttime fulltime route
     Route::get('/job/prefocc', [JobPreferenceController::class, 'index'])->name('prefocc.index');
-    //4Ps route
+    //parttime fulltime route
     Route::put('/job/{idno}/prefocc', [JobPreferenceController::class, 'prefocc'])->name('prefocc');
     //distance job route
     Route::get('/job/distance', [JobPreferenceController::class, 'distance'])->name('distance.index');
     //store distance job route
     Route::put('/job/{idno}/distance', [JobPreferenceController::class, 'work_location'])->name('work_location');
+    // list jobs route
+    Route::get('/posting/jobs', [EducationalController::class, 'list_jobs'])->name('list_jobs');
 
-    //store job history route
-    //Route::put('/job/{idno}', [WorkDetailsController::class, 'updates'])->name('job.store');
-    //exploring job route
-    // Route::get('/job/expjob', [ExploringJobController::class, 'index'])->name('expjob.index');
+    // employer route
+    Route::get('/user/emp', [EmployerController::class, 'index'])->name('employer');
 
-    //store exploring job route
-    //Route::put('/job/{idno}/expjob', [WorkDetailsController::class, 'exp_job'])->name('expjob.store');
 
-   // //distance job route
-    // Route::get('/job/roles', [JobRolesController::class, 'index'])->name('roles.index');
-    // //job Shift route
-    // Route::get('/job/shift', [JobShiftController::class, 'index'])->name('shift.index');
-    // //store distance job route
-    // Route::put('/job/{idno}/shift', [WorkDetailsController::class, 'job_shift'])->name('shift.store');
 
     //user about me route
     Route::get('/user/about', [UserAboutController::class, 'index'])->name('about.index');

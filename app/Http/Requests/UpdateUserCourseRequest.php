@@ -22,9 +22,7 @@ class UpdateUserCourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'educational_level' => 'required|string|max:60',
-            // 'custom_course' => 'required|string|max:60',
-            // 'custom_acourse' => 'nullable|string|max:60',
+            'educational_level' => 'required|string|max:50',
             // 'custom_bcourse' => 'nullable|string|max:60',
             // 'custom_mcourse' => 'nullable|string|max:60',
             // 'custom_dcourse' => 'nullable|string|max:60',

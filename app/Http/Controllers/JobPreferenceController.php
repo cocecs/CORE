@@ -42,8 +42,13 @@ class JobPreferenceController extends Controller
 
         $work_location = JobPreference::where('idno', $idno)->firstOrFail();
         $work_location->update($validatedData);
-        return redirect()->route('distance.index')->with('success', 'User details saved successfully.');
+        return redirect()->route('list_jobs')->with('success', 'User details saved successfully.');
 
+    }
+    public function current_school()
+    {
+        $user = User::where('idno', auth()->user()->idno)->first();
+        return view('education.currently-in-school', compact('user'));
     }
 
 }
