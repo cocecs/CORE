@@ -105,6 +105,8 @@ Route::middleware('auth')->group(function () {
 
     // employer route
     Route::get('/user/emp', [EmployerController::class, 'index'])->name('employer');
+    //store employer route
+    Route::post('/user/emp', [EmployerController::class, 'emp_store'])->name('emp.store');
 
 
 

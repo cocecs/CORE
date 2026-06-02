@@ -5,7 +5,7 @@
         <h2 class="text-3xl font-semibold text-blue-700 mx-auto text-center">Welcome to C.O.R.E. <br/> Career Opportunities and Recommendation Engine.</h2>
         <p class="mt-4 text-lg text-gray-600 text-center">Employer Dashboard</p>
         <a href="{{ route('employer') }}"class="mt-8 px-8 py-3 bg-white text-blue-700 font-bold rounded-lg shadow-md hover:bg-blue-50 hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
-            Start Posting</a>
+            Add your Company</a>
     </div>
 </div>
 </div>

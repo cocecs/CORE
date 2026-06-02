@@ -14,18 +14,18 @@
         @endif
     </div>
 </div>
-<form action="" method="POST">
+<form action="{{ route('emp.store') }}" method="POST">
 @csrf
 <div class="flex items-center justify-center">
   <div class="mx-auto w-full max-w-md px-6">
     <div class="flex flex-col gap-4">
         <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
-            <label for="firstname" class="block text-sm font-medium text-gray-700 mb-1">Company Name <span class="text-red-700">*</span></label>
-                <input type="text" name="firstname" id="firstname"
-                    class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('firstname') border-red-500 @enderror">
+            <label for="company_name" class="block text-sm font-medium text-gray-700 mb-1">Company Name <span class="text-red-700">*</span></label>
+                <input type="text" name="company_name" id="company_name"
+                    class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('company_name') border-red-500 @enderror">
             </label>
-            <label for="middlename" class="block text-sm font-medium text-gray-700 mb-1 mt-3">TIN</label>
-                <input type="text" id="middlename" name="middlename"
+            <label for="tin" class="block text-sm font-medium text-gray-700 mb-1 mt-3">TIN</label>
+                <input type="text" id="tin" name="tin"
                     class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
             </label>
 

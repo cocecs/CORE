@@ -18,6 +18,11 @@ class AuthenticatedSessionController extends Controller
     {
         return view('auth.login');
     }
+    // login employer
+    public function createemp(): View
+    {
+        return view('auth.loginemp');
+    }
 
     /**
      * Handle an incoming authentication request.
@@ -28,7 +33,16 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('welcome1', absolute: false));
+    }
+    // login employer
+    public function storeemp(LoginRequest $request): RedirectResponse
+    {
+        $request->authenticate();
+
+        $request->session()->regenerate();
+
+        return redirect()->intended(route('welcome2', absolute: false));
     }
 
     /**

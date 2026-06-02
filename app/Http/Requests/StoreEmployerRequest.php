@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreEmploymentRequest extends FormRequest
+class StoreEmployerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,8 +22,9 @@ class StoreEmploymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'idno' => 'string',
+            'idno' => 'nullable|string',
             'email' => 'nullable|string|max:50',
+            'company_name' => 'nullable|string|max:50',
             'province' => 'nullable|string|max:20',
             'town' => 'nullable|string|max:20',
             'brgy' => 'nullable|string|max:20',
