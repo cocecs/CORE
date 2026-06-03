@@ -14,110 +14,20 @@
         @endif
     </div>
 </div>
-<form action="{{ route('emp.store') }}" method="POST">
+<form action="{{ route('update.about', $user->idno)  }}" method="POST">
 @csrf
+@method('PUT')
 <div class="flex items-center justify-center">
   <div class="mx-auto w-full max-w-md px-6">
     <div class="flex flex-col gap-4">
-        <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
-            <label for="company_name" class="block text-sm font-medium text-gray-700 mb-1">Company Name <span class="text-red-700">*</span></label>
-                <input type="text" name="company_name" id="company_name"
-                    class="block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('company_name') ? 'border-red-500' : 'border-gray-300' }}">
-            </label>
-            <label for="tin" class="block text-sm font-medium text-gray-700 mb-1 mt-3">TIN</label>
-                <input type="text" id="tin" name="tin" maxlength="15"
-                    class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-            </label>
 
-        </div>
-        <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
-            <div x-data="{
-                selectedProvince: '',
-                selectedTown: '',
-                allData: @js(config('locations.provinces')),
-
-                get towns() {
-                    return this.selectedProvince ? this.allData[this.selectedProvince].towns : {};
-                },
-
-                get barangays() {
-                    if (this.selectedProvince && this.selectedTown) {
-                        return this.towns[this.selectedTown].barangays || [];
-                    }
-                    return [];
-                }
-            }" class="space-y-6">
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Province <span class="text-red-700">*</span></label>
-                    <select name="province" x-model="selectedProvince" @change="selectedTown = ''"
-                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                        @error('province') border-red-500 @enderror>
-                        <option value=""></option>
-                        <template x-for="(data, key) in allData" :key="key">
-                            <option :value="key" x-text="data.name"></option>
-                        </template>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Town <span class="text-red-700">*</span></label>
-                    <select name="town" x-model="selectedTown" :disabled="!selectedProvince"
-                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
-                        @error('town') border-red-500 @enderror>
-                        <option value=""></option>
-                        <template x-for="(data, zip) in towns" :key="zip">
-                            <option :value="zip" x-text="data.name"></option>
-                        </template>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Barangay <span class="text-red-700">*</span></label>
-                    <select name="brgy" :disabled="!selectedTown"
-                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
-                        @error('brgy') border-red-500 @enderror>
-                        <option value=""></option>
-                        <template x-for="brgy in barangays" :key="brgy">
-                            <option :value="brgy" x-text="brgy"></option>
-                        </template>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Address -->
-            <div>
-                <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Address <span class="italic text-gray-400">(Bldg./House#/Street/Village)</span></label>
-                <input type="text" id="address" name="address_details"
-                    value="{{ old('address_details', $post->address_details ?? '') }}"
-                    placeholder="Enter your Address"
-                    class="block w-full rounded-md shadow-sm border {{ $errors->has('address_details') ? 'border-red-500' : 'border-gray-300' }} focus:border-indigo-500 focus:ring-indigo-500">
-
-            </div>
-            <div>
-                <label for="tel" class="block text-sm font-medium text-gray-700 mb-1">Telephone # </label>
-                    <input type="text" name="tel" id="tel"
-                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 ">
-                </label>
-                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Phone #</label>
-                    <input type="text" id="phone" name="phone"
-                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-                </label>
-            </div>
-        </div>
         <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
 
-            <label for="representative_name" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Representative Name <span class="text-red-700">*</span></label>
-                <input type="text" id="representative_name" name="representative_name"
-                    class="block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('representative_name') ? 'border-red-500' : 'border-gray-300' }}">
-            </label>
-            <label for="mobile" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Mobile # <span class="text-red-700">*</span></label>
-                <input type="text" id="mobile" name="mobile"
-                    class="block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('mobile') ? 'border-red-500' : 'border-gray-300' }}">
-            </label>
-            <label for="designation" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Designation <span class="text-red-700">*</span></label>
-                <input type="text" id="designation" name="designation"
-                    class="block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('designation') ? 'border-red-500' : 'border-gray-300' }}">
+            <label for="about" class="block text-sm font-medium text-gray-700 mb-1 mt-3">About <span class="text-red-700">*</span></label>
+                <textarea id="about" name="about"
+                    class="block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('about') ? 'border-red-500' : 'border-gray-300' }}"
+                    rows="10"
+                >{{ old('about') }}</textarea>
             </label>
         </div>
     </div>

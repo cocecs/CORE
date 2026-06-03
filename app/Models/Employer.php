@@ -19,6 +19,7 @@ class Employer extends Model
         'representative_name',
         'mobile',
         'designation',
-        'tin'
+        'tin',
+        'about',
     ];
 }

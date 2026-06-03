@@ -107,7 +107,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/emp', [EmployerController::class, 'index'])->name('employer');
     //store employer route
     Route::post('/user/emp', [EmployerController::class, 'emp_store'])->name('emp.store');
-
+    // employer about route
+    Route::get('/user/empa', [EmployerController::class, 'emp_about'])->name('emp.about');
+    // employer about update route
+    Route::post('/user/empa/{idno}', [EmployerController::class, 'update_about'])->name('update.about');
+    // employer post route
+    Route::get('/user/post', [EmployerController::class, 'emp_post'])->name('emp.post');
 
 
     //user about me route

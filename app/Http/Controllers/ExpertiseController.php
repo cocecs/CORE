@@ -162,5 +162,7 @@ class ExpertiseController extends Controller
         }
         // 4. Fallback: If no keywords match, return a default category
         return 'Other';
+
+
     }
 }
