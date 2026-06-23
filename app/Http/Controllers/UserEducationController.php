@@ -33,18 +33,16 @@ class UserEducationController extends Controller
      */
     public function update(UpdateEducationalRequest $request, $idno)
     {
-        //dump and die request data for debugging
-        // dd($request->civil_status);
-        // dd($idno);
-        $validatedData = $request->validate([
-            'level' => '',
-            'school_name' => '',
-            'degree_course' => '',
-            'period_of_attendance' => '',
-            'year_graduated' => '',
+        // $validatedData = $request->validate([
+        //     'level' => '',
+        //     'school_name' => '',
+        //     'degree_course' => '',
+        //     'period_of_attendance' => '',
+        //     'year_graduated' => '',
 
-        ]);
+        // ]);
 
+        $validatedData = $request->validated();
         $userEducation = UserEducation::where('idno', $idno)->firstOrFail();
         $userEducation->update($validatedData);
         return redirect()->route('education.index')->with('success', 'User education background saved successfully.');

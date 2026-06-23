@@ -1,6 +1,7 @@
 <x-app-layout>
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+
     <div class="flex flex-col justify-between items-center">
         @if ($errors->has('firstname') || $errors->has('lastname') || $errors->has('date_of_birth'))
             {{-- This shows if any of the three fields fail validation --}}
@@ -9,132 +10,81 @@
             </h2>
         @else
             <h2 class="text-1xl font-semibold text-blue-700">
-                Good day! Welcome to CORE.
+                Add new user
             </h2>
         @endif
     </div>
 </div>
-<form action="{{ route('emp.store') }}" method="POST">
-@csrf
-<div class="flex items-center justify-center">
-  <div class="mx-auto w-full max-w-md px-6">
-    <div class="flex flex-col gap-4">
-        <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
-            <label for="company_name" class="block text-sm font-medium text-gray-700 mb-1">Company Name <span class="text-red-700">*</span></label>
-                <input type="text" name="company_name" id="company_name"
-                    class="block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('company_name') ? 'border-red-500' : 'border-gray-300' }}">
-            </label>
-            <label for="tin" class="block text-sm font-medium text-gray-700 mb-1 mt-3">TIN</label>
-                <input type="text" id="tin" name="tin" maxlength="15"
-                    class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-            </label>
+<form action="{{ route('adtv_storeUser') }}" method="POST">
+    @csrf
+    <div class="flex items-center justify-center">
+        <div class="mx-auto w-full max-w-md px-6">
+            <div class="flex flex-col gap-4">
 
-        </div>
-        <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
-            <div x-data="{
-                selectedProvince: '',
-                selectedTown: '',
-                allData: @js(config('locations.provinces')),
+                <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow">
+                    <label for="firstname" class="block text-sm font-medium text-gray-700 mb-1">Firstname <span class="text-red-700">*</span></label>
+                    <input type="text" name="firstname" id="firstname" value="{{ old('firstname') }}"
+                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('firstname') border-red-500 @enderror">
 
-                get towns() {
-                    return this.selectedProvince ? this.allData[this.selectedProvince].towns : {};
-                },
-
-                get barangays() {
-                    if (this.selectedProvince && this.selectedTown) {
-                        return this.towns[this.selectedTown].barangays || [];
-                    }
-                    return [];
-                }
-            }" class="space-y-6">
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Province <span class="text-red-700">*</span></label>
-                    <select name="province" x-model="selectedProvince" @change="selectedTown = ''"
-                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                        @error('province') border-red-500 @enderror>
-                        <option value=""></option>
-                        <template x-for="(data, key) in allData" :key="key">
-                            <option :value="key" x-text="data.name"></option>
-                        </template>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Town <span class="text-red-700">*</span></label>
-                    <select name="town" x-model="selectedTown" :disabled="!selectedProvince"
-                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
-                        @error('town') border-red-500 @enderror>
-                        <option value=""></option>
-                        <template x-for="(data, zip) in towns" :key="zip">
-                            <option :value="zip" x-text="data.name"></option>
-                        </template>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Barangay <span class="text-red-700">*</span></label>
-                    <select name="brgy" :disabled="!selectedTown"
-                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-100"
-                        @error('brgy') border-red-500 @enderror>
-                        <option value=""></option>
-                        <template x-for="brgy in barangays" :key="brgy">
-                            <option :value="brgy" x-text="brgy"></option>
-                        </template>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Address -->
-            <div>
-                <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Address <span class="italic text-gray-400">(Bldg./House#/Street/Village)</span></label>
-                <input type="text" id="address" name="address_details"
-                    value="{{ old('address_details', $post->address_details ?? '') }}"
-                    placeholder="Enter your Address"
-                    class="block w-full rounded-md shadow-sm border {{ $errors->has('address_details') ? 'border-red-500' : 'border-gray-300' }} focus:border-indigo-500 focus:ring-indigo-500">
-
-            </div>
-            <div>
-                <label for="tel" class="block text-sm font-medium text-gray-700 mb-1">Telephone # </label>
-                    <input type="text" name="tel" id="tel"
-                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 ">
-                </label>
-                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Phone #</label>
-                    <input type="text" id="phone" name="phone"
+                    <label for="middlename" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Middle Name</label>
+                    <input type="text" id="middlename" name="middlename" value="{{ old('middlename') }}"
                         class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-                </label>
+
+                    <label for="lastname" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Surname <span class="text-red-700">*</span></label>
+                    <input type="text" id="lastname" name="lastname" value="{{ old('lastname') }}"
+                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('lastname') border-red-500 @enderror">
+
+                    <label for="ext" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Suffix <span class="italic text-gray-400">(Sr., Jr., III, etc.)</span></label>
+                    <input type="text" id="ext" name="ext" value="{{ old('ext') }}"
+                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+
+                <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-700">*</span></label>
+                    <input type="email" id="email" name="email" value="{{ old('email') }}" required autocomplete="username"
+                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('email') border-red-500 @enderror">
+                    @error('email')
+                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
+
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Password <span class="text-red-700">*</span></label>
+                    <input type="password" id="password" name="password" required autocomplete="new-password"
+                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('password') border-red-500 @enderror">
+                    @error('password')
+                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
+
+                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Confirm Password <span class="text-red-700">*</span></label>
+                    <input type="password" id="password_confirmation" name="password_confirmation" required autocomplete="new-password"
+                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('password_confirmation') border-red-500 @enderror">
+                </div>
+
+                <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow">
+                    <label for="date_of_birth" class="block text-sm font-medium text-gray-700 mb-1">Date of Birth <span class="text-red-700">*</span></label>
+                    <input type="date" id="date_of_birth" name="date_of_birth"
+                        value="{{ old('date_of_birth', $post->date_of_birth ?? '') }}"
+                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('date_of_birth') border-red-500 @enderror">
+                    @error('date_of_birth')
+                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
             </div>
         </div>
-        <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
+    </div>
 
-            <label for="representative_name" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Representative Name <span class="text-red-700">*</span></label>
-                <input type="text" id="representative_name" name="representative_name"
-                    class="block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('representative_name') ? 'border-red-500' : 'border-gray-300' }}">
-            </label>
-            <label for="mobile" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Mobile # <span class="text-red-700">*</span></label>
-                <input type="text" id="mobile" name="mobile"
-                    class="block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('mobile') ? 'border-red-500' : 'border-gray-300' }}">
-            </label>
-            <label for="designation" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Designation <span class="text-red-700">*</span></label>
-                <input type="text" id="designation" name="designation"
-                    class="block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('designation') ? 'border-red-500' : 'border-gray-300' }}">
-            </label>
+    <div class="flex items-center justify-center mb-6">
+        <div class="mx-auto max-w-6xl px-12">
+            <div class="mt-8 flex gap-3">
+                <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-md font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition">
+                    Submit
+                </button>
+                <button type="reset" class="px-6 py-2 bg-white text-gray-700 border border-gray-300 rounded-md font-semibold hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition">
+                    Reset
+                </button>
+            </div>
         </div>
     </div>
-  </div>
-</div>
-<div class="flex items-center justify-center mb-6">
-    <div class="mx-auto max-w-6xl px-12">
-        <div class="mt-8 flex gap-3">
-            <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-md font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition">
-                Next
-            </button>
-            <button type="reset" class="px-6 py-2 bg-white text-gray-700 border border-gray-300 rounded-md font-semibold hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition">
-                Reset
-            </button>
-        </div>
-    </div>
-</div>
 </form>
 
 </x-app-layout>

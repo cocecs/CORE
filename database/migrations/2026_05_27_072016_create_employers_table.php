@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('idno')->unique();
             $table->string('email',50)->unique();
             $table->string('company_name',50);
+            $table->string('type_of_business',1)->nullable();
             $table->string('province', 20)->nullable();
             $table->string('town', 20)->nullable();
             $table->string('brgy', 20)->nullable();
@@ -25,7 +26,7 @@ return new class extends Migration
             $table->string('representative_name',50)->nullable();
             $table->string('mobile',50)->nullable();
             $table->string('designation',50)->nullable();
-            $table->string('tin',15)->nullable();
+            $table->string('tin',15);
             $table->string('about')->nullable();
             $table->timestamps();
         });

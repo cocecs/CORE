@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('town',50)->nullable();
             $table->string('brgy',50)->nullable();
             $table->string('address',50)->nullable();
+            $table->decimal('latitude',10,8)->nullable();
+            $table->decimal('longitude',11,8)->nullable();
             $table->string('tel_no',15)->nullable();
             $table->string('mobile_no',15)->nullable();
             $table->string('sex',1)->nullable();

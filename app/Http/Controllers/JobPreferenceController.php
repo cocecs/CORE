@@ -34,21 +34,23 @@ class JobPreferenceController extends Controller
     }
     public function work_location(UpdateJobPreferenceRequest $request, $idno)
     {
-        $validatedData = $request->validate([
-            'work_location' => '',
-            'specific_location' => '',
-            'specify_country' => '',
-        ]);
+        // $validatedData = $request->validate([
+        //     'work_location' => '',
+        //     'province' => '',
+        //     'town' => '',
+        //     'specify_country' => '',
+        // ]);
 
+        $validatedData = $request->validated();
         $work_location = JobPreference::where('idno', $idno)->firstOrFail();
         $work_location->update($validatedData);
-        return redirect()->route('list_jobs')->with('success', 'User details saved successfully.');
+        return redirect()->route('recommended')->with('success', 'User details saved successfully.');
 
     }
     public function current_school()
     {
         $user = User::where('idno', auth()->user()->idno)->first();
-        return view('education.currently-in-school', compact('user'));
+        // return view('education.currently-in-school', compact('user'));
     }
 
 }

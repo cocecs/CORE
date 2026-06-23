@@ -13,11 +13,14 @@ use App\Http\Controllers\JobHistoryController;
 use App\Http\Controllers\OfwController;
 use App\Http\Controllers\FourpsController;
 use App\Http\Controllers\JobPreferenceController;
-use App\Http\Controllers\DistanceJobController;
+use App\Http\Controllers\JobPostingController;
 use App\Http\Controllers\EducationalController;
 use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\ExpertiseController;
 use App\Http\Controllers\EmploymentStatusController;
+use App\Http\Controllers\LocationController;
+use App\Http\Controllers\JobRecommendationController;
+use App\Http\Controllers\AdminAccountController;
 use Illuminate\Support\Facades\Route;
 
 //landing page
@@ -35,6 +38,11 @@ Route::get('welcome2', function () {
     return view('welcome2');
 })->middleware(['auth', 'verified'])->name('welcome2');
 
+//welcome page for admin and peso
+Route::get('welcome3', function () {
+    return view('welcome3');
+})->middleware(['auth', 'verified'])->name('welcome3');
+
 //dashboard page
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -43,25 +51,30 @@ Route::get('/dashboard', function () {
 //other pages for authenticated users
 Route::middleware('auth')->group(function () {
     //user details route
-    Route::get('/user', [UserDetailsController::class, 'index'])->name('details.index');
+    Route::get('/app', [UserDetailsController::class, 'index'])->name('details.index');
     //store user details route
-    Route::post('/user', [UserDetailsController::class, 'store'])->name('details.store');
+    Route::post('/app', [UserDetailsController::class, 'store'])->name('details.store');
     //user address route
-    Route::get('/user/address', [UserAddressController::class, 'index'])->name('address.index');
+    Route::get('/app/address', [UserAddressController::class, 'index'])->name('address.index');
+
+    Route::get('/api/provinces', [LocationController::class, 'getProvinces']);
+    Route::get('/api/towns', [LocationController::class, 'getTowns']);
+    Route::get('/api/barangays', [LocationController::class, 'getBarangays']);
+
     //update user address route
-    Route::put('/user/{idno}/details', [UserDetailsController::class, 'update'])->name('user.update');
+    Route::put('/app/{idno}/details', [UserDetailsController::class, 'update'])->name('app.update');
     //user sex route
-    Route::get('/user/sex', [UserSexController::class, 'index'])->name('sex.index');
+    Route::get('/app/sex', [UserSexController::class, 'index'])->name('sex.index');
     //store user sex route
-    Route::put('/user/{idno}/sex', [UserDetailsController::class, 'updatesex'])->name('sex.update');
+    Route::put('/app/{idno}/sex', [UserDetailsController::class, 'updatesex'])->name('sex.update');
     //user gender route
-    Route::get('/user/gender', [UserGenderController::class, 'index'])->name('gender.index');
+    Route::get('/app/gender', [UserGenderController::class, 'index'])->name('gender.index');
     //store user gender route
-    Route::put('/user/{idno}/gender', [UserDetailsController::class, 'updateGender'])->name('gender.update');
+    Route::put('/app/{idno}/gender', [UserDetailsController::class, 'updateGender'])->name('gender.update');
     //user civil route
-    Route::get('/user/civil', [UserCivilController::class, 'index'])->name('civil.index');
+    Route::get('/app/civil', [UserCivilController::class, 'index'])->name('civil.index');
     //store user civil route
-    Route::put('/user/{idno}/civil', [UserDetailsController::class, 'updateCivil'])->name('civil.update');
+    Route::put('/app/{idno}/civil', [UserDetailsController::class, 'updateCivil'])->name('civil.update');
     //educational background route
     Route::get('/education', [EducationalController::class, 'index'])->name('background.index');
     //store educational background route
@@ -100,25 +113,53 @@ Route::middleware('auth')->group(function () {
     Route::get('/job/distance', [JobPreferenceController::class, 'distance'])->name('distance.index');
     //store distance job route
     Route::put('/job/{idno}/distance', [JobPreferenceController::class, 'work_location'])->name('work_location');
-    // list jobs route
-    Route::get('/posting/jobs', [EducationalController::class, 'list_jobs'])->name('list_jobs');
+    //user details route
+    Route::get('/app/profile', [UserDetailsController::class, 'profile'])->name('profile');
 
-    // employer route
-    Route::get('/user/emp', [EmployerController::class, 'index'])->name('employer');
+
     //store employer route
-    Route::post('/user/emp', [EmployerController::class, 'emp_store'])->name('emp.store');
+    Route::post('/app/emp', [EmployerController::class, 'emp_store'])->name('emp.store');
     // employer about route
-    Route::get('/user/empa', [EmployerController::class, 'emp_about'])->name('emp.about');
+    Route::get('/app/empa', [EmployerController::class, 'emp_about'])->name('emp.about');
     // employer about update route
-    Route::post('/user/empa/{idno}', [EmployerController::class, 'update_about'])->name('update.about');
-    // employer post route
-    Route::get('/user/post', [EmployerController::class, 'emp_post'])->name('emp.post');
+    Route::put('/app/empa/{idno}', [EmployerController::class, 'update_about'])->name('update.about');
 
+    // employer dashboard
+    Route::get('/par', [JobPostingController::class, 'index'])->name('par.index');
+    // employer job post route
+    Route::get('/par/post', [JobPostingController::class, 'emp_postc'])->name('emp.post');
+    // getting the skills based on the selected expertise route
+    Route::get('/get-skills/{expertiseId}', [JobPostingController::class, 'getSkillsByExpertise']);
+    // employer post preference route
+    Route::post('/par/post/{idno}', [JobPostingController::class, 'job_post'])->name('job_post');
+    // employer details postc route
+    Route::get('/par/postc/{job_id}', [JobPostingController::class, 'emp_postc'])->name('emp_postc');
+    // employer details postc route
+    Route::put('/par/postc/{job_id}', [JobPostingController::class, 'job_postc'])->name('job_postc');
+    // employer list of job post
+    Route::get('/par/lj', [JobPostingController::class, 'list_jobPosted'])->name('list_jobPosted');
+
+    //list of recommended jobs route
+    Route::get('/rec', [JobRecommendationController::class, 'index'])->name('recommended');
+
+    // admin dashboard
+    Route::get('/adtv', [AdminAccountController::class, 'index'])->name('adtv.index');
+    // admin list of users
+    Route::get('/adtv/lu', [AdminAccountController::class, 'adtv_listUsers'])->name('adtv_listUsers');
+    // admin add new user
+    Route::get('/adtv/nu', [AdminAccountController::class, 'adtv_addUser'])->name('adtv_addUser');
+    // admin add new user
+    Route::post('/adtv/nu', [AdminAccountController::class, 'adtv_storeUser'])->name('adtv_storeUser');
+    // view user details by admin
+    Route::get('/admin/users', [AdminAccountController::class, 'adtv_listUsers'])->name('adtv_listUsers');
+    Route::get('/admin/admins', [AdminAccountController::class, 'adtv_listAdmins'])->name('adtv_listAdmins');
+    // admin add employer
+    Route::get('/adtv/emp', [AdminAccountController::class, 'adtv_storeEmployer'])->name('adtv_storeEmployer');
 
     //user about me route
-    Route::get('/user/about', [UserAboutController::class, 'index'])->name('about.index');
+    Route::get('/app/about', [UserAboutController::class, 'index'])->name('about.index');
     //store user about route
-    Route::put('/user/{idno}/about', [UserDetailsController::class, 'updateAbout'])->name('about.update');
+    Route::put('/app/{idno}/about', [UserDetailsController::class, 'updateAbout'])->name('about.update');
 
     //profile management routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

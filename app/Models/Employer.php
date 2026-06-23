@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Employer extends Model
 {
@@ -10,6 +11,7 @@ class Employer extends Model
         'idno',
         'email',
         'company_name',
+        'type_of_business',
         'province',
         'town',
         'brgy',
@@ -22,4 +24,10 @@ class Employer extends Model
         'tin',
         'about',
     ];
+    public function account(): BelongsTo
+    {
+        // Parameter 2: Foreign key inside 'user_details' table
+        // Parameter 3: Owner key inside 'users' table
+        return $this->belongsTo(User::class, 'idno', 'idno');
+    }
 }

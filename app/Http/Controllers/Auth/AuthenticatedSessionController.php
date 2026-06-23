@@ -19,10 +19,10 @@ class AuthenticatedSessionController extends Controller
         return view('auth.login');
     }
     // login employer
-    public function createemp(): View
-    {
-        return view('auth.loginemp');
-    }
+    // public function createemp(): View
+    // {
+    //     return view('auth.loginemp');
+    // }
 
     /**
      * Handle an incoming authentication request.
@@ -33,17 +33,31 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('welcome1', absolute: false));
+        $user = Auth::user();
+
+        if ($user->usertype === 'user') {
+            return redirect()->intended(route('recommended', absolute: false));
+        }
+
+        if ($user->usertype === 'employer') {
+            return redirect()->intended(route('par.index', absolute: false));
+        }
+
+        if ($user->usertype === 'admin') {
+            return redirect()->intended(route('adtv.index', absolute: false));
+        }
+
+        return redirect('/');
     }
     // login employer
-    public function storeemp(LoginRequest $request): RedirectResponse
-    {
-        $request->authenticate();
+    // public function storeemp(LoginRequest $request): RedirectResponse
+    // {
+    //     $request->authenticate();
 
-        $request->session()->regenerate();
+    //     $request->session()->regenerate();
 
-        return redirect()->intended(route('welcome2', absolute: false));
-    }
+    //     return redirect()->intended(route('welcome2', absolute: false));
+    // }
 
     /**
      * Destroy an authenticated session.

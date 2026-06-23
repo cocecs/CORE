@@ -4,11 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateJobPreferenceRequest extends FormRequest
+class UpdateJobPostingRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
@@ -22,10 +19,10 @@ class UpdateJobPreferenceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'work_location' => 'nullable|string|max:1',
-            'province' => 'nullable|string|max:60',
-            'town' => 'nullable|string|max:30',
-            'specify_country' => 'nullable|string|max:60'
+            // 'idno' => 'required|string|max:255',
+            'job_title' => 'required|string|max:50',
+            'job_description' => 'required|string',
+            'job_requirements' => 'required|string',
         ];
     }
 }

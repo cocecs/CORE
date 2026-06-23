@@ -15,7 +15,7 @@ class UserSexController extends Controller
     {
         // return view('user.sex');
         $user = User::where('idno', auth()->user()->idno)->first();
-        return view('user.sex', compact('user'));
+        return view('app.sex', compact('user'));
     }
 
 

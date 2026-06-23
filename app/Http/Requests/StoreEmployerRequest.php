@@ -25,6 +25,7 @@ class StoreEmployerRequest extends FormRequest
             'idno' => 'nullable|string',
             'email' => 'nullable|string|max:50',
             'company_name' => 'nullable|string|max:50',
+            'type_of_business' => 'nullable|string|max:1',
             'province' => 'nullable|string|max:20',
             'town' => 'nullable|string|max:20',
             'brgy' => 'nullable|string|max:20',

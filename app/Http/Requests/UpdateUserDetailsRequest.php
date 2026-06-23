@@ -26,6 +26,8 @@ class UpdateUserDetailsRequest extends FormRequest
             'town' => 'required|string|max:255',
             'brgy' => 'required|string|max:255',
             'address' => 'nullable|string|max:255',
+            // 'latitude' => 'nullable|decimal:10,7',
+            // 'longitude' => 'nullable|decimal:10,7',
         ];
     }
 }

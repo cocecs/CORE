@@ -15,7 +15,7 @@ class UserAddressController extends Controller
     public function index()
     {
         $user = User::where('email', auth()->user()->email)->first();
-        return view('user.address', compact('user'));
+        return view('app.address', compact('user'));
     }
 
     /**
@@ -23,7 +23,7 @@ class UserAddressController extends Controller
      */
     public function create()
     {
-        return view('user.address');
+        return view('app.address');
     }
 
 

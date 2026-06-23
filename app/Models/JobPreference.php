@@ -10,13 +10,15 @@ class JobPreference extends Model
         'idno',
         'pref_occ',
         'work_location',
-        'specific_location',
+        'province',
+        'town',
         'specify_country',
     ];
     protected $casts = [
         'pref_occ' => 'string',
         'work_location' => 'string',
-        'specific_location' => 'string',
+        'province' => 'string',
+        'town' => 'string',
         'specify_country' => 'string',
 
     ];
