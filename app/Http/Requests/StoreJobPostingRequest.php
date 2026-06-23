@@ -29,6 +29,8 @@ class StoreJobPostingRequest extends FormRequest
             'province' => 'required|string|max:50',
             'town' => 'required|string|max:50',
             'barangay' => 'required|string|max:50',
+            'latitude' => 'nullable|decimal:10,7',
+            'longitude' => 'nullable|decimal:10,7',
             'sex_preference' => 'required|string|max:1',
             'num_positions' => 'required|integer',
         ];

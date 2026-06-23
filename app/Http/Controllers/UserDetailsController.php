@@ -68,20 +68,57 @@ class UserDetailsController extends Controller
     /**
      * Update the specified resource in storage. Without coordinates fetching and barangay update
      */
+    // public function update(UpdateUserDetailsRequest $request, $idno)
+    // {
+    //     // 1. Get the validated form data
+    //     $validatedData = $request->validated();
+
+    //     // 2. Find the user record or fail with a 404 if not found
+    //     $userAddress = UserDetails::where('idno', $idno)->firstOrFail();
+
+    //     // 3. Directly update user details with the form data
+    //     $userAddress->update($validatedData);
+
+    //     // 4. Redirect to the index page with a success message
+    //     return redirect()->route('sex.index')->with('success', 'User address details saved.');
+    // }
+
+    /**
+     * Update the specified resource in storage. Fetching coordinates from barangay table and updating user details with those coordinates
+     */
     public function update(UpdateUserDetailsRequest $request, $idno)
     {
-        // 1. Get the validated form data
+        // 1. Get the validated form data (e.g., province, town, brgy)
         $validatedData = $request->validated();
 
-        // 2. Find the user record or fail with a 404 if not found
+        // 2. Query the barangay table to fetch its coordinates
+        // Assuming your input field name is 'brgy' and the table column is 'name'
+        $barangayCoordinates = DB::table('barangays')
+            ->where('id', $validatedData['brgy'])
+            ->select('latitude', 'longitude')
+            ->first();
+
+        // 3. Inject coordinates into the data array if the barangay exists
+        if ($barangayCoordinates) {
+            $validatedData['latitude'] = $barangayCoordinates->latitude;
+            $validatedData['longitude'] = $barangayCoordinates->longitude;
+        } else {
+            // Optional: Handle case where coordinates aren't found
+            $validatedData['latitude'] = null;
+            $validatedData['longitude'] = null;
+        }
+
+        // 4. Find the user record or fail with a 404
         $userAddress = UserDetails::where('idno', $idno)->firstOrFail();
 
-        // 3. Directly update user details with the form data
+        // 5. Update user details (now including the fetched coordinates)
         $userAddress->update($validatedData);
 
-        // 4. Redirect to the index page with a success message
-        return redirect()->route('sex.index')->with('success', 'User address details saved.');
+        // 6. Redirect to the index page with a success message
+        return redirect()->route('sex.index')->with('success', 'User address and matching coordinates updated.');
     }
+
+
     /**
      * Update the specified resource in storage. With coordinates fetching and barangay update
      */

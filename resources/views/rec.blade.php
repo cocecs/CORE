@@ -10,7 +10,7 @@
         @endif
     </div>
 </div>
-<form action="" method="POST">
+{{-- <form action="" method="POST">
 @csrf
 @method('PUT')
 <div class="max-w-3xl mx-auto p-6 bg-gray-50 space-y-4">
@@ -112,8 +112,58 @@
         margin-bottom: 0.25rem;
     }
 </style>
-</form>
+</form> --}}
+{{-- @extends('layouts.app')
 
+@section('content') --}}
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Job Recommendations For You</h1>
+        <p class="text-sm text-gray-600">
+            Showing active jobs matching your preferences within a <span class="font-semibold text-blue-600">{{ $maxDistanceKm }}km</span> radius.
+        </p>
+    </div>
+
+    @if($jobs->isEmpty())
+        <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 p-4 rounded-lg">
+            No jobs found nearby matching your specific criteria at the moment.
+        </div>
+    @else
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            @foreach($jobs as $job)
+                <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-900">{{ $job->job_title }}</h2>
+                            <p class="text-md text-gray-700 font-medium">{{ $job->job_category }}</p>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {{ round($job->distance, 1) }} km away
+                        </span>
+                    </div>
+
+                    <div class="mt-4 flex flex-wrap gap-2 text-sm text-gray-500">
+                        <div class="flex items-center">
+                            <span class="font-medium text-gray-700">Type:</span>&nbsp;{{ $job->job_type }}
+                        </div>
+                        <span class="text-gray-300">•</span>
+                        <div class="flex items-center">
+                            <span class="font-medium text-gray-700">Location:</span>&nbsp;{{ $job->province }}, {{ $job->town }}, {{ $job->brgy }}
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+                        <span class="text-xs text-gray-400">Posted {{ $job->created_at->diffForHumans() }}</span>
+                        <a href="/jobs/{{ $job->id }}" class="text-sm font-semibold text-blue-600 hover:text-blue-800">
+                            View Job Details &rarr;
+                        </a>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
+</div>
+{{-- @endsection --}}
 
 </x-app-layout>
 

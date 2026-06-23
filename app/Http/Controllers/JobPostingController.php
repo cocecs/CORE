@@ -19,15 +19,44 @@ class JobPostingController extends Controller
         // FIX: Redirect to the SHOW route, passing the 'code'
         return view('par.post', compact('user', 'expertise'));
     }
+    // public function job_post(StoreJobPostingRequest $request)
+    // {
+    //     $idno = auth()->user()->idno;
+    //     $job =JobPosting::create(array_merge($request->validated(), ['idno' => $idno]));
+    //     // return redirect()->action([self::class, 'emp_post'])->with('success', 'Job posting saved successfully.');
+
+    //     return redirect()->route('emp_postc', ['job_id' => $job->job_id])
+    //                  ->with('success', 'Job details saved successfully.');
+    // }
+
     public function job_post(StoreJobPostingRequest $request)
     {
         $idno = auth()->user()->idno;
-        $job =JobPosting::create(array_merge($request->validated(), ['idno' => $idno]));
-        // return redirect()->action([self::class, 'emp_post'])->with('success', 'Job posting saved successfully.');
+
+        // 1. Get the validated data from your request
+        $validatedData = $request->validated();
+
+        // 2. Fetch the coordinates from the barangays table using the submitted 'brgy' field
+        // Note: If your table name is singular, change 'barangays' to 'barangay'
+        $barangayCoordinates = \Illuminate\Support\Facades\DB::table('barangays')
+            ->where('id', $validatedData['barangay'] ?? null)
+            ->select('latitude', 'longitude')
+            ->first();
+
+        // 3. Merge coordinates and the user's idno into the final insertion array
+        $jobData = array_merge($validatedData, [
+            'idno' => $idno,
+            'latitude' => $barangayCoordinates ? $barangayCoordinates->latitude : null,
+            'longitude' => $barangayCoordinates ? $barangayCoordinates->longitude : null,
+        ]);
+
+        // 4. Create the Job Posting
+        $job = JobPosting::create($jobData);
 
         return redirect()->route('emp_postc', ['job_id' => $job->job_id])
-                     ->with('success', 'Job details saved successfully.');
+                        ->with('success', 'Job details and coordinates saved successfully.');
     }
+
     public function getSkillsByExpertise($expertiseId)
     {
         // 1. Find the row matching the selected Area of Expertise ID

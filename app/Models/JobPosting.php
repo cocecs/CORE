@@ -30,6 +30,8 @@ class JobPosting extends Model
         'province',
         'town',
         'barangay',
+        'latitude',
+        'longitude',
         'sex_preference',
         'num_positions',
         'is_active',

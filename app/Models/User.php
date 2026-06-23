@@ -121,6 +121,13 @@ class User extends Authenticatable
      */
     public function details(): HasOne
     {
-        return $this->hasOne(UserDetail::class, 'user_id');
+        return $this->hasOne(UserDetails::class, 'user_id');
+    }
+
+    public function userDetails(): HasOne
+    {
+        // Parameter 2: Foreign key inside the 'user_details' table (idno)
+        // Parameter 3: Local key inside the 'users' table (idno)
+        return $this->hasOne(UserDetails::class, 'idno', 'idno');
     }
 }

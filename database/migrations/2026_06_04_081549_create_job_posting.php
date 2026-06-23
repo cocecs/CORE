@@ -22,8 +22,8 @@ return new class extends Migration
             $table->text('job_description');
             $table->text('job_requirements');
             $table->string('place_of_work',100);
-            $table->string('latitude');
-            $table->string('longitude');
+            $table->decimal('latitude', 10, 7);
+            $table->decimal('longitude', 10, 7);
             $table->string('sex_preference',1);
             $table->integer('num_positions');
             $table->boolean('is_active')->default(true);
