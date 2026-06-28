@@ -1,15 +1,4 @@
 <x-app-layout>
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="flex flex-col justify-between items-center mb-6">
-        @if ($errors->any())
-            @error('exploring_job')
-                <h2 class="text-1xl font-semibold text-red-600">* {{ $message }}</h2>
-            @enderror
-        @else
-            <h2 class="text-1xl font-semibold text-blue-700">Do you have a specific reason for exploring new job?</h2>
-        @endif
-    </div>
-</div>
 {{-- <form action="" method="POST">
 @csrf
 @method('PUT')
@@ -154,7 +143,7 @@
 
                     <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
                         <span class="text-xs text-gray-400">Posted {{ $job->created_at->diffForHumans() }}</span>
-                        <a href="/jobs/{{ $job->id }}" class="text-sm font-semibold text-blue-600 hover:text-blue-800">
+                        <a href="/recd/{{ $job->job_id }}" class="text-sm font-semibold text-blue-600 hover:text-blue-800">
                             View Job Details &rarr;
                         </a>
                     </div>

@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobPosting;
+use App\Models\User;
+use App\Http\Requests\StoreJobApplyRequest;
+use App\Http\Requests\StoreJobSaveRequest;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -89,5 +92,84 @@ class JobRecommendationController extends Controller
 
         // 3. Pass the filtered jobs to the Blade view
         return view('rec', compact('jobs', 'maxDistanceKm'));
+    }
+    public function details($job_id)
+    {
+        // Fetch the job details, or return a 404 page if the job ID doesn't exist
+        $job = JobPosting::where('job_id', $job_id)->firstOrFail();
+
+        // Return the full details view with the job data
+        return view('recd', compact('job'));
+    }
+    /**
+     * Handle the user applying for/saving a job.
+     */
+    public function apply(StoreJobApplyRequest $request, $jobId)
+    {
+        // 1. Fetch the job posting using your custom unique 'job_id' column
+        $job = JobPosting::where('job_id', $jobId)->firstOrFail();
+        $user = Auth::user();
+
+        // 2. Check the job_applications table directly using appliedJobs()
+        $alreadyApplied = $user->appliedJobs()
+            ->where('job_applications.job_id', $jobId)
+            ->exists();
+
+        if ($alreadyApplied) {
+            return redirect()->back()->with('info', 'You have already applied for this job.');
+        }
+
+        // 3. Attach the record to the job_applications pivot table
+        // Use $job->job_id to match your database column name property
+        $user->appliedJobs()->syncWithoutDetaching([$job->job_id => ['status' => 'applied']]);
+
+        // 4. Typically, you want to redirect back with flash messages instead of returning a view directly.
+        // This allows the page to refresh cleanly and show your Tailwind alerts.
+
+        return view('recd', compact('job'));
+        // return redirect()->back()->with('success', 'Application submitted successfully!');
+    }
+
+    /**
+     * Toggle the "Save Job" state (Save / Unsave).
+     */
+    public function toggleSave(StoreJobSaveRequest $request, $job_id)
+    {
+        // Find the job using the ID passed from the route
+        $job = JobPosting::where('job_id', $job_id)->firstOrFail();
+
+        $user = Auth::user();
+
+        // Check using the true primary key 'id'
+        $isSaved = $user->savedJobs()->where('job_saves.job_id', $job->job_id)->exists();
+
+        if ($isSaved) {
+            // Detach using the true primary key 'id'
+            $user->savedJobs()->detach($job->job_id);
+            return redirect()->back()->with('success', 'Job removed from your saved list.');
+        }
+
+        // Attach using the true primary key 'id'
+        // This inserts the actual database primary key ($job->id) into job_saves.job_id
+        $user->savedJobs()->attach($job->job_id, ['status' => 'saved']);
+
+        return redirect()->back()->with('success', 'Job saved successfully!');
+    }
+
+    public function cancel(StoreJobApplyRequest $request, $job_id)
+    {
+        $user = Auth::user();
+
+        // Detach the job to cancel the application
+        $user->appliedJobs()->detach($job_id);
+
+        return redirect()->back()->with('success', 'Application withdrawn successfully.');
+    }
+
+    public function profile_review($job_id)
+    {
+        $job = JobPosting::where('job_id', $job_id)->firstOrFail();
+        $user = Auth::user();
+        return view('recp', compact('user', 'job'));
     }
 }

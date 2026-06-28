@@ -24,10 +24,18 @@
 
     <div>
         <div class="mb-4 flex items-center justify-between">
-            <h2 class="text-lg font-bold text-gray-900 tracking-tight">System Administrators</h2>
-            <span class="inline-flex items-center rounded-full bg-red-100 px-3 py-0.5 text-xs font-medium text-red-800">
-                Total: {{ $admins->count() }}
-            </span>
+            <div class="flex items-center space-x-3">
+                <h2 class="text-lg font-bold text-gray-900 tracking-tight">System Administrators</h2>
+                <span class="inline-flex items-center rounded-full bg-red-100 px-3 py-0.5 text-xs font-medium text-red-800">
+                    Total: {{ $admins->count() }}
+                </span>
+            </div>
+            <a href="{{ route('adtv_addUser') }}" class="inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-500 transition-colors">
+                <svg class="-ml-0.5 mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add User
+            </a>
         </div>
         <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
             <table class="min-w-full divide-y divide-gray-200 bg-white text-sm table-fixed">
@@ -66,10 +74,18 @@
 
     <div>
         <div class="mb-4 flex items-center justify-between">
-            <h2 class="text-lg font-bold text-gray-900 tracking-tight">Registered Employers</h2>
-            <span class="inline-flex items-center rounded-full bg-purple-100 px-3 py-0.5 text-xs font-medium text-purple-800">
-                Total: {{ $employers->count() }}
-            </span>
+            <div class="flex items-center space-x-3">
+                <h2 class="text-lg font-bold text-gray-900 tracking-tight">Registered Employers</h2>
+                <span class="inline-flex items-center rounded-full bg-purple-100 px-3 py-0.5 text-xs font-medium text-purple-800">
+                    Total: {{ $employers->count() }}
+                </span>
+            </div>
+            <a href="{{ route('adtv_storeEmployer') }}" class="inline-flex items-center rounded-md bg-purple-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-purple-500 transition-colors">
+                <svg class="-ml-0.5 mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add Employer
+            </a>
         </div>
         <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
             <table class="min-w-full divide-y divide-gray-200 bg-white text-sm table-fixed">

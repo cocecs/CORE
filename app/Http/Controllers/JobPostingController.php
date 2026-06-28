@@ -1,12 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreJobPostingRequest;
 use App\Http\Requests\UpdateJobPostingRequest;
 use App\Models\JobPosting;
 use App\Models\User;
 use App\Models\Expertise;
+use App\Models\JobApplication;
 
 class JobPostingController extends Controller
 {
@@ -15,9 +16,10 @@ class JobPostingController extends Controller
     {
         $user = User::where('idno', auth()->user()->idno)->first();
         $expertise = Expertise::all();
+        $jobs = JobPosting::where('idno', $user->idno)->latest()->get();
 
         // FIX: Redirect to the SHOW route, passing the 'code'
-        return view('par.post', compact('user', 'expertise'));
+        return view('par.lj', compact('user', 'expertise', 'jobs'));
     }
     // public function job_post(StoreJobPostingRequest $request)
     // {
@@ -72,6 +74,12 @@ class JobPostingController extends Controller
         // 3. Return the clean array to your JavaScript fetch
         return response()->json($skillsArray);
     }
+    public function emp_post()
+    {
+        $expertise = Expertise::all();
+        $user = User::where('idno', auth()->user()->idno)->first();
+        return view('par.post', compact('user', 'expertise'));
+    }
     public function emp_postc($job_id)
     {
         $job = JobPosting::where('job_id', $job_id)->firstOrFail();
@@ -94,5 +102,62 @@ class JobPostingController extends Controller
         $idno = auth()->user()->idno;
         $jobs = JobPosting::where('idno', $idno)->latest()->get();
         return view('par.lj', compact('jobs'));
+    }
+    public function parJobDetails($job_id)
+    {
+        $jobApp = JobApplication::where('job_id', $job_id)->count();
+        $job = JobPosting::where('job_id', $job_id)->firstOrFail();
+        return view('par.jd', compact('job','jobApp'));
+    }
+    public function parListApp($job_id)
+    {
+        $job = JobPosting::where('job_id', $job_id)->firstOrFail();
+        $applicants = $job->applicants;
+        return view('par.la', compact('job', 'applicants'));
+    }
+    public function parAppProfile($idno, $job_id)
+    {
+        // Queries the exact application instance using both identifier strings
+        $application = JobApplication::with(['user.details'])
+            ->where('user_id', $idno)
+            ->where('job_id', $job_id)
+            ->firstOrFail();
+
+        $user = $application->user;
+        $userDetails = $user->details;
+
+        return view('par.app', compact('application', 'user', 'userDetails'));
+    }
+    public function addToInterviewList(Request $request, $job_id, $idno)
+    {
+        // Find the job to ensure it exists
+        $job = JobPosting::where('job_id', $job_id)->firstOrFail();
+
+        // Use syncWithoutDetaching to link them in the pivot table without creating duplicate records
+        $job->interviewees()->syncWithoutDetaching([
+            $idno => ['status' => 'interviewee']
+        ]);
+
+        return redirect()->back()->with('success', 'Applicant successfully added to the interview list!');
+    }
+    public function removeFromInterviewList($job_id, $idno)
+    {
+        $job = JobPosting::where('job_id', $job_id)->firstOrFail();
+
+        // Detach removes the record matching this idno from the pivot table
+        $job->interviewees()->detach($idno);
+
+        return redirect()->back()->with('success', 'Applicant successfully removed from the interview list!');
+    }
+    public function hireApplicant($job_id, $idno)
+    {
+        $job = JobPosting::where('job_id', $job_id)->firstOrFail();
+
+        // Updates the specific pivot row status field cleanly
+        $job->interviewees()->updateExistingPivot($idno, [
+            'status' => 'hired'
+        ]);
+
+        return redirect()->back()->with('success', 'Applicant status updated to Hired!');
     }
 }

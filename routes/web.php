@@ -21,6 +21,7 @@ use App\Http\Controllers\EmploymentStatusController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\JobRecommendationController;
 use App\Http\Controllers\AdminAccountController;
+use App\Http\Controllers\JobApplicationController;
 use Illuminate\Support\Facades\Route;
 
 //landing page
@@ -116,7 +117,6 @@ Route::middleware('auth')->group(function () {
     //user details route
     Route::get('/app/profile', [UserDetailsController::class, 'profile'])->name('profile');
 
-
     //store employer route
     Route::post('/app/emp', [EmployerController::class, 'emp_store'])->name('emp.store');
     // employer about route
@@ -127,7 +127,7 @@ Route::middleware('auth')->group(function () {
     // employer dashboard
     Route::get('/par', [JobPostingController::class, 'index'])->name('par.index');
     // employer job post route
-    Route::get('/par/post', [JobPostingController::class, 'emp_postc'])->name('emp.post');
+    Route::get('/par/post', [JobPostingController::class, 'emp_post'])->name('emp.post');
     // getting the skills based on the selected expertise route
     Route::get('/get-skills/{expertiseId}', [JobPostingController::class, 'getSkillsByExpertise']);
     // employer post preference route
@@ -138,23 +138,56 @@ Route::middleware('auth')->group(function () {
     Route::put('/par/postc/{job_id}', [JobPostingController::class, 'job_postc'])->name('job_postc');
     // employer list of job post
     Route::get('/par/lj', [JobPostingController::class, 'list_jobPosted'])->name('list_jobPosted');
+    // employer job details route
+    Route::get('/par/jd/{job_id}', [JobPostingController::class, 'parJobDetails'])->name('parJobDetails');
+    // employer list of applicants specific job route
+    Route::get('/par/la/{job_id}', [JobPostingController::class, 'parListApp'])->name('parListApp');
+    // employer show applicant profile route
+    Route::get('/par/app/{idno}/{job_id}', [JobPostingController::class, 'parAppProfile'])->name('parAppProfile');
+    // employer add applicant to interview list route
+    Route::post('/par/{job_id}/interview/{idno}', [JobPostingController::class, 'addToInterviewList'])->name('addToInterviewList');
+    // employer remove applicant from interview list route
+    Route::delete('/par/{job_id}/interview/{idno}/remove', [JobPostingController::class, 'removeFromInterviewList'])->name('jobs.removeInterviewe');
+    // employer hire applicant route
+    Route::patch('/par/{job_id}/interview/{idno}/hire', [JobPostingController::class, 'hireApplicant'])->name('jobs.hireApplicant');
 
     //list of recommended jobs route
     Route::get('/rec', [JobRecommendationController::class, 'index'])->name('recommended');
+    // job details route
+    Route::get('/recd/{job_id}', [JobRecommendationController::class, 'details'])->name('job_details');
+    // Route for handling job application / saving / apply
+    Route::middleware(['auth'])->group(function () {
+        Route::post('/recd/{job_id}/save', [JobRecommendationController::class, 'toggleSave'])->name('jobs_save');
+        Route::delete('/recd/{job_id}/cancel-application', [JobRecommendationController::class, 'cancel'])->name('jobs_cancel');
+        Route::post('/recp/{job_id}', [JobRecommendationController::class, 'profile_review'])->name('profile_review');
+        Route::post('/recp/{job_id}/apply', [JobRecommendationController::class, 'apply'])->name('jobs_apply');
 
-    // admin dashboard
-    Route::get('/adtv', [AdminAccountController::class, 'index'])->name('adtv.index');
-    // admin list of users
-    Route::get('/adtv/lu', [AdminAccountController::class, 'adtv_listUsers'])->name('adtv_listUsers');
-    // admin add new user
-    Route::get('/adtv/nu', [AdminAccountController::class, 'adtv_addUser'])->name('adtv_addUser');
-    // admin add new user
-    Route::post('/adtv/nu', [AdminAccountController::class, 'adtv_storeUser'])->name('adtv_storeUser');
-    // view user details by admin
-    Route::get('/admin/users', [AdminAccountController::class, 'adtv_listUsers'])->name('adtv_listUsers');
-    Route::get('/admin/admins', [AdminAccountController::class, 'adtv_listAdmins'])->name('adtv_listAdmins');
-    // admin add employer
-    Route::get('/adtv/emp', [AdminAccountController::class, 'adtv_storeEmployer'])->name('adtv_storeEmployer');
+    });
+
+    // Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+        // admin dashboard
+        Route::get('/adtv', [AdminAccountController::class, 'index'])->name('adtv.index');
+        // admin list of users
+        Route::get('/adtv/lu', [AdminAccountController::class, 'adtv_listUsers'])->name('adtv_listUsers');
+        // admin add new user
+        Route::get('/adtv/nu', [AdminAccountController::class, 'adtv_addUser'])->name('adtv_addUser');
+        // admin add new user
+        Route::post('/adtv/nu', [AdminAccountController::class, 'adtv_storeUser'])->name('adtv_storeUser');
+        // view user details by admin
+        Route::get('/admin/users', [AdminAccountController::class, 'adtv_listUsers'])->name('adtv_listUsers');
+        Route::get('/admin/admins', [AdminAccountController::class, 'adtv_listAdmins'])->name('adtv_listAdmins');
+        // admin add employer
+        Route::get('/adtv/emp', [AdminAccountController::class, 'adtv_storeEmployer'])->name('adtv_storeEmployer');
+        // admin list of posted jobs
+        Route::get('/adtv/loj', [AdminAccountController::class, 'listJobs'])->name('listJobs');
+        // admin job details route
+        Route::get('/adtv/loj/{job_id}', [AdminAccountController::class, 'jobDetails'])->name('jobDetails');
+        // admin job applicants route
+        Route::get('/adtv/loa/{job_id}', [AdminAccountController::class, 'jobApplicants'])->name('jobApplicants');
+        // admin show applicant profile route
+        Route::get('/adtv/appl/{idno}/{job_id}', [AdminAccountController::class, 'applProfile'])->name('applProfile');
+
+    // });
 
     //user about me route
     Route::get('/app/about', [UserAboutController::class, 'index'])->name('about.index');

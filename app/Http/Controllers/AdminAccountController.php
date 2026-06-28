@@ -12,6 +12,8 @@ use Illuminate\View\View;
 use App\Models\User;
 use App\Models\UserDetails;
 use App\Models\Employer;
+use App\Models\JobPosting;
+use App\Models\JobApplication;
 use App\Http\Requests\StoreUserDetailsRequest;
 
 class AdminAccountController extends Controller
@@ -143,5 +145,41 @@ class AdminAccountController extends Controller
             ->route('adtv_listUsers') // Change this route to wherever you want the admin to go next
             ->with('status', 'User and personal details created successfully!');
     }
+    public function listJobs()
+    {
+        // Fetch all job postings sorted by newest
+        $jobs = JobPosting::orderBy('created_at', 'desc')->get();
 
+        // Get total count for the upper badge indicator
+        $totalJobs = $jobs->count();
+
+        return view('adtv.loj', compact('jobs', 'totalJobs'));
+    }
+    public function jobDetails($job_id)
+    {
+        $jobApp = JobApplication::where('job_id', $job_id)->count();
+        $job = JobPosting::where('job_id', $job_id)->firstOrFail();
+
+        return view('adtv.lojd', compact('job', 'jobApp'));
+    }
+    public function jobApplicants($job_id)
+    {
+        $job = JobPosting::where('job_id', $job_id)->firstOrFail();
+        $applicants = $job->applicants;
+        return view('adtv.loa', compact('job', 'applicants'));
+    }
+
+    public function applProfile($idno, $job_id)
+    {
+        // Queries the exact application instance using both identifier strings
+        $application = JobApplication::with(['user.details'])
+            ->where('user_id', $idno)
+            ->where('job_id', $job_id)
+            ->firstOrFail();
+
+        $user = $application->user;
+        $userDetails = $user->details;
+
+        return view('adtv.appl', compact('application', 'user', 'userDetails'));
+    }
 }

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('idno')->unique();
             $table->string('pref_occ',1)->nullable();
             $table->string('work_location',1)->nullable();
+            $table->decimal('latitude',10,8)->nullable();
+            $table->decimal('longitude',11,8)->nullable();
             $table->string('specific_location',60)->nullable();
             $table->string('specify_country',60)->nullable();
             $table->timestamps();

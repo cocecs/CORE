@@ -13,17 +13,19 @@ return new class extends Migration
     {
         Schema::create('job_postings', function (Blueprint $table) {
             $table->id();
-            $table->string('idno')->unique();
-            $table->integer('job_id')->unique();
+            $table->string('idno');
+            $table->string('job_id', 50)->unique();
             $table->string('job_type', 1);
             $table->string('job_category', 3);
             $table->json('skills_required');
-            $table->string('job_title',50);
-            $table->text('job_description');
-            $table->text('job_requirements');
-            $table->string('place_of_work',100);
-            $table->decimal('latitude', 10, 7);
-            $table->decimal('longitude', 10, 7);
+            $table->string('job_title',50)->nullable();
+            $table->text('job_description')->nullable();
+            $table->text('job_requirements')->nullable();
+            $table->string('province',50)->nullable();
+            $table->string('town',50)->nullable();
+            $table->string('barangay',50)->nullable();
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
             $table->string('sex_preference',1);
             $table->integer('num_positions');
             $table->boolean('is_active')->default(true);

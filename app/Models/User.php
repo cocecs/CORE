@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\JobPosting;
 
 // class User extends Authenticatable
 // {
@@ -121,7 +122,7 @@ class User extends Authenticatable
      */
     public function details(): HasOne
     {
-        return $this->hasOne(UserDetails::class, 'user_id');
+        return $this->hasOne(UserDetails::class, 'idno', 'idno');
     }
 
     public function userDetails(): HasOne
@@ -129,5 +130,24 @@ class User extends Authenticatable
         // Parameter 2: Foreign key inside the 'user_details' table (idno)
         // Parameter 3: Local key inside the 'users' table (idno)
         return $this->hasOne(UserDetails::class, 'idno', 'idno');
+    }
+    public function savedJobs()
+    {
+        // This maps to a pivot table named 'job_user' or 'saved_jobs'
+        return $this->belongsToMany(JobPosting::class, 'job_saves', 'user_id', 'job_id', 'idno', 'job_id')
+                ->withPivot('status')
+                ->withTimestamps();
+    }
+    public function appliedJobs()
+    {
+        return $this->belongsToMany(JobPosting::class, 'job_applications', 'user_id', 'job_id', 'idno', 'job_id')
+                ->withPivot('status')
+                ->withTimestamps();
+    }
+    public function interviewingJobs()
+    {
+        return $this->belongsToMany(JobPosting::class, 'job_interviewees', 'user_id', 'job_id', 'idno', 'job_id')
+                    ->withPivot('status')
+                    ->withTimestamps();
     }
 }
