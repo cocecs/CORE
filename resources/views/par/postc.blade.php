@@ -28,7 +28,7 @@
 
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="flex flex-col justify-between items-center">
-        @if ($errors->has('job_title') || $errors->has('job_description') || $errors->has('job_requirements'))
+        @if ($errors->has('job_title') || $errors->has('job_summary') || $errors->has('job_description') || $errors->has('job_requirements'))
             <h2 class="text-1xl font-semibold text-red-600">
                 * Please check your details. Some required fields are missing.
             </h2>
@@ -55,7 +55,17 @@
                     class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('job_title') ? 'border-red-500' : '' }}">
                 @error('job_title') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
-
+            <div class="w-full mb-4 wysiwyg-container {{ $errors->has('job_summary') ? 'has-error' : '' }}">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Job Summary <span class="text-red-700">*</span></label>
+                <div class="relative block w-full">
+                    <div id="editor_summary" class="bg-white">
+                        {!! old('job_summary') !!}
+                    </div>
+                    <div class="absolute bottom-2 right-3 pointer-events-none text-slate-400 text-xs select-none">///</div>
+                </div>
+                <input type="hidden" name="job_summary" id="job_summary_hidden" value="{{ old('job_summary') }}">
+                @error('job_summary') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            </div>
             <div class="w-full mb-4 wysiwyg-container {{ $errors->has('job_description') ? 'has-error' : '' }}">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Job Description <span class="text-red-700">*</span></label>
                 <div class="relative block w-full">
@@ -109,14 +119,21 @@
             ['clean']
         ];
 
-        // Init Editor 1: Description
+        // Init Editor 1: Summary (ADDED MISSING INITIALIZATION)
+        const quillSummary = new Quill('#editor_summary', {
+            theme: 'snow',
+            placeholder: 'Provide a brief, catchy 2-3 sentence overview of the role...',
+            modules: { toolbar: layoutToolbarOptions }
+        });
+
+        // Init Editor 2: Description
         const quillDescription = new Quill('#editor_description', {
             theme: 'snow',
             placeholder: 'Detail key roles, expectations, and day-to-day operations...',
             modules: { toolbar: layoutToolbarOptions }
         });
 
-        // Init Editor 2: Requirements
+        // Init Editor 3: Requirements
         const quillRequirements = new Quill('#editor_requirements', {
             theme: 'snow',
             placeholder: 'Detail experience benchmarks, core skill sets, and backgrounds required...',
@@ -124,6 +141,12 @@
         });
 
         // Event Listeners updating hidden fields in real-time
+        quillSummary.on('text-change', function() {
+            let htmlValue = quillSummary.root.innerHTML;
+            if (htmlValue === '<p><br></p>') htmlValue = '';
+            document.getElementById('job_summary_hidden').value = htmlValue;
+        });
+
         quillDescription.on('text-change', function() {
             let htmlValue = quillDescription.root.innerHTML;
             if (htmlValue === '<p><br></p>') htmlValue = '';

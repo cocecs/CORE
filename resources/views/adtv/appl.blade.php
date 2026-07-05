@@ -42,7 +42,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                     </svg>
                     <span>
-                        {{ $userDetails->barangay ?? 'N/A' }}, {{ $userDetails->town ?? 'Tangub City' }}, {{ $userDetails->province ?? 'Misamis Occidental' }}
+                        {{ $userDetails->barangay }}, {{ $userDetails->town }}, {{ $userDetails->province }}
                     </span>
                 </div>
 
@@ -87,9 +87,9 @@
                 <span class="inline-block bg-[#fae8ff] text-[#b512b0] text-xs font-semibold px-3 py-1 rounded-md mb-3">
                     Found in resumé
                 </span>
-                <h3 class="text-xl font-bold text-[#1e2d56] mb-1">{{ $userDetails->degree ?? 'Bachelor of Science in Information Technology' }}</h3>
-                <p class="text-[#475569] text-[16px] mb-1">{{ $userDetails->school ?? 'Misamis University' }}</p>
-                <p class="text-[#64748b] text-[15px]">Year Graduated: {{ $userDetails->grad_year ?? '2014' }}</p>
+                <h3 class="text-xl font-bold text-[#1e2d56] mb-1">{{ $userDetails->degree  }}</h3>
+                <p class="text-[#475569] text-[16px] mb-1">{{ $userDetails->school  }}</p>
+                <p class="text-[#64748b] text-[15px]">Year Graduated: {{ $userDetails->grad_year  }}</p>
             </div>
         </div>
 

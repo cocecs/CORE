@@ -25,6 +25,8 @@ class UpdateJobPreferenceRequest extends FormRequest
             'work_location' => 'nullable|string|max:1',
             'province' => 'nullable|string|max:60',
             'town' => 'nullable|string|max:30',
+            'latitude' => 'nullable|decimal:10,7',
+            'longitude' => 'nullable|decimal:10,7',
             'specify_country' => 'nullable|string|max:60'
         ];
     }

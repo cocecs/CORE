@@ -21,6 +21,7 @@ class UpdateJobPostingRequest extends FormRequest
         return [
             // 'idno' => 'required|string|max:255',
             'job_title' => 'required|string|max:50',
+            'job_summary' => 'required|string',
             'job_description' => 'required|string',
             'job_requirements' => 'required|string',
         ];

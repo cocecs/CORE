@@ -48,6 +48,10 @@
     </div>
 
     <div class="prose max-w-none text-gray-800">
+        <h3 class="text-xl font-semibold mb-2">Job Summary</h3>
+        <div class="mb-6 leading-relaxed">
+            {!! $job->job_summary !!}
+        </div>
         <h3 class="text-xl font-semibold mb-2">Job Description</h3>
         <div class="mb-6 leading-relaxed">
             {!! $job->job_description !!}

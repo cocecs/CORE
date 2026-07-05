@@ -21,6 +21,7 @@ use App\Http\Controllers\EmploymentStatusController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\JobRecommendationController;
 use App\Http\Controllers\AdminAccountController;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\JobApplicationController;
 use Illuminate\Support\Facades\Route;
 
@@ -186,7 +187,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/adtv/loa/{job_id}', [AdminAccountController::class, 'jobApplicants'])->name('jobApplicants');
         // admin show applicant profile route
         Route::get('/adtv/appl/{idno}/{job_id}', [AdminAccountController::class, 'applProfile'])->name('applProfile');
-
+        // admin dashboard
+        Route::get('/adtv/rp', [AdminDashboardController::class, 'index'])->name('adtvDashboard');
+        // admin report 2 General Analysis Based on the LMI Report
+        Route::get('/adtv/rp2', [AdminDashboardController::class, 'rp2'])->name('rp2');
+        // admin report 3 Applicants Registered
+        Route::get('/adtv/rp3', [AdminDashboardController::class, 'rp3'])->name('rp3');
+        // admin report 4 Applicants placed
+        Route::get('/adtv/rp4', [AdminDashboardController::class, 'rp4'])->name('rp4');
     // });
 
     //user about me route

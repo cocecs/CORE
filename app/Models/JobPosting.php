@@ -30,6 +30,7 @@ class JobPosting extends Model
         'job_category',
         'skills_required',
         'job_title',
+        'job_summary',
         'job_description',
         'job_requirements',
         'province',

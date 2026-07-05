@@ -13,6 +13,7 @@ class LocationController extends Controller
         // Fetch unique provinces sorted alphabetically
         $provinces = DB::table('towns')
             ->distinct()
+            ->where('province', 'Misamis Occidental')
             ->orderBy('province', 'asc')
             ->pluck('province');
 

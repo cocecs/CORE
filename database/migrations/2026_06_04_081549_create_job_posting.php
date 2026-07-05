@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('job_category', 3);
             $table->json('skills_required');
             $table->string('job_title',50)->nullable();
+            $table->text('job_summary')->nullable();
             $table->text('job_description')->nullable();
             $table->text('job_requirements')->nullable();
             $table->string('province',50)->nullable();

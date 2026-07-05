@@ -66,7 +66,7 @@ class JobRecommendationController extends Controller
         $preferredSkills = $workDetail->skills;
 
         // Maximum radius allowed for the recommendation (e.g., 15 kilometers)
-        $maxDistanceKm = 15;
+        $maxDistanceKm = 100;
 
         // 2. Query Job Postings using Geospatial & Knowledge-Based Filters
         // Ensure $preferredSkills is treated as an array
