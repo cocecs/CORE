@@ -44,7 +44,7 @@
     <div class="grid grid-cols-2 gap-4 mb-6 text-sm text-gray-700">
         <div><strong>Location:</strong> {{ $job->province }}, {{ $job->town }}, {{ $job->barangay }}</div>
         <div><strong>Type:</strong> {{ $job->job_type }}</div>
-        <div><strong>Distance:</strong> {{ $job->distance ?? '0' }} km away</div>
+        <div><strong>Distance:</strong> {{ round($job->distance, 1) }} km away</div>
     </div>
 
     <div class="prose max-w-none text-gray-800">

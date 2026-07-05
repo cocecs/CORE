@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobPosting;
-use App\Models\User;
+use App\Models\Expertise;
 use App\Http\Requests\StoreJobApplyRequest;
 use App\Http\Requests\StoreJobSaveRequest;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class JobRecommendationController extends Controller
 {
@@ -72,17 +73,19 @@ class JobRecommendationController extends Controller
         // Ensure $preferredSkills is treated as an array
         $skillsArray = is_array($preferredSkills) ? $preferredSkills : json_decode($preferredSkills, true) ?? [];
 
-        $jobs = JobPosting::select('*')
+        $jobs = JobPosting::select('job_postings.*', 'expertises.area_of_expertise') // <-- Select columns safely
+            // Join the expertises table using the matching numeric ID
+            ->join('expertises', 'job_postings.job_category', '=', 'expertises.id')
             ->selectRaw("
-                ( 6371 * acos( cos( radians(?) ) * cos( radians( latitude ) )
-                * cos( radians( longitude ) - radians(?) ) + sin( radians(?) )
-                * sin( radians( latitude ) ) ) ) AS distance
+                ( 6371 * acos( cos( radians(?) ) * cos( radians( job_postings.latitude ) )
+                * cos( radians( job_postings.longitude ) - radians(?) ) + sin( radians(?) )
+                * sin( radians( job_postings.latitude ) ) ) ) AS distance
             ", [$applicantLat, $applicantLng, $applicantLat])
 
             // Knowledge-Based Filter: Match if the job requires ANY of the user's skills
             ->where(function ($query) use ($skillsArray) {
                 foreach ($skillsArray as $skill) {
-                    $query->orWhere('skills_required', 'LIKE', '%' . $skill . '%');
+                    $query->orWhere('job_postings.skills_required', 'LIKE', '%' . $skill . '%');
                 }
             })
 
@@ -90,15 +93,32 @@ class JobRecommendationController extends Controller
             ->orderBy('distance', 'asc')
             ->get();
 
-        // 3. Pass the filtered jobs to the Blade view
-        return view('rec', compact('jobs', 'maxDistanceKm'));
+        $expertise = Expertise::all();
+
+        // Pass the combined $jobs variable to your Blade view
+        return view('rec', compact('jobs', 'maxDistanceKm', 'expertise'));
     }
     public function details($job_id)
     {
-        // Fetch the job details, or return a 404 page if the job ID doesn't exist
-        $job = JobPosting::where('job_id', $job_id)->firstOrFail();
+        // 1. Fetch user details to get their latitude and longitude coordinates
+        $applicant = \App\Models\UserDetails::where('idno', Auth::user()->idno)->first();
 
-        // Return the full details view with the job data
+        // Set fallback coordinates if the user profile doesn't exist to avoid breaks
+        $applicantLat = $applicant ? $applicant->latitude : 0;
+        $applicantLng = $applicant ? $applicant->longitude : 0;
+
+        // 2. Fetch the job details while calculating the distance on the fly
+        $job = JobPosting::select('job_postings.*', 'expertises.area_of_expertise')
+            ->join('expertises', 'job_postings.job_category', '=', 'expertises.id')
+            ->selectRaw("
+                ( 6371 * acos( cos( radians(?) ) * cos( radians( job_postings.latitude ) )
+                * cos( radians( job_postings.longitude ) - radians(?) ) + sin( radians(?) )
+                * sin( radians( job_postings.latitude ) ) ) ) AS distance
+            ", [$applicantLat, $applicantLng, $applicantLat])
+            ->where('job_postings.job_id', $job_id)
+            ->firstOrFail();
+
+        // Return the full details view with the computed job data
         return view('recd', compact('job'));
     }
     /**

@@ -25,10 +25,10 @@
                 class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
                 @error('job_type') border-red-500 @enderror>
                 <option value=""></option>
-                <option value="1">Full Time</option>
-                <option value="2">Part Time</option>
-                <option value="3">Contract / Freelance</option>
-                <option value="4">Temporary / Seasonal</option>
+                <option value="Full Time">Full Time</option>
+                <option value="Part Time">Part Time</option>
+                <option value="Contract / Freelance">Contract / Freelance</option>
+                <option value="Temporary / Seasonal">Temporary / Seasonal</option>
             </select>
             <label for="job_category" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Category of Job <span class="text-red-700">*</span></label>
             <select id="job_category" name="job_category"
@@ -117,7 +117,7 @@
                         .then(towns => {
                             towns.forEach(t => {
                                 let opt = document.createElement('option');
-                                opt.value = t.id;
+                                opt.value = t.town;
                                 opt.textContent = t.town;
                                 townSelect.appendChild(opt);
                             });
@@ -139,7 +139,7 @@
                         .then(barangays => {
                             barangays.forEach(b => {
                                 let opt = document.createElement('option');
-                                opt.value = b.id;
+                                opt.value = b.barangay;
                                 opt.textContent = b.barangay;
                                 barangaySelect.appendChild(opt);
                             });

@@ -74,6 +74,15 @@
                             <a href="{{ route('listJobs') }}" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                 Job List
                             </a>
+                            <a href="{{ route('rp2') }}" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                LMI Statistical Analysis
+                            </a>
+                            <a href="{{ route('rp3') }}" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                Applicants Registered
+                            </a>
+                            <a href="{{ route('rp4') }}" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                Applicants Placed
+                            </a>
                         </nav>
 
                         <div class="p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50">

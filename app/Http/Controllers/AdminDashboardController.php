@@ -30,18 +30,19 @@ class AdminDashboardController extends Controller
             ->pluck('age');
 
         $ageBrackets = [
-            '0-17'  => 0,
+            // '0-17'  => 0,
             '18-30' => 0,
             '31-50' => 0,
             '51+'   => 0,
         ];
 
         foreach ($ages as $age) {
-            if ($age <= 17) {
-                $ageBrackets['0-17']++;
-            } elseif ($age <= 30) {
+            // if ($age <= 17) {
+            //     $ageBrackets['0-17']++;
+            // } else
+            if ($age >= 18 && $age <= 30) {
                 $ageBrackets['18-30']++;
-            } elseif ($age <= 50) {
+            } elseif ($age >= 31 && $age <= 50) {
                 $ageBrackets['31-50']++;
             } else {
                 $ageBrackets['51+']++;
@@ -53,6 +54,8 @@ class AdminDashboardController extends Controller
             'gender' => DB::table('user_details')
                 ->join('users', 'user_details.idno', '=', 'users.idno')
                 ->where('users.usertype', '=', 'user')
+                ->wherenotnull('user_details.gender')
+                ->wherenotnull('user_details.sex')
                 ->groupBy('user_details.gender')
                 ->select('user_details.gender', DB::raw('count(*) as total'))
                 ->pluck('total', 'user_details.gender')

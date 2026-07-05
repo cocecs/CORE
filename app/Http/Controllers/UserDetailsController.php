@@ -86,37 +86,37 @@ class UserDetailsController extends Controller
     /**
      * Update the specified resource in storage. Fetching coordinates from barangay table and updating user details with those coordinates
      */
-    // public function update(UpdateUserDetailsRequest $request, $idno)
-    // {
-    //     // 1. Get the validated form data (e.g., province, town, brgy)
-    //     $validatedData = $request->validated();
+    public function update(UpdateUserDetailsRequest $request, $idno)
+    {
+        // 1. Get the validated form data (e.g., province, town, brgy)
+        $validatedData = $request->validated();
 
-    //     // 2. Query the barangay table to fetch its coordinates
-    //     // Assuming your input field name is 'brgy' and the table column is 'name'
-    //     $barangayCoordinates = DB::table('barangays')
-    //         ->where('id', $validatedData['brgy'])
-    //         ->select('latitude', 'longitude')
-    //         ->first();
+        // 2. Query the barangay table to fetch its coordinates
+        // Assuming your input field name is 'brgy' and the table column is 'name'
+        $barangayCoordinates = DB::table('barangays')
+            ->where('id', $validatedData['brgy'])
+            ->select('latitude', 'longitude')
+            ->first();
 
-    //     // 3. Inject coordinates into the data array if the barangay exists
-    //     if ($barangayCoordinates) {
-    //         $validatedData['latitude'] = $barangayCoordinates->latitude;
-    //         $validatedData['longitude'] = $barangayCoordinates->longitude;
-    //     } else {
-    //         // Optional: Handle case where coordinates aren't found
-    //         $validatedData['latitude'] = null;
-    //         $validatedData['longitude'] = null;
-    //     }
+        // 3. Inject coordinates into the data array if the barangay exists
+        if ($barangayCoordinates) {
+            $validatedData['latitude'] = $barangayCoordinates->latitude;
+            $validatedData['longitude'] = $barangayCoordinates->longitude;
+        } else {
+            // Optional: Handle case where coordinates aren't found
+            $validatedData['latitude'] = null;
+            $validatedData['longitude'] = null;
+        }
 
-    //     // 4. Find the user record or fail with a 404
-    //     $userAddress = UserDetails::where('idno', $idno)->firstOrFail();
+        // 4. Find the user record or fail with a 404
+        $userAddress = UserDetails::where('idno', $idno)->firstOrFail();
 
-    //     // 5. Update user details (now including the fetched coordinates)
-    //     $userAddress->update($validatedData);
+        // 5. Update user details (now including the fetched coordinates)
+        $userAddress->update($validatedData);
 
-    //     // 6. Redirect to the index page with a success message
-    //     return redirect()->route('sex.index')->with('success', 'User address and matching coordinates updated.');
-    // }
+        // 6. Redirect to the index page with a success message
+        return redirect()->route('sex.index')->with('success', 'User address and matching coordinates updated.');
+    }
 
 
     /**
@@ -175,65 +175,65 @@ class UserDetailsController extends Controller
     /**
      * Update the specified resource in storage. With coordinates fetching and barangay update, with coordinates in barangays table
      */
-    public function update(UpdateUserDetailsRequest $request, $idno)
-    {
-        $validatedData = $request->validated();
+    // public function update(UpdateUserDetailsRequest $request, $idno)
+    // {
+    //     $validatedData = $request->validated();
 
-        // 1. Retrieve the selected Barangay and its parent Town
-        $barangay = DB::table('barangays')->where('id', $request->input('brgy'))->first();
+    //     // 1. Retrieve the selected Barangay and its parent Town
+    //     $barangay = DB::table('barangays')->where('id', $request->input('brgy'))->first();
 
-        $latitude  = null;
-        $longitude = null;
+    //     $latitude  = null;
+    //     $longitude = null;
 
-        if ($barangay) {
-            $town = DB::table('towns')->where('id', $barangay->town_id)->first();
+    //     if ($barangay) {
+    //         $town = DB::table('towns')->where('id', $barangay->town_id)->first();
 
-            // 2. Construct the precise address search string
-            $searchAddress = "{$barangay->barangay}, {$town->town}, {$town->province}, Philippines";
+    //         // 2. Construct the precise address search string
+    //         $searchAddress = "{$barangay->barangay}, {$town->town}, {$town->province}, Philippines";
 
-            // 3. Query the Geocoding API
-            try {
-                $response = Http::withHeaders([
-                    'User-Agent' => 'ARC_Application/1.0 (contact@yourdomain.com)'
-                ])->timeout(7)->get('https://nominatim.openstreetmap.org/search', [
-                    'q'      => $searchAddress,
-                    'format' => 'json',
-                    'limit'  => 1
-                ]);
+    //         // 3. Query the Geocoding API
+    //         try {
+    //             $response = Http::withHeaders([
+    //                 'User-Agent' => 'ARC_Application/1.0 (contact@yourdomain.com)'
+    //             ])->timeout(7)->get('https://nominatim.openstreetmap.org/search', [
+    //                 'q'      => $searchAddress,
+    //                 'format' => 'json',
+    //                 'limit'  => 1
+    //             ]);
 
-                if ($response->successful() && !empty($response->json())) {
-                    $geoData   = $response->json()[0];
-                    $latitude  = $geoData['lat'];
-                    $longitude = $geoData['lon'];
-                }
-            } catch (\Exception $e) {
-                report($e); // Logs the error silently if the connection drops
-            }
-        }
+    //             if ($response->successful() && !empty($response->json())) {
+    //                 $geoData   = $response->json()[0];
+    //                 $latitude  = $geoData['lat'];
+    //                 $longitude = $geoData['lon'];
+    //             }
+    //         } catch (\Exception $e) {
+    //             report($e); // Logs the error silently if the connection drops
+    //         }
+    //     }
 
-        // 4. Update both UserDetails and Barangays tables securely inside a transaction
-        DB::transaction(function () use ($idno, $validatedData, $latitude, $longitude, $barangay) {
-            // Update user details with the form data and the precise coordinates
-            $userAddress = UserDetails::where('idno', $idno)->firstOrFail();
-            $userAddress->update(array_merge($validatedData, [
-                'latitude'  => $latitude,
-                'longitude' => $longitude
-            ]));
+    //     // 4. Update both UserDetails and Barangays tables securely inside a transaction
+    //     DB::transaction(function () use ($idno, $validatedData, $latitude, $longitude, $barangay) {
+    //         // Update user details with the form data and the precise coordinates
+    //         $userAddress = UserDetails::where('idno', $idno)->firstOrFail();
+    //         $userAddress->update(array_merge($validatedData, [
+    //             'latitude'  => $latitude,
+    //             'longitude' => $longitude
+    //         ]));
 
-            // NEW: Update the coordinates in the barangays table if coordinates were found
-            if ($barangay && $latitude && $longitude) {
-                DB::table('barangays')
-                    ->where('id', $barangay->id)
-                    ->update([
-                        'latitude'   => $latitude, // Ensure these column names match your DB schema
-                        'longitude'  => $longitude,
-                        'updated_at' => now()       // Good practice if you track timestamps manually here
-                    ]);
-            }
-        });
+    //         // NEW: Update the coordinates in the barangays table if coordinates were found
+    //         if ($barangay && $latitude && $longitude) {
+    //             DB::table('barangays')
+    //                 ->where('id', $barangay->id)
+    //                 ->update([
+    //                     'latitude'   => $latitude, // Ensure these column names match your DB schema
+    //                     'longitude'  => $longitude,
+    //                     'updated_at' => now()       // Good practice if you track timestamps manually here
+    //                 ]);
+    //         }
+    //     });
 
-        return redirect()->route('sex.index')->with('success', 'User address and barangay details saved.');
-    }
+    //     return redirect()->route('sex.index')->with('success', 'User address and barangay details saved.');
+    // }
     public function updatesex(UpdateUserSexRequest $request, $idno)
     {
         // $validatedData = $request->validate([
