@@ -9,93 +9,155 @@ use App\Http\Requests\StoreJobSaveRequest;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Http\Request;
 class JobRecommendationController extends Controller
 {
     /**
      * Display the recommended job listings.
      */
+
     // public function index()
     // {
-    //     // 1. Fetch the recommended jobs from the database
-    //     // Adjust the query filters/ordering to match your actual requirements
-    //     $jobs = JobPosting::where('is_active', true)
-    //         ->latest()
-    //         ->take(10) // Limit for UI performance
+    //     // 1. Fetch user details directly using the 'idno' column
+    //     $applicant = \App\Models\UserDetails::where('idno', Auth::user()->idno)->first();
+    //     $workDetail = \App\Models\WorkDetails::where('idno', Auth::user()->idno)->first();
+    //     $jobPreference = \App\Models\JobPreference::where('idno', Auth::user()->idno)->first();
+
+    //     // 1. Safety Check: If the user hasn't filled out their address profile yet
+    //     if (!$applicant) {
+    //         return redirect()->route('address.index')
+    //             ->with('error', 'Please complete your profile and address details first.');
+    //     }
+
+    //     // 2. NEW Safety Check: If the user hasn't filled out their work details/skills yet
+    //     if (!$workDetail) {
+    //         return redirect()->route('background.index')
+    //             ->with('error', 'Please complete your work experience and skills profile first.');
+    //     }
+
+    //     // 3. Safety Check: If they have a profile record but no coordinates have been saved yet
+    //     if (is_null($jobPreference->latitude) || is_null($jobPreference->longitude)) {
+    //         return redirect()->route('distance.index')
+    //             ->with('error', 'Please update your job preferences to set your preferred location coordinates.');
+    //     }
+
+    //     // 4. Set the variables for the geospatial query below
+    //     $applicantLat = $jobPreference->latitude;
+    //     $applicantLng = $jobPreference->longitude;
+
+    //     // This is now safe from throwing a "null" exception!
+    //     $preferredSkills = $workDetail->skills;
+
+    //     // Maximum radius allowed for the recommendation (e.g., 15 kilometers)
+    //     $maxDistanceKm = 100;
+
+    //     // 2. Query Job Postings using Geospatial & Knowledge-Based Filters
+    //     // Ensure $preferredSkills is treated as an array
+    //     $skillsArray = is_array($preferredSkills) ? $preferredSkills : json_decode($preferredSkills, true) ?? [];
+
+    //     $jobs = JobPosting::select('job_postings.*', 'expertises.area_of_expertise') // <-- Select columns safely
+    //         // Join the expertises table using the matching numeric ID
+    //         ->join('expertises', 'job_postings.job_category', '=', 'expertises.id')
+    //         ->selectRaw("
+    //             ( 6371 * acos( cos( radians(?) ) * cos( radians( job_postings.latitude ) )
+    //             * cos( radians( job_postings.longitude ) - radians(?) ) + sin( radians(?) )
+    //             * sin( radians( job_postings.latitude ) ) ) ) AS distance
+    //         ", [$applicantLat, $applicantLng, $applicantLat])
+
+    //         // Knowledge-Based Filter: Match if the job requires ANY of the user's skills
+    //         ->where(function ($query) use ($skillsArray) {
+    //             foreach ($skillsArray as $skill) {
+    //                 $query->orWhere('job_postings.skills_required', 'LIKE', '%' . $skill . '%');
+    //             }
+    //         })
+
+    //         ->having('distance', '<=', $maxDistanceKm)
+    //         ->orderBy('distance', 'asc')
     //         ->get();
 
-    //     // 2. Dynamically inject the "is_new" logic if it's not a database column
-    //     // For example, marking jobs posted within the last 48 hours as "New to you"
-    //     $jobs->transform(function ($job) {
-    //         $job->is_new = $job->created_at->greaterThanOrEqualTo(Carbon::now()->subHours(48));
-    //         return $job;
-    //     });
+    //     $expertise = Expertise::all();
 
-    //     // 3. Pass the data to your blade view
-    //     return view('rec', compact('jobs'));
+    //     // Pass the combined $jobs variable to your Blade view
+    //     return view('rec', compact('jobs', 'maxDistanceKm', 'expertise'));
     // }
 
-    public function index()
+    public function index(Request $request)
     {
-        // 1. Fetch user details directly using the 'idno' column
+        // 1. Fetch user and validation checks
         $applicant = \App\Models\UserDetails::where('idno', Auth::user()->idno)->first();
         $workDetail = \App\Models\WorkDetails::where('idno', Auth::user()->idno)->first();
+        $jobPreference = \App\Models\JobPreference::where('idno', Auth::user()->idno)->first();
 
-        // 1. Safety Check: If the user hasn't filled out their address profile yet
         if (!$applicant) {
-            return redirect()->route('sex.index')
-                ->with('error', 'Please complete your profile and address details first.');
+            return redirect()->route('address.index')->with('error', 'Please complete your profile first.');
         }
-
-        // 2. NEW Safety Check: If the user hasn't filled out their work details/skills yet
         if (!$workDetail) {
-            return redirect()->route('background.index')
-                ->with('error', 'Please complete your work experience and skills profile first.');
+            return redirect()->route('background.index')->with('error', 'Please complete your skills profile first.');
+        }
+        if (is_null($jobPreference->latitude) || is_null($jobPreference->longitude)) {
+            return redirect()->route('distance.index')->with('error', 'Please update your coordinates.');
         }
 
-        // 3. Safety Check: If they have a profile record but no coordinates have been saved yet
-        if (is_null($applicant->latitude) || is_null($applicant->longitude)) {
-            return redirect()->route('sex.index')
-                ->with('error', 'Please update your address to set your location coordinates.');
-        }
-
-        // 4. Set the variables for the geospatial query below
-        $applicantLat = $applicant->latitude;
-        $applicantLng = $applicant->longitude;
-
-        // This is now safe from throwing a "null" exception!
-        $preferredSkills = $workDetail->skills;
-
-        // Maximum radius allowed for the recommendation (e.g., 15 kilometers)
+        $applicantLat = $jobPreference->latitude;
+        $applicantLng = $jobPreference->longitude;
         $maxDistanceKm = 100;
 
-        // 2. Query Job Postings using Geospatial & Knowledge-Based Filters
-        // Ensure $preferredSkills is treated as an array
-        $skillsArray = is_array($preferredSkills) ? $preferredSkills : json_decode($preferredSkills, true) ?? [];
-
-        $jobs = JobPosting::select('job_postings.*', 'expertises.area_of_expertise') // <-- Select columns safely
-            // Join the expertises table using the matching numeric ID
+        // 2. Start Base Query (Location & Distance)
+        $query = JobPosting::select('job_postings.*', 'expertises.area_of_expertise')
             ->join('expertises', 'job_postings.job_category', '=', 'expertises.id')
             ->selectRaw("
                 ( 6371 * acos( cos( radians(?) ) * cos( radians( job_postings.latitude ) )
                 * cos( radians( job_postings.longitude ) - radians(?) ) + sin( radians(?) )
                 * sin( radians( job_postings.latitude ) ) ) ) AS distance
-            ", [$applicantLat, $applicantLng, $applicantLat])
+            ", [$applicantLat, $applicantLng, $applicantLat]);
 
-            // Knowledge-Based Filter: Match if the job requires ANY of the user's skills
-            ->where(function ($query) use ($skillsArray) {
-                foreach ($skillsArray as $skill) {
-                    $query->orWhere('job_postings.skills_required', 'LIKE', '%' . $skill . '%');
+        // 3. SPLIT LOGIC: Are they searching, or just loading the page?
+        $isSearching = $request->hasAny(['job_type', 'job_category', 'province', 'town']);
+
+        if ($isSearching) {
+            // --- USER IS SEARCHING ---
+            // Ignore skills entirely. Filter ONLY by the form inputs.
+            $query->where(function($subQuery) use ($request) {
+
+                if ($request->filled('job_type')) {
+                    $subQuery->where('job_postings.job_type', $request->input('job_type'));
                 }
-            })
 
-            ->having('distance', '<=', $maxDistanceKm)
+                if ($request->filled('job_category')) {
+                    $subQuery->where('job_postings.job_category', $request->input('job_category'));
+                }
+
+                if ($request->filled('province')) {
+                    $subQuery->where('job_postings.province', $request->input('province'));
+                }
+
+                if ($request->filled('town')) {
+                    $subQuery->where('job_postings.town', $request->input('town'));
+                }
+            });
+
+        } else {
+            // --- DEFAULT PAGE LOAD ---
+            // Apply the skills requirement to show personalized recommendations
+            $preferredSkills = $workDetail->skills;
+            $skillsArray = is_array($preferredSkills) ? $preferredSkills : json_decode($preferredSkills, true) ?? [];
+
+            if (!empty($skillsArray)) {
+                $query->where(function ($q) use ($skillsArray) {
+                    foreach ($skillsArray as $skill) {
+                        $q->orWhere('job_postings.skills_required', 'LIKE', '%' . $skill . '%');
+                    }
+                });
+            }
+        }
+
+        // 4. Finalize results based on max distance
+        $jobs = $query->having('distance', '<=', $maxDistanceKm)
             ->orderBy('distance', 'asc')
             ->get();
 
         $expertise = Expertise::all();
 
-        // Pass the combined $jobs variable to your Blade view
         return view('rec', compact('jobs', 'maxDistanceKm', 'expertise'));
     }
     public function details($job_id)

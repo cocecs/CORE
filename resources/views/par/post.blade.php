@@ -117,7 +117,7 @@
                         .then(towns => {
                             towns.forEach(t => {
                                 let opt = document.createElement('option');
-                                opt.value = t.town;
+                                opt.value = t.id;
                                 opt.textContent = t.town;
                                 townSelect.appendChild(opt);
                             });
@@ -139,7 +139,8 @@
                         .then(barangays => {
                             barangays.forEach(b => {
                                 let opt = document.createElement('option');
-                                opt.value = b.barangay;
+                                // CHANGE THIS LINE: set the value to the ID instead of the string name
+                                opt.value = b.id;
                                 opt.textContent = b.barangay;
                                 barangaySelect.appendChild(opt);
                             });

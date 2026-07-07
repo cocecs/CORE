@@ -32,32 +32,40 @@ class JobPostingController extends Controller
     // }
 
     public function job_post(StoreJobPostingRequest $request)
-    {
-        $idno = auth()->user()->idno;
+{
+    $idno = auth()->user()->idno;
 
-        // 1. Get the validated data from your request
-        $validatedData = $request->validated();
+    // 1. Get the validated data from your request
+    $validatedData = $request->validated();
 
-        // 2. Fetch the coordinates from the barangays table using the submitted 'brgy' field
-        // Note: If your table name is singular, change 'barangays' to 'barangay'
-        $barangayCoordinates = \Illuminate\Support\Facades\DB::table('barangays')
-            ->where('id', $validatedData['barangay'] ?? null)
-            ->select('latitude', 'longitude')
-            ->first();
+    // 2. Look up the Town name using the submitted town ID
+    // (Adjust 'towns' table name or column name if yours are named differently)
+    $townRecord = \Illuminate\Support\Facades\DB::table('towns')
+        ->where('id', $validatedData['town'] ?? null)
+        ->select('town') // Assuming your column name is 'town'
+        ->first();
 
-        // 3. Merge coordinates and the user's idno into the final insertion array
-        $jobData = array_merge($validatedData, [
-            'idno' => $idno,
-            'latitude' => $barangayCoordinates ? $barangayCoordinates->latitude : null,
-            'longitude' => $barangayCoordinates ? $barangayCoordinates->longitude : null,
-        ]);
+    // 3. Fetch the coordinates AND the barangay name from the barangays table
+    $barangayRecord = \Illuminate\Support\Facades\DB::table('barangays')
+        ->where('id', $validatedData['barangay'] ?? null)
+        ->select('barangay', 'latitude', 'longitude') // Assuming your column name is 'barangay'
+        ->first();
 
-        // 4. Create the Job Posting
-        $job = JobPosting::create($jobData);
+    // 4. Overwrite the IDs with text names and merge everything into the final array
+    $jobData = array_merge($validatedData, [
+        'idno'      => $idno,
+        'town'      => $townRecord ? $townRecord->town : null,
+        'barangay'  => $barangayRecord ? $barangayRecord->barangay : null,
+        'latitude'  => $barangayRecord ? $barangayRecord->latitude : null,
+        'longitude' => $barangayRecord ? $barangayRecord->longitude : null,
+    ]);
 
-        return redirect()->route('emp_postc', ['job_id' => $job->job_id])
-                        ->with('success', 'Job details and coordinates saved successfully.');
-    }
+    // 5. Create the Job Posting
+    $job = JobPosting::create($jobData);
+
+    return redirect()->route('emp_postc', ['job_id' => $job->job_id])
+                    ->with('success', 'Job details, location names, and coordinates saved successfully.');
+}
 
     public function getSkillsByExpertise($expertiseId)
     {

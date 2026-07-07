@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('towns', function (Blueprint $table) {
             $table->id(); // Primary key (town_id)
             $table->string('town');     // e.g., Tangub City, Oroquieta City
+            $table->decimal('latitude', 10, 7);
+            $table->decimal('longitude', 10, 7);
             $table->string('province'); // e.g., Misamis Occidental
             $table->timestamps();
 
