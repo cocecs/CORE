@@ -84,7 +84,7 @@ Route::middleware('auth')->group(function () {
     // triger expertise
     Route::get('/expertise', [ExpertiseController::class, 'processMatch'])->name('expertise.process');
     // show expertise
-    Route::get('/expertise/{code}', [ExpertiseController::class, 'show'])->name('expertise.show');
+    Route::get('/expertise/{id}', [ExpertiseController::class, 'show'])->name('expertise.show');
     // store expertise
     Route::put('/expertise/{idno}/skills', [WorkDetailsController::class, 'store'])->name('skills.store');
     //professional or experience level route

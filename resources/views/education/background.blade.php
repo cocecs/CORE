@@ -1,12 +1,18 @@
 <x-app-layout>
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="flex flex-col justify-between items-center">
-        @if ($errors->any())
+        @if ($errors->any() || session('error'))
+            {{-- 1. Display your specific validation error if it exists --}}
             @error('educational_level')
                 <h2 class="text-1xl font-semibold text-red-600">*ad {{ $message }}</h2>
             @enderror
+
+            {{-- 2. Display the redirect flash error message --}}
+            @if (session('error'))
+                <h2 class="text-1xl font-semibold text-red-600">* {{ session('error') }}</h2>
+            @endif
         @else
-            <h2 class="text-1xl font-semibold text-blue-700">Great {{ $user->firstname }}! Where now in the Stage 2. Let's identify your level of education.</h2>
+            <h2 class="text-1xl font-semibold text-blue-700">Great {{ $user->firstname }}! We're now in Stage 2. Let's identify your level of education.</h2>
         @endif
     </div>
 </div>
@@ -70,8 +76,15 @@
                     </div>
 
                     <div class="relative w-full max-w-xl hidden peer-checked:block rounded-b-md ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
-                        <label for="custom_course" class="block w-full cursor-text rounded-b-md bg-white p-2 pt-2 text-gray-600 ring-2 ring-transparent transition-all peer-checked:ring-blue-400 peer-checked:ring-offset-2 border-t-0">
-                            <input type="text" id="custom_course" name="custom_course[]" autocomplete="off" maxlength="60" oninput="this.value = this.value.toUpperCase()" class="w-full bg-transparent border-none p-0 focus:ring-0 text-blue-800 font-bold placeholder-gray-400" placeholder="Type your technical course here..."/>
+                        <label for="course_vocational" class="block w-full cursor-text rounded-b-md bg-white p-2 pt-2 text-gray-600 ring-2 ring-transparent transition-all peer-checked:ring-blue-400 peer-checked:ring-offset-2 border-t-0">
+                            <select name="course_vocational" id="course_vocational" class="w-full bg-transparent border-none p-0 focus:ring-0 text-blue-800 font-bold placeholder-gray-400"">
+                                <option value="" disabled selected hidden>Select your vocational course here...</option>
+                                @foreach($vocationalCourses as $course)
+                                    <option value="{{ $course->id }}">
+                                        {{ strtoupper($course->display_name) }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </label>
                     </div>
                 </label>
@@ -90,11 +103,19 @@
                     </div>
 
                     <div class="relative w-full max-w-xl hidden peer-checked:block rounded-b-md ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
-                        <label for="custom_course" class="block w-full cursor-text rounded-b-md bg-white p-2 pt-2 text-gray-600 ring-2 ring-transparent transition-all peer-checked:ring-blue-400 peer-checked:ring-offset-2 border-t-0">
-                            <input type="text" id="custom_course" name="custom_course[]" autocomplete="off" maxlength="60" oninput="this.value = this.value.toUpperCase()" class="w-full bg-transparent border-none p-0 focus:ring-0 text-blue-800 font-bold placeholder-gray-400" placeholder="Type your associate course here..."/>
+                        <label for="course_associate" class="block w-full cursor-text rounded-b-md bg-white p-2 pt-2 text-gray-600 ring-2 ring-transparent transition-all peer-checked:ring-blue-400 peer-checked:ring-offset-2 border-t-0">
+                            <select name="course_associate" id="course_associate" class="w-full bg-transparent border-none p-0 focus:ring-0 text-blue-800 font-bold placeholder-gray-400"">
+                                <option value="" disabled selected hidden>Select your associate course here...</option>
+                                @foreach($associateCourses as $course)
+                                    <option value="{{ $course->id }}">
+                                        {{ strtoupper($course->display_name) }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </label>
                     </div>
                 </label>
+
                 <label class="cursor-pointer bg-white ">
                     <input type="radio" id="bachelor" class="peer sr-only" name="educational_level" value="5" />
 
@@ -111,8 +132,15 @@
 
                     <div class="relative w-full max-w-xl hidden peer-checked:block rounded-b-md ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
                         <label for="custom_course" class="block w-full cursor-text rounded-b-md bg-white p-2 pt-2 text-gray-600 ring-2 ring-transparent transition-all peer-checked:ring-blue-400 peer-checked:ring-offset-2 border-t-0">
-                            <input type="text" id="custom_course" name="custom_course[]" autocomplete="off" maxlength="60" oninput="this.value = this.value.toUpperCase()" class="w-full bg-transparent border-none p-0 focus:ring-0 text-blue-800 font-bold placeholder-gray-400" placeholder="Type your degree course here..."/>
-
+                            {{-- <input type="text" id="custom_course" name="custom_course[]" autocomplete="off" maxlength="60" oninput="this.value = this.value.toUpperCase()" class="w-full bg-transparent border-none p-0 focus:ring-0 text-blue-800 font-bold placeholder-gray-400" placeholder="Type your degree course here..."/> --}}
+                            <select name="course_bachelor" id="course_bachelor" class="w-full bg-transparent border-none p-0 focus:ring-0 text-blue-800 font-bold placeholder-gray-400"">
+                                <option value="" disabled selected hidden>Select your degree course here...</option>
+                                @foreach($bachelorCourses as $course)
+                                    <option value="{{ $course->id }}">
+                                        {{ strtoupper($course->display_name) }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </label>
                     </div>
                 </label>
@@ -131,8 +159,15 @@
                     </div>
 
                     <div class="relative w-full max-w-xl hidden peer-checked:block rounded-b-md ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
-                        <label for="custom_course" class="block w-full cursor-text rounded-b-md bg-white p-2 pt-2 text-gray-600 ring-2 ring-transparent transition-all peer-checked:ring-blue-400 peer-checked:ring-offset-2 border-t-0">
-                            <input type="text" id="custom_course" name="custom_course[]" autocomplete="off" maxlength="60" oninput="this.value = this.value.toUpperCase()" class="w-full bg-transparent border-none p-0 focus:ring-0 text-blue-800 font-bold placeholder-gray-400" placeholder="Type your course here..."/>
+                        <label for="course_masters" class="block w-full cursor-text rounded-b-md bg-white p-2 pt-2 text-gray-600 ring-2 ring-transparent transition-all peer-checked:ring-blue-400 peer-checked:ring-offset-2 border-t-0">
+                            <select name="course_masters" id="course_masters" class="w-full bg-transparent border-none p-0 focus:ring-0 text-blue-800 font-bold placeholder-gray-400"">
+                                <option value="" disabled selected hidden>Select your masters course here...</option>
+                                @foreach($mastersCourses as $course)
+                                    <option value="{{ $course->id }}">
+                                        {{ strtoupper($course->display_name) }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </label>
                     </div>
                 </label>
@@ -151,8 +186,15 @@
                     </div>
 
                     <div class="relative w-full max-w-xl hidden peer-checked:block rounded-b-md ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
-                        <label for="custom_course" class="block w-full cursor-text rounded-b-md bg-white p-2 pt-2 text-gray-600 ring-2 ring-transparent transition-all peer-checked:ring-blue-400 peer-checked:ring-offset-2 border-t-0">
-                            <input type="text" id="custom_course" name="custom_course[]" autocomplete="off" maxlength="60" oninput="this.value = this.value.toUpperCase()" class="w-full bg-transparent border-none p-0 focus:ring-0 text-blue-800 font-bold placeholder-gray-400" placeholder="Type your course here..."/>
+                        <label for="course_doctoral" class="block w-full cursor-text rounded-b-md bg-white p-2 pt-2 text-gray-600 ring-2 ring-transparent transition-all peer-checked:ring-blue-400 peer-checked:ring-offset-2 border-t-0">
+                            <select name="course_doctoral" id="course_doctoral" class="w-full bg-transparent border-none p-0 focus:ring-0 text-blue-800 font-bold placeholder-gray-400"">
+                                <option value="" disabled selected hidden>Select your doctoral course here...</option>
+                                @foreach($doctoralCourses as $course)
+                                    <option value="{{ $course->id }}">
+                                        {{ strtoupper($course->display_name) }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </label>
                     </div>
                 </label>
@@ -173,7 +215,5 @@
     </div>
 </div>
 </form>
-
-
 </x-app-layout>
 

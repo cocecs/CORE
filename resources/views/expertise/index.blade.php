@@ -17,28 +17,33 @@
   <div class="mx-auto max-w-6xl px-12 w-full">
     <div class="grid grid-cols-1 gap-6">
         <div class="flex flex-wrap justify-center gap-3">
-            @foreach($expertises as $expertise)
-                {{-- We break the string into an array and loop through each individual skill --}}
-                @foreach(explode(',', $expertise->skills) as $skill)
-                    @php $trimmedSkill = trim($skill); @endphp
+            {{-- 1. Parse the JSON string from your single, matched expertise model --}}
+            @php
+                $skillsArray = is_array($expertise->skills) ? $expertise->skills : json_decode($expertise->skills, true);
+            @endphp
 
-                    <label class="w-fit max-w-xl cursor-pointer mb-2">
-                        {{-- Use the skill name as the value so it's sent to your controller --}}
-                        <input type="checkbox" class="peer sr-only" name="skills[]" value="{{ $trimmedSkill }}"/>
+            {{-- 2. Loop exclusively through the 34 specific skills array belonging to this course --}}
+            @forelse(($skillsArray ?? []) as $skill)
+                @php $trimmedSkill = trim($skill); @endphp
 
-                        <div class="w-fit max-w-xl rounded-md bg-white p-2 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
-                            <div class="flex flex-col gap-1">
-                                <div class="flex items-center justify-between">
-                                    {{-- Display the single skill here --}}
-                                    <p class="text-sm font-semibold uppercase text-gray-500">
-                                        {{ $trimmedSkill }}
-                                    </p>
-                                </div>
+                <label class="w-fit max-w-xl cursor-pointer mb-2">
+                    {{-- Use the clean skill name as the value so it's sent to your controller --}}
+                    <input type="checkbox" class="peer sr-only" name="skills[]" value="{{ $trimmedSkill }}"/>
+
+                    <div class="w-fit max-w-xl rounded-md bg-white p-2 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center justify-between">
+                                {{-- Display the single skill cleanly here --}}
+                                <p class="text-sm font-semibold uppercase text-gray-500">
+                                    {{ $trimmedSkill }}
+                                </p>
                             </div>
                         </div>
-                    </label>
-                @endforeach
-            @endforeach
+                    </div>
+                </label>
+            @empty
+                <p class="text-gray-500 text-sm">No skills found matching this specific course track.</p>
+            @endforelse
         </div>
     </div>
   </div>

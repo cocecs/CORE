@@ -175,7 +175,10 @@
                             skills.forEach(skill => {
                                 const option = document.createElement('option');
                                 option.value = skill;        // e.g., value="Graphic Design"
-                                option.textContent = skill;  // e.g., text="Graphic Design"
+                                option.textContent = skill.toLowerCase()
+                                    .split(' ')
+                                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                    .join(' ');  // e.g., text="Graphic Design"
                                 skillsSelect.appendChild(option);
                             });
                         })

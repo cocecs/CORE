@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('gender',15)->nullable();
             $table->string('civil_status',15)->nullable();
             $table->string('educational_level',60)->nullable();
+            $table->bigInteger('course_id',20)->nullable();
             $table->text('about_me')->nullable();
 
             $table->timestamps();

@@ -28,6 +28,7 @@ class UserDetails extends Model
         'gender',
         'civil_status',
         'educational_level',
+        'course_id',
         'about_me',
     ];
     public function account(): BelongsTo
@@ -35,5 +36,10 @@ class UserDetails extends Model
         // Parameter 2: Foreign key inside 'user_details' table
         // Parameter 3: Owner key inside 'users' table
         return $this->belongsTo(User::class, 'idno', 'idno');
+    }
+    public function course()
+    {
+        // Maps user_details.course_id to courses.id
+        return $this->belongsTo(Course::class, 'course_id', 'id');
     }
 }

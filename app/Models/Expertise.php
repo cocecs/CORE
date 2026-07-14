@@ -16,4 +16,7 @@ class Expertise extends Model
         'exp_code',
         'area_of_expertise',
     ];
+    protected $casts = [
+        'skills' => 'array',
+    ];
 }

@@ -16,71 +16,80 @@ class JobRecommendationController extends Controller
      * Display the recommended job listings.
      */
 
-    // public function index()
+    // public function index(Request $request)
     // {
-    //     // 1. Fetch user details directly using the 'idno' column
+    //     // 1. Fetch user and validation checks
     //     $applicant = \App\Models\UserDetails::where('idno', Auth::user()->idno)->first();
     //     $workDetail = \App\Models\WorkDetails::where('idno', Auth::user()->idno)->first();
     //     $jobPreference = \App\Models\JobPreference::where('idno', Auth::user()->idno)->first();
 
-    //     // 1. Safety Check: If the user hasn't filled out their address profile yet
     //     if (!$applicant) {
-    //         return redirect()->route('address.index')
-    //             ->with('error', 'Please complete your profile and address details first.');
+    //         return redirect()->route('address.index')->with('error', 'Please complete your profile first.');
     //     }
-
-    //     // 2. NEW Safety Check: If the user hasn't filled out their work details/skills yet
     //     if (!$workDetail) {
-    //         return redirect()->route('background.index')
-    //             ->with('error', 'Please complete your work experience and skills profile first.');
+    //         return redirect()->route('background.index')->with('error', 'Please complete your skills profile first.');
     //     }
-
-    //     // 3. Safety Check: If they have a profile record but no coordinates have been saved yet
     //     if (is_null($jobPreference->latitude) || is_null($jobPreference->longitude)) {
-    //         return redirect()->route('distance.index')
-    //             ->with('error', 'Please update your job preferences to set your preferred location coordinates.');
+    //         return redirect()->route('distance.index')->with('error', 'Please update your coordinates.');
     //     }
 
-    //     // 4. Set the variables for the geospatial query below
     //     $applicantLat = $jobPreference->latitude;
     //     $applicantLng = $jobPreference->longitude;
 
-    //     // This is now safe from throwing a "null" exception!
-    //     $preferredSkills = $workDetail->skills;
-
-    //     // Maximum radius allowed for the recommendation (e.g., 15 kilometers)
+    //     $showAll = $request->has('show_all');
+    //     $isSearching = $request->hasAny(['job_type', 'job_category', 'province', 'town']);
     //     $maxDistanceKm = 100;
 
-    //     // 2. Query Job Postings using Geospatial & Knowledge-Based Filters
-    //     // Ensure $preferredSkills is treated as an array
-    //     $skillsArray = is_array($preferredSkills) ? $preferredSkills : json_decode($preferredSkills, true) ?? [];
-
-    //     $jobs = JobPosting::select('job_postings.*', 'expertises.area_of_expertise') // <-- Select columns safely
-    //         // Join the expertises table using the matching numeric ID
+    //     // 2. Start Base Query (Location & Distance)
+    //     $query = JobPosting::select('job_postings.*', 'expertises.area_of_expertise')
     //         ->join('expertises', 'job_postings.job_category', '=', 'expertises.id')
     //         ->selectRaw("
     //             ( 6371 * acos( cos( radians(?) ) * cos( radians( job_postings.latitude ) )
     //             * cos( radians( job_postings.longitude ) - radians(?) ) + sin( radians(?) )
     //             * sin( radians( job_postings.latitude ) ) ) ) AS distance
-    //         ", [$applicantLat, $applicantLng, $applicantLat])
+    //         ", [$applicantLat, $applicantLng, $applicantLat]);
 
-    //         // Knowledge-Based Filter: Match if the job requires ANY of the user's skills
-    //         ->where(function ($query) use ($skillsArray) {
-    //             foreach ($skillsArray as $skill) {
-    //                 $query->orWhere('job_postings.skills_required', 'LIKE', '%' . $skill . '%');
-    //             }
-    //         })
+    //     // 3. APPLY FILTERS (If user is explicitly searching or if query parameters are set)
+    //     if ($request->filled('job_type')) {
+    //         $query->where('job_postings.job_type', $request->input('job_type'));
+    //     }
+    //     if ($request->filled('job_category')) {
+    //         $query->where('job_postings.job_category', $request->input('job_category'));
+    //     }
+    //     if ($request->filled('province')) {
+    //         $query->where('job_postings.province', $request->input('province'));
+    //     }
+    //     if ($request->filled('town')) {
+    //         $query->where('job_postings.town', $request->input('town'));
+    //     }
 
-    //         ->having('distance', '<=', $maxDistanceKm)
-    //         ->orderBy('distance', 'asc')
-    //         ->get();
+    //     // 4. APPLY SKILLS MATCHING (Only on standard load: NOT when searching and NOT when showing all)
+    //     if (!$showAll && !$isSearching) {
+    //         $preferredSkills = $workDetail->skills;
+    //         $skillsArray = is_array($preferredSkills) ? $preferredSkills : json_decode($preferredSkills, true) ?? [];
 
+    //         if (!empty($skillsArray)) {
+    //             $query->where(function ($q) use ($skillsArray) {
+    //                 foreach ($skillsArray as $skill) {
+    //                     $q->orWhere('job_postings.skills_required', 'LIKE', '%' . $skill . '%');
+    //                 }
+    //             });
+    //         }
+    //     }
+
+    //     // 5. DISTANCE CONSTRAINT BYPASS
+    //     if (!$showAll && !$isSearching) {
+    //         $query->having('distance', '<=', $maxDistanceKm);
+    //     } else {
+    //         $maxDistanceKm = null; // Set to null for subheader display compatibility
+    //     }
+
+    //     // 6. Finalize Results
+    //     $jobs = $query->orderBy('distance', 'asc')->get();
     //     $expertise = Expertise::all();
 
-    //     // Pass the combined $jobs variable to your Blade view
     //     return view('rec', compact('jobs', 'maxDistanceKm', 'expertise'));
     // }
-
     public function index(Request $request)
     {
         // 1. Fetch user and validation checks
@@ -100,9 +109,12 @@ class JobRecommendationController extends Controller
 
         $applicantLat = $jobPreference->latitude;
         $applicantLng = $jobPreference->longitude;
-        $maxDistanceKm = 100;
 
-        // 2. Start Base Query (Location & Distance)
+        $showAll = $request->has('show_all');
+        // Modify isSearching to ensure it's ignored if "Show All" is explicitly clicked
+        $isSearching = !$showAll && $request->hasAny(['job_type', 'job_category', 'province', 'town']);
+
+        // 2. Start Base Query (Location & Proximity Calculation)
         $query = JobPosting::select('job_postings.*', 'expertises.area_of_expertise')
             ->join('expertises', 'job_postings.job_category', '=', 'expertises.id')
             ->selectRaw("
@@ -111,34 +123,24 @@ class JobRecommendationController extends Controller
                 * sin( radians( job_postings.latitude ) ) ) ) AS distance
             ", [$applicantLat, $applicantLng, $applicantLat]);
 
-        // 3. SPLIT LOGIC: Are they searching, or just loading the page?
-        $isSearching = $request->hasAny(['job_type', 'job_category', 'province', 'town']);
+        // 3. APPLY FILTERS (Skipped completely if $showAll is true)
+        if (!$showAll) {
+            if ($request->filled('job_type')) {
+                $query->where('job_postings.job_type', $request->input('job_type'));
+            }
+            if ($request->filled('job_category')) {
+                $query->where('job_postings.job_category', $request->input('job_category'));
+            }
+            if ($request->filled('province')) {
+                $query->where('job_postings.province', $request->input('province'));
+            }
+            if ($request->filled('town')) {
+                $query->where('job_postings.town', $request->input('town'));
+            }
+        }
 
-        if ($isSearching) {
-            // --- USER IS SEARCHING ---
-            // Ignore skills entirely. Filter ONLY by the form inputs.
-            $query->where(function($subQuery) use ($request) {
-
-                if ($request->filled('job_type')) {
-                    $subQuery->where('job_postings.job_type', $request->input('job_type'));
-                }
-
-                if ($request->filled('job_category')) {
-                    $subQuery->where('job_postings.job_category', $request->input('job_category'));
-                }
-
-                if ($request->filled('province')) {
-                    $subQuery->where('job_postings.province', $request->input('province'));
-                }
-
-                if ($request->filled('town')) {
-                    $subQuery->where('job_postings.town', $request->input('town'));
-                }
-            });
-
-        } else {
-            // --- DEFAULT PAGE LOAD ---
-            // Apply the skills requirement to show personalized recommendations
+        // 4. APPLY SKILLS MATCHING (Only on standard load: NOT when searching and NOT when showing all)
+        if (!$showAll && !$isSearching) {
             $preferredSkills = $workDetail->skills;
             $skillsArray = is_array($preferredSkills) ? $preferredSkills : json_decode($preferredSkills, true) ?? [];
 
@@ -151,24 +153,21 @@ class JobRecommendationController extends Controller
             }
         }
 
-        // 4. Finalize results based on max distance
-        $jobs = $query->having('distance', '<=', $maxDistanceKm)
-            ->orderBy('distance', 'asc')
-            ->get();
+        // 5. Finalize Results (Sorted by closest distance)
+        $jobs = $query->orderBy('distance', 'asc')->get();
+        $expertise = \App\Models\Expertise::all(); // Added fallback full namespace if not imported
 
-        $expertise = Expertise::all();
-
-        return view('rec', compact('jobs', 'maxDistanceKm', 'expertise'));
+        return view('rec', compact('jobs', 'expertise'));
     }
     public function details($job_id)
     {
         // 1. Fetch user details to get their latitude and longitude coordinates
         $applicant = \App\Models\UserDetails::where('idno', Auth::user()->idno)->first();
+        $jobPreference = \App\Models\JobPreference::where('idno', Auth::user()->idno)->first();
 
         // Set fallback coordinates if the user profile doesn't exist to avoid breaks
-        $applicantLat = $applicant ? $applicant->latitude : 0;
-        $applicantLng = $applicant ? $applicant->longitude : 0;
-
+        $applicantLat = $jobPreference->latitude;
+        $applicantLng = $jobPreference->longitude;
         // 2. Fetch the job details while calculating the distance on the fly
         $job = JobPosting::select('job_postings.*', 'expertises.area_of_expertise')
             ->join('expertises', 'job_postings.job_category', '=', 'expertises.id')

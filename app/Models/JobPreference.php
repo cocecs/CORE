@@ -12,6 +12,8 @@ class JobPreference extends Model
         'work_location',
         'province',
         'town',
+        'latitude',
+        'longitude',
         'specify_country',
     ];
     protected $casts = [
@@ -19,6 +21,8 @@ class JobPreference extends Model
         'work_location' => 'string',
         'province' => 'string',
         'town' => 'string',
+        'latitude' => 'decimal:7',
+        'longitude' => 'decimal:7',
         'specify_country' => 'string',
 
     ];

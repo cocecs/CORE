@@ -49,7 +49,7 @@
                             </td>
                             <td class="py-4 px-6 text-right whitespace-nowrap">
                                 <a href="{{ route('jobDetails', $job->job_id) }}" class="inline-flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-medium text-xs px-4 py-2 rounded-lg transition-colors shadow-sm">
-                                    Manage Job
+                                    Details...
                                 </a>
                             </td>
                         </tr>

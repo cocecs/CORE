@@ -21,67 +21,66 @@ class JobPostingController extends Controller
         // FIX: Redirect to the SHOW route, passing the 'code'
         return view('par.lj', compact('user', 'expertise', 'jobs'));
     }
-    // public function job_post(StoreJobPostingRequest $request)
-    // {
-    //     $idno = auth()->user()->idno;
-    //     $job =JobPosting::create(array_merge($request->validated(), ['idno' => $idno]));
-    //     // return redirect()->action([self::class, 'emp_post'])->with('success', 'Job posting saved successfully.');
-
-    //     return redirect()->route('emp_postc', ['job_id' => $job->job_id])
-    //                  ->with('success', 'Job details saved successfully.');
-    // }
 
     public function job_post(StoreJobPostingRequest $request)
-{
-    $idno = auth()->user()->idno;
+    {
+        $idno = auth()->user()->idno;
 
-    // 1. Get the validated data from your request
-    $validatedData = $request->validated();
+        // 1. Get the validated data from your request
+        $validatedData = $request->validated();
 
-    // 2. Look up the Town name using the submitted town ID
-    // (Adjust 'towns' table name or column name if yours are named differently)
-    $townRecord = \Illuminate\Support\Facades\DB::table('towns')
-        ->where('id', $validatedData['town'] ?? null)
-        ->select('town') // Assuming your column name is 'town'
-        ->first();
+        // 2. Look up the Town name using the submitted town ID
+        // (Adjust 'towns' table name or column name if yours are named differently)
+        $townRecord = \Illuminate\Support\Facades\DB::table('towns')
+            ->where('id', $validatedData['town'] ?? null)
+            ->select('town') // Assuming your column name is 'town'
+            ->first();
 
-    // 3. Fetch the coordinates AND the barangay name from the barangays table
-    $barangayRecord = \Illuminate\Support\Facades\DB::table('barangays')
-        ->where('id', $validatedData['barangay'] ?? null)
-        ->select('barangay', 'latitude', 'longitude') // Assuming your column name is 'barangay'
-        ->first();
+        // 3. Fetch the coordinates AND the barangay name from the barangays table
+        $barangayRecord = \Illuminate\Support\Facades\DB::table('barangays')
+            ->where('id', $validatedData['barangay'] ?? null)
+            ->select('barangay', 'latitude', 'longitude') // Assuming your column name is 'barangay'
+            ->first();
 
-    // 4. Overwrite the IDs with text names and merge everything into the final array
-    $jobData = array_merge($validatedData, [
-        'idno'      => $idno,
-        'town'      => $townRecord ? $townRecord->town : null,
-        'barangay'  => $barangayRecord ? $barangayRecord->barangay : null,
-        'latitude'  => $barangayRecord ? $barangayRecord->latitude : null,
-        'longitude' => $barangayRecord ? $barangayRecord->longitude : null,
-    ]);
+        // 4. Overwrite the IDs with text names and merge everything into the final array
+        $jobData = array_merge($validatedData, [
+            'idno'      => $idno,
+            'town'      => $townRecord ? $townRecord->town : null,
+            'barangay'  => $barangayRecord ? $barangayRecord->barangay : null,
+            'latitude'  => $barangayRecord ? $barangayRecord->latitude : null,
+            'longitude' => $barangayRecord ? $barangayRecord->longitude : null,
+        ]);
 
-    // 5. Create the Job Posting
-    $job = JobPosting::create($jobData);
+        // 5. Create the Job Posting
+        $job = JobPosting::create($jobData);
 
-    return redirect()->route('emp_postc', ['job_id' => $job->job_id])
-                    ->with('success', 'Job details, location names, and coordinates saved successfully.');
-}
+        return redirect()->route('emp_postc', ['job_id' => $job->job_id])
+                        ->with('success', 'Job details, location names, and coordinates saved successfully.');
+    }
 
     public function getSkillsByExpertise($expertiseId)
-    {
-        // 1. Find the row matching the selected Area of Expertise ID
-        $expertise = Expertise::find($expertiseId);
+{
+    // 1. Find the row matching the selected Area of Expertise ID
+    $expertise = Expertise::find($expertiseId);
 
-        if (!$expertise || empty($expertise->skills)) {
-            return response()->json([]);
-        }
-
-        // 2. Turn "Skill A, Skill B, Skill C" into ['Skill A', 'Skill B', 'Skill C']
-        $skillsArray = array_map('trim', explode(',', $expertise->skills));
-
-        // 3. Return the clean array to your JavaScript fetch
-        return response()->json($skillsArray);
+    if (!$expertise || empty($expertise->skills)) {
+        return response()->json([]);
     }
+
+    // 2. Turn the JSON array string ["skill1", "skill2"] into a clean PHP array
+    // If your Expertise model already casts 'skills' to an array, you can skip json_decode
+    $skillsArray = is_array($expertise->skills)
+        ? $expertise->skills
+        : json_decode($expertise->skills, true);
+
+    // Safety fallback if JSON decoding fails
+    if (!is_array($skillsArray)) {
+        $skillsArray = array_map('trim', explode(',', $expertise->skills));
+    }
+
+    // 3. Return the clean array to your JavaScript fetch
+    return response()->json(array_values($skillsArray));
+}
     public function emp_post()
     {
         $expertise = Expertise::all();
