@@ -16,6 +16,7 @@ class JobRecommendationController extends Controller
      * Display the recommended job listings.
      */
 
+
     // public function index(Request $request)
     // {
     //     // 1. Fetch user and validation checks
@@ -27,7 +28,7 @@ class JobRecommendationController extends Controller
     //         return redirect()->route('address.index')->with('error', 'Please complete your profile first.');
     //     }
     //     if (!$workDetail) {
-    //         return redirect()->route('background.index')->with('error', 'Please complete your skills profile first.');
+    //         return redirect()->route('expertise.process')->with('error', 'Please complete your skills profile first.');
     //     }
     //     if (is_null($jobPreference->latitude) || is_null($jobPreference->longitude)) {
     //         return redirect()->route('distance.index')->with('error', 'Please update your coordinates.');
@@ -37,10 +38,10 @@ class JobRecommendationController extends Controller
     //     $applicantLng = $jobPreference->longitude;
 
     //     $showAll = $request->has('show_all');
-    //     $isSearching = $request->hasAny(['job_type', 'job_category', 'province', 'town']);
-    //     $maxDistanceKm = 100;
+    //     // Modify isSearching to ensure it's ignored if "Show All" is explicitly clicked
+    //     $isSearching = !$showAll && $request->hasAny(['job_type', 'job_category', 'province', 'town']);
 
-    //     // 2. Start Base Query (Location & Distance)
+    //     // 2. Start Base Query (Location & Proximity Calculation)
     //     $query = JobPosting::select('job_postings.*', 'expertises.area_of_expertise')
     //         ->join('expertises', 'job_postings.job_category', '=', 'expertises.id')
     //         ->selectRaw("
@@ -49,18 +50,20 @@ class JobRecommendationController extends Controller
     //             * sin( radians( job_postings.latitude ) ) ) ) AS distance
     //         ", [$applicantLat, $applicantLng, $applicantLat]);
 
-    //     // 3. APPLY FILTERS (If user is explicitly searching or if query parameters are set)
-    //     if ($request->filled('job_type')) {
-    //         $query->where('job_postings.job_type', $request->input('job_type'));
-    //     }
-    //     if ($request->filled('job_category')) {
-    //         $query->where('job_postings.job_category', $request->input('job_category'));
-    //     }
-    //     if ($request->filled('province')) {
-    //         $query->where('job_postings.province', $request->input('province'));
-    //     }
-    //     if ($request->filled('town')) {
-    //         $query->where('job_postings.town', $request->input('town'));
+    //     // 3. APPLY FILTERS (Skipped completely if $showAll is true)
+    //     if (!$showAll) {
+    //         if ($request->filled('job_type')) {
+    //             $query->where('job_postings.job_type', $request->input('job_type'));
+    //         }
+    //         if ($request->filled('job_category')) {
+    //             $query->where('job_postings.job_category', $request->input('job_category'));
+    //         }
+    //         if ($request->filled('province')) {
+    //             $query->where('job_postings.province', $request->input('province'));
+    //         }
+    //         if ($request->filled('town')) {
+    //             $query->where('job_postings.town', $request->input('town'));
+    //         }
     //     }
 
     //     // 4. APPLY SKILLS MATCHING (Only on standard load: NOT when searching and NOT when showing all)
@@ -77,18 +80,11 @@ class JobRecommendationController extends Controller
     //         }
     //     }
 
-    //     // 5. DISTANCE CONSTRAINT BYPASS
-    //     if (!$showAll && !$isSearching) {
-    //         $query->having('distance', '<=', $maxDistanceKm);
-    //     } else {
-    //         $maxDistanceKm = null; // Set to null for subheader display compatibility
-    //     }
-
-    //     // 6. Finalize Results
+    //     // 5. Finalize Results (Sorted by closest distance)
     //     $jobs = $query->orderBy('distance', 'asc')->get();
-    //     $expertise = Expertise::all();
+    //     $expertise = \App\Models\Expertise::all(); // Added fallback full namespace if not imported
 
-    //     return view('rec', compact('jobs', 'maxDistanceKm', 'expertise'));
+    //     return view('rec', compact('jobs', 'expertise'));
     // }
     public function index(Request $request)
     {
@@ -97,11 +93,19 @@ class JobRecommendationController extends Controller
         $workDetail = \App\Models\WorkDetails::where('idno', Auth::user()->idno)->first();
         $jobPreference = \App\Models\JobPreference::where('idno', Auth::user()->idno)->first();
 
+        // Fetch educational profile to retrieve course fields
+        $educational = \Illuminate\Support\Facades\DB::table('educationals')
+            ->where('idno', Auth::user()->idno)
+            ->first();
+
         if (!$applicant) {
             return redirect()->route('address.index')->with('error', 'Please complete your profile first.');
         }
+        if (!$educational) {
+            return redirect()->route('background.index')->with('error', 'Please complete your educational profile first.');
+        }
         if (!$workDetail) {
-            return redirect()->route('background.index')->with('error', 'Please complete your skills profile first.');
+            return redirect()->route('expertise.process')->with('error', 'Please complete your skills profile first.');
         }
         if (is_null($jobPreference->latitude) || is_null($jobPreference->longitude)) {
             return redirect()->route('distance.index')->with('error', 'Please update your coordinates.');
@@ -111,25 +115,27 @@ class JobRecommendationController extends Controller
         $applicantLng = $jobPreference->longitude;
 
         $showAll = $request->has('show_all');
-        // Modify isSearching to ensure it's ignored if "Show All" is explicitly clicked
-        $isSearching = !$showAll && $request->hasAny(['job_type', 'job_category', 'province', 'town']);
+
+        // Check if the user is actively using the search/filter form
+        $isSearching = !$showAll && $request->hasAny(['job_type', 'course', 'province', 'town']);
 
         // 2. Start Base Query (Location & Proximity Calculation)
-        $query = JobPosting::select('job_postings.*', 'expertises.area_of_expertise')
-            ->join('expertises', 'job_postings.job_category', '=', 'expertises.id')
+        $query = JobPosting::select('job_postings.*')
             ->selectRaw("
                 ( 6371 * acos( cos( radians(?) ) * cos( radians( job_postings.latitude ) )
                 * cos( radians( job_postings.longitude ) - radians(?) ) + sin( radians(?) )
                 * sin( radians( job_postings.latitude ) ) ) ) AS distance
             ", [$applicantLat, $applicantLng, $applicantLat]);
 
-        // 3. APPLY FILTERS (Skipped completely if $showAll is true)
-        if (!$showAll) {
+        // 3. APPLY FILTERS (Active Search Mode)
+        if (!$showAll && $isSearching) {
             if ($request->filled('job_type')) {
                 $query->where('job_postings.job_type', $request->input('job_type'));
             }
-            if ($request->filled('job_category')) {
-                $query->where('job_postings.job_category', $request->input('job_category'));
+            if ($request->filled('course')) {
+                // Updated to search within JSON array structure using LIKE
+                $searchCourse = $request->input('course');
+                $query->where('job_postings.course', 'LIKE', '%' . $searchCourse . '%');
             }
             if ($request->filled('province')) {
                 $query->where('job_postings.province', $request->input('province'));
@@ -139,25 +145,41 @@ class JobRecommendationController extends Controller
             }
         }
 
-        // 4. APPLY SKILLS MATCHING (Only on standard load: NOT when searching and NOT when showing all)
+        // 4. APPLY AUTOMATIC MATCHING (Standard Load Mode - when NOT searching and NOT showing all)
         if (!$showAll && !$isSearching) {
-            $preferredSkills = $workDetail->skills;
-            $skillsArray = is_array($preferredSkills) ? $preferredSkills : json_decode($preferredSkills, true) ?? [];
+            // A. STRICT COURSE FILTERING (Match array to array)
+            // Collect all non-null courses from the applicant's educational profile
+            $applicantCourses = array_filter([
+                $educational->vocational_course ?? null,
+                $educational->course_degree ?? null,
+                $educational->postgrad_course_degree ?? null,
+                $educational->doctoral_course_degree ?? null
+            ]);
 
-            if (!empty($skillsArray)) {
-                $query->where(function ($q) use ($skillsArray) {
-                    foreach ($skillsArray as $skill) {
-                        $q->orWhere('job_postings.skills_required', 'LIKE', '%' . $skill . '%');
+            // Clean values: trim whitespaces and remove duplicates
+            $applicantCourses = array_unique(array_filter(array_map('trim', $applicantCourses)));
+
+            // Strict: Only display jobs where the job's course array matches one of the applicant's courses
+            if (!empty($applicantCourses)) {
+                $query->where(function ($q) use ($applicantCourses) {
+                    foreach ($applicantCourses as $course) {
+                        // Since job_postings.course is stored as a JSON array (e.g. ["Course A", "Course B"]),
+                        // using 'LIKE' finds the exact course name wrapped within the JSON string.
+                        $q->orWhere('job_postings.course', 'LIKE', '%' . $course . '%');
                     }
                 });
+            } else {
+                // Optional fallback: If applicant has no courses filled, return nothing on strict load to maintain logic
+                $query->whereRaw('1 = 0');
             }
         }
 
-        // 5. Finalize Results (Sorted by closest distance)
+        // 5. Finalize Results (Strictly sorted by closest distance)
         $jobs = $query->orderBy('distance', 'asc')->get();
-        $expertise = \App\Models\Expertise::all(); // Added fallback full namespace if not imported
+        $expertise = \App\Models\Expertise::all();
+        $courses = \Illuminate\Support\Facades\DB::table('courses')->select('display_name')->distinct()->get();
 
-        return view('rec', compact('jobs', 'expertise'));
+        return view('rec', compact('jobs', 'courses', 'expertise'));
     }
     public function details($job_id)
     {

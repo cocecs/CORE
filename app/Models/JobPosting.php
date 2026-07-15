@@ -28,6 +28,7 @@ class JobPosting extends Model
         'job_id',
         'job_type',
         'job_category',
+        'course',
         'skills_required',
         'job_title',
         'job_summary',

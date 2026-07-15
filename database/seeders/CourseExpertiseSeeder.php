@@ -23,112 +23,129 @@ class CourseExpertiseSeeder extends Seeder
         $mappingMatrix = [
             'Information & Communications Technology' => [
                 'educ_level' => 'vocational',
-                'code' => 'ICT',
+                'code'       => 'ICT',
                 'skills' => [
-                    'Assembling and disassembling computer systems', 'Installing and configuring operating systems', 'Troubleshooting hardware and software issues',
-                    'Performing preventive maintenance on computer systems', 'Upgrading computer components', 'Networking basics and configuration', 'Data backup and recovery procedures',
-                    'Computer security and virus protection', 'Customer support and technical assistance', 'Understanding computer architecture and components',
-                    'Knowledge of computer peripherals and accessories', 'Understanding computer software applications', 'Basic programming and scripting knowledge',
-                    'Understanding computer networking protocols', 'Knowledge of computer hardware specifications', 'Familiarity with computer repair tools and equipment',
-                    'Understanding computer system performance optimization', 'Knowledge of computer system diagnostics and testing', 'Understanding computer system documentation and manuals',
-                    'Knowledge of computer system troubleshooting techniques'
+                    'Computer Systems Servicing NC II (CSS NC II)', 'Visual Graphic Design NC III (VGD NC III)',
+                    'Technical Drafting NC II', 'Broadband Installation (Fixed Wireless Systems) NC II',
+                    'Telecom OSP Installation (Fiber Optic Cable) NC II', 'Contact Center Services NC II',
+                    'Web Development NC III', 'Animation NC II', 'Illustration NC II',
+                    'Programming (.NET Technology) NC III', 'Programming (Java) NC III', 'Programming (Oracle Database) NC III'
                 ],
                 'courses' => [
                     'Computer Systems Servicing (CSS)' => ['css', 'computer systems servicing', 'computer hardware and software'],
-                    'Visual Graphic Design (VGD)' => ['vgd', 'visual graphic design', 'graphic design'],
+                    'Visual Graphic Design (VGD)_'      => ['vgd', 'visual graphic design', 'graphic design'],
                 ]
             ],
             'Visual Graphic Design' => [
                 'educ_level' => 'vocational',
-                'code' => 'VGD',
+                'code'       => 'VGD',
                 'skills' => [
-                    'Graphic design principles and elements', 'Typography and font selection', 'Color theory and color schemes', 'Layout and composition techniques',
-                    'Image editing and manipulation', 'Vector graphics and illustration', 'Logo design and branding',
-                    'User interface (UI) design', 'User experience (UX) design', 'Web design and responsive design', 'Print design and production',
-                    'Digital illustration and concept art', 'Motion graphics and animation', 'Photography and photo editing', '3D modeling and rendering',
-                    'Packaging design and product visualization', 'Advertising and marketing design', 'Social media graphics and content creation',
-                    'Presentation design and visual storytelling', 'Portfolio development and self-promotion'
+                    'Visual Graphic Design NC III', 'Illustration NC II', 'Animation NC II',
+                    'Animation NC III', '2D Animation NC III', '3D Animation NC III',
+                    'Photography NC II', 'Web Development NC III', 'Adobe Certified Professional (ACP) - Photoshop/Illustrator'
                 ],
                 'courses' => [
-
+                    'Visual Graphic Design (VGD)' => ['vgd', 'visual graphic design', 'graphic design'],
+                    'Illustration'                => ['illustration', 'illustrator', 'digital art'],
+                    'Animation'                   => ['animation', '2d animation', '3d animation', 'animator'],
                 ]
             ],
             'Contact Center Services' => [
-                'educ_level' => 'vocational',
-                'code' => 'CCS',
+                'educ_level'   => 'vocational',
+                'code'         => 'CCS',
                 'skills' => [
-                    'Customer service and support', 'Communication skills and active listening', 'Problem-solving and conflict resolution',
-                    'Call handling and telephone etiquette', 'CRM (Customer Relationship Management) software proficiency', 'Multitasking and time management',
-                    'Product and service knowledge', 'Sales and upselling techniques', 'Data entry and documentation skills', 'Teamwork and collaboration',
-                    'Adaptability and flexibility', 'Stress management and resilience', 'Quality assurance and performance monitoring',
-                    'Technical troubleshooting and support', 'Customer feedback analysis and reporting', 'Knowledge of company policies and procedures',
-                    'Understanding customer needs and expectations', 'Handling difficult customers and situations', 'Knowledge of industry regulations and compliance',
-                    'Continuous learning and professional development'
+                    'Contact Center Services NC II',
+                    'Customer Services NC II',
+                    'Customer Service Representative NC II',
+
                 ],
-                'courses' => [
+                'courses'      => [
                     'Contact Center Services (CCS)' => ['ccs', 'contact center services', 'customer service'],
+                    'Customer Services'             => ['customer services', 'customer support'],
+                    'Customer Service Representative' => ['customer service representative', 'csr']
                 ]
             ],
             'Automotive & Land Transportation' => [
-                'educ_level' => 'vocational',
-                'code' => 'ALT',
+                'educ_level'   => 'vocational',
+                'code'         => 'ALT',
                 'skills' => [
-                    'Diagnosing and repairing automotive engine mechanical systems', 'Servicing automotive electrical and electronic systems', 'Troubleshooting and repairing brake systems',
-                    'Performing wheel alignment and balancing', 'Servicing automotive air conditioning systems', 'Conducting preventive maintenance services (PMS)',
-                    'Overhauling engine assemblies', 'Diagnosing electronic fuel injection (EFI) systems', 'Repairing manual and automatic transmission systems',
-                    'Understanding vehicle suspension and steering mechanics', 'Using specialized automotive diagnostic scanners and tools', 'Adhering to workshop safety and hazardous waste disposal regulations'
+                    'Automotive Servicing NC I',
+                    'Automotive Servicing NC II',
+                    'Automotive Servicing NC III',
+                    'Automotive Servicing NC IV',
+                    'Driving NC II',
+                    'Driving (Passenger Bus/Heavy Vehicle) NC III',
+                    'Motorcycle and Small Engine Servicing NC II',
                 ],
-                'courses' => [
-                    'Automotive Servicing' => ['automotive servicing', 'car repair', 'mechanic', 'auto electrical'],
-                    'Driving' => ['driving', 'light vehicle driving', 'heavy vehicle driving', 'truck driving'],
+                'courses'      => [
+                    'Automotive Servicing'                  => ['automotive servicing', 'car repair', 'mechanic', 'auto electrical'],
+                    'Driving'                               => ['driving', 'light vehicle driving', 'heavy vehicle driving', 'truck driving'],
                     'Motorcycle and Small Engine Servicing' => ['motorcycle servicing', 'small engine repair', 'motorcycle mechanic']
                 ]
             ],
             'Tourism, Hospitality, & Culinary' => [
-                'educ_level' => 'vocational',
-                'code' => 'THC',
+                'educ_level'   => 'vocational',
+                'code'         => 'THC',
                 'skills' => [
-                    'Preparing and cooking hot and cold meals', 'Baking bread, pastries, and cakes', 'Performing professional food and beverage table service',
-                    'Managing front office reservations and guest relations', 'Executing commercial housekeeping and room preparation', 'Preparing and mixing alcoholic and non-alcoholic beverages',
-                    'Applying food safety, sanitation, and HACCP standards', 'Handling customer complaints and providing guest assistance', 'Operating point-of-sale (POS) systems',
-                    'Understanding kitchen workflow and inventory management', 'Applying barista techniques and espresso machine operation'
+                    'Cookery NC II',
+                    'Commercial Cooking NC III',
+                    'Commercial Cooking NC IV',
+                    'Food and Beverage Services NC II',
+                    'Food and Beverage Services NC III',
+                    'Bread and Pastry Production NC II',
+                    'Housekeeping NC II',
+                    'Housekeeping NC III',
+                    'Bartending NC II',
+                    'Barista NC II',
+                    'Front Office Services NC II',
                 ],
-                'courses' => [
-                    'Cookery' => ['cookery', 'culinary arts', 'cooking', 'chef'],
-                    'Food and Beverage Services (FBS)' => ['fbs', 'food and beverage services', 'waiter', 'waitress'],
+                'courses'      => [
+                    'Cookery'                            => ['cookery', 'culinary arts', 'cooking', 'chef'],
+                    'Food and Beverage Services (FBS)'  => ['fbs', 'food and beverage services', 'waiter', 'waitress'],
                     'Bread and Pastry Production (BPP)' => ['bpp', 'bread and pastry production', 'baking', 'baker'],
-                    'Housekeeping' => ['housekeeping', 'room attendant', 'hotel maintenance'],
-                    'Bartending' => ['bartending', 'barista', 'mixology', 'coffee making']
+                    'Housekeeping'                       => ['housekeeping', 'room attendant', 'hotel maintenance'],
+                    'Bartending'                         => ['bartending', 'barista', 'mixology', 'coffee making']
                 ]
             ],
             'Construction & Mechanical Trades' => [
-                'educ_level' => 'vocational',
-                'code' => 'CMT',
+                'educ_level'   => 'vocational',
+                'code'         => 'CMT',
                 'skills' => [
-                    'Performing shielded metal arc welding (SMAW)', 'Interpreting technical blueprints and architectural drawings', 'Installing, maintaining, and repairing electrical wiring systems',
-                    'Roughing-in and installing electrical conduits', 'Installing and repairing plumbing fixtures and piping networks', 'Performing woodworking, joinery, and structural carpentry',
-                    'Operating manual and semi-automatic welding equipment', 'Applying occupational health and safety standards on construction sites', 'Troubleshooting industrial and residential electrical faults',
-                    'Using precision layout, measuring, and cutting tools'
+                    'Shielded Metal Arc Welding (SMAW) NC I',
+                    'Shielded Metal Arc Welding (SMAW) NC II',
+                    'Shielded Metal Arc Welding (SMAW) NC III',
+                    'Flux Cored Arc Welding (FCAW) NC II',
+                    'Gas Metal Arc Welding (GMAW) NC II',
+                    'Electrical Installation and Maintenance (EIM) NC II',
+                    'Electrical Installation and Maintenance (EIM) NC III',
+                    'Plumbing NC II',
+                    'Plumbing NC III',
+                    'Carpentry NC II',
+                    'Carpentry NC III',
                 ],
-                'courses' => [
-                    'Shielded Metal Arc Welding (SMAW)' => ['smaw', 'welding', 'welder', 'arc welding'],
+                'courses'      => [
+                    'Shielded Metal Arc Welding (SMAW)'              => ['smaw', 'welding', 'welder', 'arc welding'],
                     'Electrical Installation and Maintenance (EIM)' => ['eim', 'electrical installation', 'electrician', 'house wiring'],
-                    'Plumbing' => ['plumbing', 'plumber', 'pipefitting'],
-                    'Carpentry' => ['carpentry', 'carpenter', 'woodworking']
+                    'Plumbing'                                       => ['plumbing', 'plumber', 'pipefitting'],
+                    'Carpentry'                                      => ['carpentry', 'carpenter', 'woodworking']
                 ]
             ],
             'Health, Beauty, & Wellness' => [
-                'educ_level' => 'vocational',
-                'code' => 'HBW',
+                'educ_level'   => 'vocational',
+                'code'         => 'HBW',
                 'skills' => [
-                    'Performing basic nursing and patient care procedures', 'Assisting elderly, disabled, or convalescent patients with daily living', 'Administering basic first aid and emergency response',
-                    'Performing professional haircutting, styling, and chemical hair treatments', 'Applying aesthetic makeup and facial treatments', 'Performing manicures, pedicures, and nail art',
-                    'Executing various therapeutic massage techniques (Swedish, Shiatsu, reflexology)', 'Maintaining strict hygiene and sterilization of beauty tools', 'Conducting client consultations and skin/hair assessments'
+                    'Caregiving NC. II',
+                    'Caregiving (Grade Schooler/Adolescent) NC III',
+                    'Hairdressing NC II',
+                    'Hairdressing NC III',
+                    'Beauty Care (Nail Care) NC II',
+                    'Beauty Care NC III',
+                    'Massage Therapy NC II',
                 ],
-                'courses' => [
-                    'Caregiving' => ['caregiving', 'caregiver', 'patient care', 'elderly care'],
-                    'Hairdressing' => ['hairdressing', 'hair stylist', 'salon management'],
-                    'Beauty Care' => ['beauty care', 'esthetics', 'makeup artist', 'nail technician'],
+                'courses'      => [
+                    'Caregiving'      => ['caregiving', 'caregiver', 'patient care', 'elderly care'],
+                    'Hairdressing'    => ['hairdressing', 'hair stylist', 'salon management'],
+                    'Beauty Care'     => ['beauty care', 'esthetics', 'makeup artist', 'nail technician'],
                     'Massage Therapy' => ['massage therapy', 'masseur', 'masseuse', 'spa therapist']
                 ]
             ],

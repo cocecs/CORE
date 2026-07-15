@@ -25,6 +25,7 @@ class StoreJobPostingRequest extends FormRequest
             'job_id' => 'nullable|string|max:255',
             'job_type' => 'required|string|max:50',
             'job_category' => 'required|string|max:50',
+            'course_id' => 'required|exists:courses,id',
             'skills_required' => 'required|array',
             'province' => 'required|string|max:50',
             'town' => 'required|string|max:50',
@@ -35,5 +36,5 @@ class StoreJobPostingRequest extends FormRequest
             'num_positions' => 'required|integer',
         ];
     }
-    
+
 }

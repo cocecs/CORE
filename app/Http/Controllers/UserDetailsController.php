@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Http;
 
 use App\Models\User;
 use App\Models\UserDetails;
+use App\Models\WorkDetails;
+use App\Models\Educational;
 use App\Http\Requests\StoreUserDetailsRequest;
 use App\Http\Requests\UpdateUserDetailsRequest;
 use App\Http\Requests\UpdateUserSexRequest;
@@ -27,7 +29,9 @@ class UserDetailsController extends Controller
     public function profile()
     {
         $user = UserDetails::where('idno', auth()->user()->idno)->first();
-        return view('app.profile', compact('user'));
+        $work = WorkDetails::where('idno', auth()->user()->idno)->first();
+        $education = Educational::where('idno', auth()->user()->idno)->first();
+        return view('app.profile', compact('user', 'work', 'education'));
     }
     /**
      * Show the form for creating a new resource.

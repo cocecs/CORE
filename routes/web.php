@@ -151,7 +151,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/par/{job_id}/interview/{idno}/remove', [JobPostingController::class, 'removeFromInterviewList'])->name('jobs.removeInterviewe');
     // employer hire applicant route
     Route::patch('/par/{job_id}/interview/{idno}/hire', [JobPostingController::class, 'hireApplicant'])->name('jobs.hireApplicant');
-
+    // employer - get the courses
+    Route::get('/get-courses/{expertiseId}', [App\Http\Controllers\EmployerController::class, 'getCourses']);
     //list of recommended jobs route
     Route::get('/rec', [JobRecommendationController::class, 'index'])->name('recommended');
     // job details route

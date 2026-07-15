@@ -1,10 +1,16 @@
 <x-app-layout>
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="flex flex-col justify-between items-center mb-6">
-        @if ($errors->any())
+    <div class="flex flex-col justify-between items-center">
+        @if ($errors->any() || session('error'))
+            {{-- 1. Display your specific validation error if it exists --}}
             @error('expertise')
-                <h2 class="text-1xl font-semibold text-red-600">* {{ $message }}</h2>
+                <h2 class="text-1xl font-semibold text-red-600">*ad {{ $message }}</h2>
             @enderror
+
+            {{-- 2. Display the redirect flash error message --}}
+            @if (session('error'))
+                <h2 class="text-1xl font-semibold text-red-600">* {{ session('error') }}</h2>
+            @endif
         @else
             <h2 class="text-1xl font-semibold text-blue-700">Wow! You earned {{ $user->educational_level }}. <br/>Select your areas of expertise</h2>
         @endif

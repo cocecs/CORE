@@ -39,6 +39,12 @@
                     <option value="{{ $item->id }}">{{ $item->area_of_expertise }}</option>
                 @endforeach
             </select>
+            <label for="course-select" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Course <span class="text-red-700">*</span></label>
+            <select id="course-select" name="course_id[]" multiple
+                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+                @error('course_id') border-red-500 @enderror required>
+                <option value="">Select Course</option>
+            </select>
             <label for="skills-select" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Skills Required <span class="text-red-700">*</span></label>
             <select id="skills-select" name="skills_required[]" multiple
                 class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
@@ -150,41 +156,58 @@
             });
             </script>
             <script>
-                // 1. Grab both dropdown elements from the DOM
-                const jobCategoryDropdown = document.getElementById('job_category');
-                const skillsSelect = document.getElementById('skills-select');
+    // 1. Grab dropdown elements from the DOM
+    const jobCategoryDropdown = document.getElementById('job_category');
+    const skillsSelect = document.getElementById('skills-select');
+    const courseSelect = document.getElementById('course-select'); // New Course element
 
-                // 2. Listen for when the user CHANGES the "Areas of Expertise" dropdown
-                jobCategoryDropdown.addEventListener('change', function() {
-                    const expertiseId = this.value; // Gets the selected option's value (the ID)
+    // 2. Listen for when the user CHANGES the "Areas of Expertise" dropdown
+    jobCategoryDropdown.addEventListener('change', function() {
+        const expertiseId = this.value; // Gets the selected option's value (the ID)
 
-                    // If the user selected an empty option, reset the skills dropdown and stop
-                    if (!expertiseId) {
-                        skillsSelect.innerHTML = '<option value="">Select Skill</option>';
-                        return;
-                    }
+        // If the user selected an empty option, reset dropdowns and stop
+        if (!expertiseId) {
+            skillsSelect.innerHTML = '<option value="">Select Skill</option>';
+            courseSelect.innerHTML = '<option value="">Select Course</option>';
+            return;
+        }
 
-                    // 3. Fetch the data from your Laravel route dynamically
-                    fetch(`/get-skills/${expertiseId}`)
-                        .then(response => response.json())
-                        .then(skills => {
-                            // Clear old options
-                            skillsSelect.innerHTML = '<option value="">Select Skill</option>';
+        // --- FETCH SKILLS ---
+        fetch(`/get-skills/${expertiseId}`)
+            .then(response => response.json())
+            .then(skills => {
+                skillsSelect.innerHTML = '<option value="">Select Skill</option>';
 
-                            // 4. Loop through the array sent by your EmployerController
-                            skills.forEach(skill => {
-                                const option = document.createElement('option');
-                                option.value = skill;        // e.g., value="Graphic Design"
-                                option.textContent = skill.toLowerCase()
-                                    .split(' ')
-                                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                                    .join(' ');  // e.g., text="Graphic Design"
-                                skillsSelect.appendChild(option);
-                            });
-                        })
-                        .catch(error => console.error('Error fetching skills:', error));
+                skills.forEach(skill => {
+                    const option = document.createElement('option');
+                    option.value = skill;
+                    option.textContent = skill.toLowerCase()
+                        .split(' ')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ');
+                    skillsSelect.appendChild(option);
                 });
-            </script>
+            })
+            .catch(error => console.error('Error fetching skills:', error));
+
+        // --- FETCH COURSES (New Scenario) ---
+        fetch(`/get-courses/${expertiseId}`)
+            .then(response => response.json())
+            .then(courses => {
+                // Clear old options
+                courseSelect.innerHTML = '<option value="">Select Course</option>';
+
+                // Loop through the course objects and append options
+                courses.forEach(course => {
+                    const option = document.createElement('option');
+                    option.value = course.id; // Submits course ID to the backend
+                    option.textContent = course.display_name; // Displays the course name
+                    courseSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching courses:', error));
+    });
+</script>
             <!--input type="text" id="place_of_work" name="place_of_work" autocomplete="off" list="autocomplete-results"
                     placeholder="Start typing your work location..."
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border">

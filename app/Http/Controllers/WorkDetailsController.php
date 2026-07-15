@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Http\Requests\StoreWorkDetailsRequest;
 use App\Http\Requests\UpdateWorkDetailsRequest;
 use App\Models\WorkDetails;
+use App\Models\Educational;
 
 class WorkDetailsController extends Controller
 {
@@ -28,14 +29,48 @@ class WorkDetailsController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(StoreWorkDetailsRequest $request)
     {
         $idno = auth()->user()->idno;
+
+        // 1. Create the work details record as usual
         WorkDetails::create(array_merge($request->validated(), ['idno' => $idno]));
-        return redirect()->route('professional.index')->with('success', 'Work details saved successfully.');
+
+        // 2. Fetch the skills array from the request
+        $skills = $request->input('skills'); // Adjust if your input key name is different
+
+        if (!empty($skills)) {
+            // Convert the skills array to a clean, comma-separated string
+            $skillsString = is_array($skills) ? implode(', ', $skills) : $skills;
+
+            // Retrieve the educational record we inserted in the previous step
+            $educational = Educational::where('idno', $idno)->first();
+
+            if ($educational) {
+                $skillsColumn = null;
+
+                // Detect which course column was filled to target the correct skills column
+                if (!empty($educational->vocational_course)) {
+                    $skillsColumn = 'vocational_skills';
+                } elseif (!empty($educational->course_degree)) {
+                    $skillsColumn = 'bachelor_skills';
+                } elseif (!empty($educational->postgrad_course_degree)) {
+                    $skillsColumn = 'masters_skills';
+                } elseif (!empty($educational->doctoral_course_degree)) {
+                    $skillsColumn = 'doctoral_skills';
+                }
+
+                // If we found a matching column, update it
+                if ($skillsColumn) {
+                    $educational->update([
+                        $skillsColumn => $skillsString
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('professional.index')->with('success', 'Work and educational details saved successfully.');
     }
 
     /**

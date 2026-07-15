@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('job_id', 50)->unique();
             $table->string('job_type', 1);
             $table->string('job_category', 3);
+            $table->string('course', 60)->nullable();
             $table->json('skills_required');
             $table->string('job_title',50)->nullable();
             $table->text('job_summary')->nullable();
