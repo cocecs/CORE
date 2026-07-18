@@ -45,6 +45,11 @@
         <div><strong>Location:</strong> {{ $job->province }}, {{ $job->town }}, {{ $job->barangay }}</div>
         <div><strong>Type:</strong> {{ $job->job_type }}</div>
         <div><strong>Distance based on your work preferences:</strong> {{ round($job->distance, 1) }} km away</div>
+        <!-- Added: Salary Display in the grid -->
+        <div>
+            <strong>Salary / Compensation:</strong>
+            {{ $job->salary_range ? '₱' . number_format($job->salary_range, 2) : 'Not Specified' }}
+        </div>
     </div>
 
     <div class="prose max-w-none text-gray-800">

@@ -24,7 +24,8 @@ class UpdateJobPreferenceRequest extends FormRequest
         return [
             'work_location' => 'nullable|string|max:1',
             'province' => 'nullable|string|max:60',
-            'town' => 'nullable|string|max:30',
+            'town' => 'nullable|integer|max:30',
+
             'latitude' => 'nullable',
             'longitude' => 'nullable',
             'specify_country' => 'nullable|string|max:60'

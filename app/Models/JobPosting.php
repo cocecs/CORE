@@ -34,6 +34,7 @@ class JobPosting extends Model
         'job_summary',
         'job_description',
         'job_requirements',
+        'salary_range',
         'province',
         'town',
         'barangay',

@@ -108,13 +108,13 @@ Route::middleware('auth')->group(function () {
     //4Ps route
     Route::put('/employment/{idno}/fourps', [WorkDetailsController::class, 'fourps'])->name('fourps');
     //parttime fulltime route
-    Route::get('/job/prefocc', [JobPreferenceController::class, 'index'])->name('prefocc.index');
+    Route::get('/job/prefocc', [WorkDetailsController::class, 'indexPrefocc'])->name('prefocc.index');
     //parttime fulltime route
-    Route::put('/job/{idno}/prefocc', [JobPreferenceController::class, 'prefocc'])->name('prefocc');
+    Route::put('/job/{idno}/prefocc', [WorkDetailsController::class, 'prefocc'])->name('prefocc');
     //distance job route
-    Route::get('/job/distance', [JobPreferenceController::class, 'distance'])->name('distance.index');
+    Route::get('/job/distance', [WorkDetailsController::class, 'distance'])->name('distance.index');
     //store distance job route
-    Route::put('/job/{idno}/distance', [JobPreferenceController::class, 'work_location'])->name('work_location');
+    Route::put('/job/{idno}/distance', [WorkDetailsController::class, 'work_location'])->name('work_location');
     //user details route
     Route::get('/app/profile', [UserDetailsController::class, 'profile'])->name('profile');
 

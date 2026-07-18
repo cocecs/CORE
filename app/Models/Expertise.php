@@ -19,4 +19,8 @@ class Expertise extends Model
     protected $casts = [
         'skills' => 'array',
     ];
+    public function courses()
+    {
+        return $this->hasMany(Course::class, 'expertise_id', 'id');
+    }
 }

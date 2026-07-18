@@ -22,77 +22,111 @@ class JobPostingController extends Controller
         return view('par.lj', compact('user', 'expertise', 'jobs'));
     }
 
-        public function job_post(StoreJobPostingRequest $request)
-        {
-            $idno = auth()->user()->idno;
-
-            // 1. Get the validated data from your request
-            $validatedData = $request->validated();
-
-            // 2. Look up the Town name using the submitted town ID
-            $townRecord = \Illuminate\Support\Facades\DB::table('towns')
-                ->where('id', $validatedData['town'] ?? null)
-                ->select('town')
-                ->first();
-
-            // 3. Fetch the coordinates AND the barangay name from the barangays table
-            $barangayRecord = \Illuminate\Support\Facades\DB::table('barangays')
-                ->where('id', $validatedData['barangay'] ?? null)
-                ->select('barangay', 'latitude', 'longitude')
-                ->first();
-
-            // 4. UPDATED: Fetch multiple course display names using the submitted course IDs array
-            $courseIds = $validatedData['course_id'] ?? [];
-
-            // Query all matching courses and pluck their display names
-            $courseNames = \Illuminate\Support\Facades\DB::table('courses')
-                ->whereIn('id', is_array($courseIds) ? $courseIds : [$courseIds])
-                ->pluck('display_name')
-                ->toArray();
-
-            // 5. Overwrite the IDs with text names and merge everything into the final array
-            $jobData = array_merge($validatedData, [
-                'idno'      => $idno,
-                'town'      => $townRecord ? $townRecord->town : null,
-                'barangay'  => $barangayRecord ? $barangayRecord->barangay : null,
-                'latitude'  => $barangayRecord ? $barangayRecord->latitude : null,
-                'longitude' => $barangayRecord ? $barangayRecord->longitude : null,
-
-                // Save the array of course names as a JSON string (recommended)
-                // Alternatively, use: implode(', ', $courseNames) if you prefer a comma-separated string
-                'course'    => !empty($courseNames) ? json_encode($courseNames) : null,
-            ]);
-
-            // 6. Create the Job Posting
-            $job = JobPosting::create($jobData);
-
-            return redirect()->route('emp_postc', ['job_id' => $job->job_id])
-                            ->with('success', 'Job details, courses, location names, and coordinates saved successfully.');
-        }
-
-    public function getSkillsByExpertise($expertiseId)
+    public function job_post(StoreJobPostingRequest $request)
     {
-        // 1. Find the row matching the selected Area of Expertise ID
-        $expertise = Expertise::find($expertiseId);
+        $idno = auth()->user()->idno;
 
-        if (!$expertise || empty($expertise->skills)) {
-            return response()->json([]);
-        }
+        // 1. Get the validated data from your request
+        $validatedData = $request->validated();
 
-        // 2. Turn the JSON array string ["skill1", "skill2"] into a clean PHP array
-        // If your Expertise model already casts 'skills' to an array, you can skip json_decode
-        $skillsArray = is_array($expertise->skills)
-            ? $expertise->skills
-            : json_decode($expertise->skills, true);
+        // 2. Look up the Town name using the submitted town ID
+        $townRecord = \Illuminate\Support\Facades\DB::table('towns')
+            ->where('id', $validatedData['town'] ?? null)
+            ->select('town')
+            ->first();
 
-        // Safety fallback if JSON decoding fails
-        if (!is_array($skillsArray)) {
-            $skillsArray = array_map('trim', explode(',', $expertise->skills));
-        }
+        // 3. Fetch the coordinates AND the barangay name from the barangays table
+        $barangayRecord = \Illuminate\Support\Facades\DB::table('barangays')
+            ->where('id', $validatedData['barangay'] ?? null)
+            ->select('barangay', 'latitude', 'longitude')
+            ->first();
 
-        // 3. Return the clean array to your JavaScript fetch
-        return response()->json(array_values($skillsArray));
+        // 4. UPDATED: Fetch multiple course display names using the submitted course IDs array
+        $courseIds = $validatedData['course_id'] ?? [];
+
+        // Query all matching courses and pluck their display names
+        $courseNames = \Illuminate\Support\Facades\DB::table('courses')
+            ->whereIn('id', is_array($courseIds) ? $courseIds : [$courseIds])
+            ->pluck('display_name')
+            ->toArray();
+
+        // 5. Overwrite the IDs with text names and merge everything into the final array
+        $jobData = array_merge($validatedData, [
+            'idno'      => $idno,
+            'town'      => $townRecord ? $townRecord->town : null,
+            'barangay'  => $barangayRecord ? $barangayRecord->barangay : null,
+            'latitude'  => $barangayRecord ? $barangayRecord->latitude : null,
+            'longitude' => $barangayRecord ? $barangayRecord->longitude : null,
+
+            // Save the array of course names as a JSON string (recommended)
+            // Alternatively, use: implode(', ', $courseNames) if you prefer a comma-separated string
+            'course'    => !empty($courseNames) ? json_encode($courseNames) : null,
+        ]);
+
+        // 6. Create the Job Posting
+        $job = JobPosting::create($jobData);
+
+        return redirect()->route('emp_postc', ['job_id' => $job->job_id])
+                        ->with('success', 'Job details, courses, location names, and coordinates saved successfully.');
     }
+
+    // public function getSkillsByExpertise($expertiseId)
+    // {
+    //     // 1. Find the row matching the selected Area of Expertise ID
+    //     $expertise = Expertise::find($expertiseId);
+
+    //     if (!$expertise || empty($expertise->skills)) {
+    //         return response()->json([]);
+    //     }
+
+    //     // 2. Turn the JSON array string ["skill1", "skill2"] into a clean PHP array
+    //     // If your Expertise model already casts 'skills' to an array, you can skip json_decode
+    //     $skillsArray = is_array($expertise->skills)
+    //         ? $expertise->skills
+    //         : json_decode($expertise->skills, true);
+
+    //     // Safety fallback if JSON decoding fails
+    //     if (!is_array($skillsArray)) {
+    //         $skillsArray = array_map('trim', explode(',', $expertise->skills));
+    //     }
+
+    //     // 3. Return the clean array to your JavaScript fetch
+    //     return response()->json(array_values($skillsArray));
+    // }
+    // For your /get-skills/{id} route
+public function getSkillsByExpertise($expertiseId)
+{
+    $expertise = Expertise::find($expertiseId);
+
+    if (!$expertise) {
+        return response()->json([]);
+    }
+
+    // Safely unpack the JSON skills column
+    $skillsArray = is_array($expertise->skills)
+        ? $expertise->skills
+        : json_decode($expertise->skills, true);
+
+    if (!is_array($skillsArray)) {
+        $skillsArray = [];
+    }
+
+    // Return the flat array directly so JS loops over it smoothly
+    return response()->json(array_values($skillsArray));
+}
+
+// For your /get-courses/{id} route
+public function getCoursesByExpertise($expertiseId)
+{
+    $expertise = Expertise::with('courses')->find($expertiseId);
+
+    if (!$expertise) {
+        return response()->json([]);
+    }
+
+    // Return the plain collection (the updated frontend JavaScript handles grouping)
+    return response()->json($expertise->courses);
+}
     public function emp_post()
     {
         $expertise = Expertise::all();

@@ -20,39 +20,57 @@
   <div class="mx-auto w-full max-w-md px-6">
     <div class="flex flex-col gap-4">
         <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
-            <label for="job_type" class="block text-sm font-medium text-gray-700 mb-1">Type of Job <span class="text-red-700">*</span></label>
-            <select name="job_type"
-                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                @error('job_type') border-red-500 @enderror>
-                <option value=""></option>
-                <option value="Full Time">Full Time</option>
-                <option value="Part Time">Part Time</option>
-                <option value="Contract / Freelance">Contract / Freelance</option>
-                <option value="Temporary / Seasonal">Temporary / Seasonal</option>
-            </select>
-            <label for="job_category" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Category of Job <span class="text-red-700">*</span></label>
-            <select id="job_category" name="job_category"
-                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                @error('job_category') border-red-500 @enderror>
-                <option value=""></option>
-                @foreach($expertise as $item)
-                    <option value="{{ $item->id }}">{{ $item->area_of_expertise }}</option>
-                @endforeach
-            </select>
-            <label for="course-select" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Course <span class="text-red-700">*</span></label>
-            <select id="course-select" name="course_id[]" multiple
-                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                @error('course_id') border-red-500 @enderror required>
-                <option value="">Select Course</option>
-            </select>
-            <label for="skills-select" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Skills Required <span class="text-red-700">*</span></label>
-            <select id="skills-select" name="skills_required[]" multiple
-                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                @error('skills_required') border-red-500 @enderror>
-                <option value=""></option>
+    <!-- Type of Job -->
+    <label for="job_type" class="block text-sm font-medium text-gray-700 mb-1">Type of Job <span class="text-red-700">*</span></label>
+    <select name="job_type"
+        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('job_type') ? 'border-red-500 ring-red-500' : '' }}">
+        <option value=""></option>
+        <option value="Full Time">Full Time</option>
+        <option value="Part Time">Part Time</option>
+        <option value="Contract / Freelance">Contract / Freelance</option>
+        <option value="Temporary / Seasonal">Temporary / Seasonal</option>
+    </select>
+    @error('job_type')
+        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+    @enderror
 
-            </select>
-        </div>
+    <!-- Category of Job -->
+    <label for="job_category" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Category of Job <span class="text-red-700">*</span></label>
+    <select id="job_category" name="job_category"
+        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('job_category') ? 'border-red-500 ring-red-500' : '' }}">
+        <option value=""></option>
+        @foreach($expertise as $item)
+            <option value="{{ $item->id }}">{{ $item->area_of_expertise }}</option>
+        @endforeach
+    </select>
+    @error('job_category')
+        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+    @enderror
+
+    <!-- Course Selection Box -->
+    <label class="block text-sm font-medium text-gray-700 mb-1 mt-3">
+        Course <span class="text-red-700">*</span>
+    </label>
+    <div id="courses-container" class="block w-full rounded-md shadow-sm border bg-white max-h-48 overflow-y-auto p-3 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500
+        @error('course_id') border-red-500 @else border-gray-300 @enderror">
+        <p class="text-sm text-gray-400">Select a Job Category first...</p>
+    </div>
+    @error('course_id')
+        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+    @enderror
+
+    <!-- Skills Required Selection Box -->
+    <label class="block text-sm font-medium text-gray-700 mb-1 mt-3">
+        Skills Required <span class="text-red-700">*</span>
+    </label>
+    <div id="skills-container" class="block w-full rounded-md shadow-sm border bg-white max-h-48 overflow-y-auto p-3 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500
+        @error('skills_required') border-red-500 @else border-gray-300 @enderror">
+        <p class="text-sm text-gray-400">Select a Job Category first...</p>
+    </div>
+    @error('skills_required')
+        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+    @enderror
+</div>
         <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
             <div>
                 <label for="province" class="block text-sm font-medium text-gray-700 mb-1 mt-3"><b>LOCATION OF JOB</b></label>
@@ -156,58 +174,144 @@
             });
             </script>
             <script>
-    // 1. Grab dropdown elements from the DOM
-    const jobCategoryDropdown = document.getElementById('job_category');
-    const skillsSelect = document.getElementById('skills-select');
-    const courseSelect = document.getElementById('course-select'); // New Course element
+                // 1. Grab elements from the DOM
+                const jobCategoryDropdown = document.getElementById('job_category');
+                const skillsContainer = document.getElementById('skills-container');
+                const coursesContainer = document.getElementById('courses-container');
 
-    // 2. Listen for when the user CHANGES the "Areas of Expertise" dropdown
-    jobCategoryDropdown.addEventListener('change', function() {
-        const expertiseId = this.value; // Gets the selected option's value (the ID)
-
-        // If the user selected an empty option, reset dropdowns and stop
-        if (!expertiseId) {
-            skillsSelect.innerHTML = '<option value="">Select Skill</option>';
-            courseSelect.innerHTML = '<option value="">Select Course</option>';
-            return;
-        }
-
-        // --- FETCH SKILLS ---
-        fetch(`/get-skills/${expertiseId}`)
-            .then(response => response.json())
-            .then(skills => {
-                skillsSelect.innerHTML = '<option value="">Select Skill</option>';
-
-                skills.forEach(skill => {
-                    const option = document.createElement('option');
-                    option.value = skill;
-                    option.textContent = skill.toLowerCase()
+                // Helper: Converts "computer system" to "Computer System"
+                function titleCase(str) {
+                    return str.toLowerCase()
                         .split(' ')
                         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
                         .join(' ');
-                    skillsSelect.appendChild(option);
-                });
-            })
-            .catch(error => console.error('Error fetching skills:', error));
+                }
 
-        // --- FETCH COURSES (New Scenario) ---
-        fetch(`/get-courses/${expertiseId}`)
-            .then(response => response.json())
-            .then(courses => {
-                // Clear old options
-                courseSelect.innerHTML = '<option value="">Select Course</option>';
+                // Helper: Safely generates a unique ID string by removing spaces/special characters
+                function cleanId(string) {
+                    return string.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                }
 
-                // Loop through the course objects and append options
-                courses.forEach(course => {
-                    const option = document.createElement('option');
-                    option.value = course.id; // Submits course ID to the backend
-                    option.textContent = course.display_name; // Displays the course name
-                    courseSelect.appendChild(option);
+                // 2. Listen for "Areas of Expertise" dropdown changes
+                jobCategoryDropdown.addEventListener('change', function() {
+                    const expertiseId = this.value;
+
+                    // If nothing is selected, display empty placeholders and stop
+                    if (!expertiseId) {
+                        skillsContainer.innerHTML = '<p class="text-sm text-gray-400">Select a Job Category first...</p>';
+                        coursesContainer.innerHTML = '<p class="text-sm text-gray-400">Select a Job Category first...</p>';
+                        return;
+                    }
+
+                    // Show a temporary loading state
+                    skillsContainer.innerHTML = '<p class="text-sm text-gray-500 animate-pulse">Loading skills...</p>';
+                    coursesContainer.innerHTML = '<p class="text-sm text-gray-500 animate-pulse">Loading courses...</p>';
+
+                    // --- FETCH SKILLS ---
+                    fetch(`/get-skills/${expertiseId}`)
+                        .then(response => response.json())
+                        .then(skills => {
+                            skillsContainer.innerHTML = ''; // Clear container
+
+                            if (skills.length === 0) {
+                                skillsContainer.innerHTML = '<p class="text-sm text-gray-500">No skills available for this category.</p>';
+                                return;
+                            }
+
+                            skills.forEach((skill, index) => {
+                                const uniqueId = `skill-${cleanId(skill)}-${index}`;
+
+                                const div = document.createElement('div');
+                                div.className = 'flex items-center mb-2 last:mb-0';
+
+                                const checkbox = document.createElement('input');
+                                checkbox.type = 'checkbox';
+                                checkbox.id = uniqueId;
+                                checkbox.name = 'skills_required[]';
+                                checkbox.value = skill;
+                                checkbox.className = 'h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer';
+
+                                const label = document.createElement('label');
+                                label.htmlFor = uniqueId;
+                                label.className = 'ml-2 text-sm text-gray-700 cursor-pointer select-none';
+                                label.textContent = titleCase(skill);
+
+                                div.appendChild(checkbox);
+                                div.appendChild(label);
+                                skillsContainer.appendChild(div);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching skills:', error);
+                            skillsContainer.innerHTML = '<p class="text-sm text-red-500">Failed to load skills.</p>';
+                        });
+
+                    // --- FETCH & GROUP COURSES ---
+                    fetch(`/get-courses/${expertiseId}`)
+                        .then(response => response.json())
+                        .then(courses => {
+                            coursesContainer.innerHTML = ''; // Clear container
+
+                            if (courses.length === 0) {
+                                coursesContainer.innerHTML = '<p class="text-sm text-gray-500">No courses available for this category.</p>';
+                                return;
+                            }
+
+                            // Group courses by their educ_level property
+                            const groupedCourses = courses.reduce((groups, course) => {
+                                const level = course.educ_level || 'Other';
+                                if (!groups[level]) {
+                                    groups[level] = [];
+                                }
+                                groups[level].push(course);
+                                return groups;
+                            }, {});
+
+                            // Iterate through the groups (Vocational, Associate, Bachelor, etc.)
+                            Object.keys(groupedCourses).forEach(level => {
+                                // Create a section wrapper for this education level
+                                const sectionGroup = document.createElement('div');
+                                sectionGroup.className = 'mb-4 last:mb-0';
+
+                                // Create a clean heading for the education level
+                                const heading = document.createElement('h4');
+                                heading.className = 'text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 mt-2 border-b border-gray-100 pb-1';
+                                heading.textContent = titleCase(level);
+                                sectionGroup.appendChild(heading);
+
+                                // Append checkboxes belonging to this group
+                                groupedCourses[level].forEach(course => {
+                                    const uniqueId = `course-${course.id}`;
+
+                                    const div = document.createElement('div');
+                                    div.className = 'flex items-center mb-2 last:mb-0 pl-1';
+
+                                    const checkbox = document.createElement('input');
+                                    checkbox.type = 'checkbox';
+                                    checkbox.id = uniqueId;
+                                    checkbox.name = 'course_id[]';
+                                    checkbox.value = course.id;
+                                    checkbox.className = 'h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer';
+
+                                    const label = document.createElement('label');
+                                    label.htmlFor = uniqueId;
+                                    label.className = 'ml-2 text-sm text-gray-700 cursor-pointer select-none';
+                                    label.textContent = course.display_name;
+
+                                    div.appendChild(checkbox);
+                                    div.appendChild(label);
+                                    sectionGroup.appendChild(div);
+                                });
+
+                                coursesContainer.appendChild(sectionGroup);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching courses:', error);
+                            coursesContainer.innerHTML = '<p class="text-sm text-red-500">Failed to load courses.</p>';
+                        });
                 });
-            })
-            .catch(error => console.error('Error fetching courses:', error));
-    });
-</script>
+            </script>
             <!--input type="text" id="place_of_work" name="place_of_work" autocomplete="off" list="autocomplete-results"
                     placeholder="Start typing your work location..."
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border">

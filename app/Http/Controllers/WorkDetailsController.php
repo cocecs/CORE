@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\User;
 use App\Http\Requests\StoreWorkDetailsRequest;
@@ -19,14 +20,6 @@ class WorkDetailsController extends Controller
     {
         $user = User::where('idno', auth()->user()->idno)->first();
         return view('education.background', compact('user'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
 
@@ -231,5 +224,59 @@ class WorkDetailsController extends Controller
         $fourps->update($validatedData);
         return redirect()->route('prefocc.index')->with('success', 'User details saved successfully.');
 
+    }
+    public function indexPrefocc()
+    {
+        $user = User::where('idno', auth()->user()->idno)->first();
+        return view('job.prefocc', compact('user'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function prefocc(UpdateWorkDetailsRequest $request)
+    {
+        $idno = auth()->user()->idno;
+        WorkDetails::where('idno', $idno)->update($request->validated());
+        return redirect()->route('distance.index')->with('success', 'Job preference saved successfully.');
+    }
+    public function distance()
+    {
+        $user = User::where('idno', auth()->user()->idno)->first();
+        return view('job.distance', compact('user'));
+    }
+    public function work_location(UpdateWorkDetailsRequest $request, $idno)
+    {
+        // without coordinates
+        // $validatedData = $request->validated();
+        // $work_location = JobPreference::where('idno', $idno)->firstOrFail();
+        // $work_location->update($validatedData);
+        // return redirect()->route('recommended')->with('success', 'User details saved successfully.');
+
+        //with coordinates
+        $validatedData = $request->validated();
+        $jobPreference = WorkDetails::where('idno', $idno)->firstOrFail();
+        $jobPreference->fill($validatedData);
+
+        if ($request->input('work_location') == 'Local' && $request->filled('town')) {
+
+            // Find the town matching the ID sent from the dropdown
+            $townCoordinate = DB::table('towns')
+                ->where('id', $request->input('town')) // <-- Ensure 'id' is the primary key column in your towns table
+                ->select('latitude', 'longitude')
+                ->first();
+
+            if ($townCoordinate) {
+                $jobPreference->latitude = $townCoordinate->latitude;
+                $jobPreference->longitude = $townCoordinate->longitude;
+            }
+        } else {
+            $jobPreference->latitude = null;
+            $jobPreference->longitude = null;
+        }
+
+        $jobPreference->save();
+
+        return redirect()->route('recommended')->with('success', 'User details saved successfully.');
     }
 }

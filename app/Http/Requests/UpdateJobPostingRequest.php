@@ -24,6 +24,7 @@ class UpdateJobPostingRequest extends FormRequest
             'job_summary' => 'required|string',
             'job_description' => 'required|string',
             'job_requirements' => 'required|string',
+            'salary_range' => 'nullable|numeric|min:0',
         ];
     }
 }

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->text('job_summary')->nullable();
             $table->text('job_description')->nullable();
             $table->text('job_requirements')->nullable();
+            $table->decimal('salary_range', 10, 2)->nullable();
             $table->string('province',50)->nullable();
             $table->string('town',50)->nullable();
             $table->string('barangay',50)->nullable();

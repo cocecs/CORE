@@ -46,11 +46,6 @@ class JobPreferenceController extends Controller
         $jobPreference = JobPreference::where('idno', $idno)->firstOrFail();
         $jobPreference->fill($validatedData);
 
-        // --- DEBUGGING BLOCK ---
-        // If it stops here, look at what 'work_location' and 'town' are actually sending
-        // dd($request->input('work_location'), $request->input('town'));
-        // -----------------------
-
         if ($request->input('work_location') == '1' && $request->filled('town')) {
 
             // Find the town matching the ID sent from the dropdown
@@ -58,12 +53,6 @@ class JobPreferenceController extends Controller
                 ->where('id', $request->input('town')) // <-- Ensure 'id' is the primary key column in your towns table
                 ->select('latitude', 'longitude')
                 ->first();
-
-            // --- DEBUGGING BLOCK ---
-            // If this displays 'null', it means your 'towns' table doesn't have a row matching that town ID,
-            // or the column names ('latitude' / 'longitude') inside the 'towns' table are named differently.
-            // dd($townCoordinate);
-            // -----------------------
 
             if ($townCoordinate) {
                 $jobPreference->latitude = $townCoordinate->latitude;

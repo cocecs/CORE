@@ -163,127 +163,127 @@
 
     <!-- Combined Education & Skills Section Card -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-6">
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h2 class="text-3xl font-bold tracking-tight text-[#1e2d56]">Education & Skills</h2>
-            <p class="text-sm text-slate-400 mt-1">Your academic qualifications and the skills associated with them.</p>
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-3xl font-bold tracking-tight text-[#1e2d56]">Education & Skills</h2>
+                <p class="text-sm text-slate-400 mt-1">Your academic qualifications and the skills associated with them.</p>
+            </div>
+            <button @click="openAddModal()" class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-[#2b3a8f] hover:bg-[#202c70] active:bg-[#1a245c] rounded-xl transition-all shadow-sm focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                <span>Add Details</span>
+            </button>
         </div>
-        <button @click="openAddModal()" class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-[#2b3a8f] hover:bg-[#202c70] active:bg-[#1a245c] rounded-xl transition-all shadow-sm focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            <span>Add Details</span>
-        </button>
-    </div>
 
-    <!-- Course & Skills Card -->
-    <div class="space-y-6">
-        @php
-            // 1. Extract and organize completed courses purely from the Educationals record
-            $completedCourses = [];
-            if ($education) {
-                if (!empty($education->vocational_course)) {
-                    $completedCourses['Vocational Course'] = $education->vocational_course;
-                }
+        <!-- Course & Skills Card -->
+        <div class="space-y-6">
+            @php
+                // 1. Extract and organize completed courses purely from the Educationals record
+                $completedCourses = [];
+                if ($education) {
+                    if (!empty($education->vocational_course)) {
+                        $completedCourses['Vocational Course'] = $education->vocational_course;
+                    }
 
-                $degree = $education->degree_course ?? $education->course_degree ?? null;
-                if (!empty($degree)) {
-                    $completedCourses['Degree Course'] = $degree;
-                }
+                    $degree = $education->degree_course ?? $education->course_degree ?? null;
+                    if (!empty($degree)) {
+                        $completedCourses['Degree Course'] = $degree;
+                    }
 
-                $postgrad = $education->postgrad_degree_course ?? $education->postgrad_course_degree ?? null;
-                if (!empty($postgrad)) {
-                    $completedCourses['Postgraduate Degree'] = $postgrad;
-                }
+                    $postgrad = $education->postgrad_degree_course ?? $education->postgrad_course_degree ?? null;
+                    if (!empty($postgrad)) {
+                        $completedCourses['Postgraduate Degree'] = $postgrad;
+                    }
 
-                $doctoral = $education->doctoral_course ?? $education->doctoral_course_degree ?? null;
-                if (!empty($doctoral)) {
-                    $completedCourses['Doctoral Degree'] = $doctoral;
-                }
-            }
-
-            // 2. Fetch skills dynamically based on populated courses in Educationals
-            $skillsArray = [];
-            $rawSkillsString = '';
-
-            if ($education) {
-                if (!empty($education->vocational_course)) {
-                    $rawSkillsString = $education->vocational_skills;
-                } elseif (!empty($education->course_degree) || !empty($education->degree_course)) {
-                    $rawSkillsString = $education->bachelor_skills;
-                } elseif (!empty($education->postgrad_course_degree) || !empty($education->postgrad_degree_course)) {
-                    $rawSkillsString = $education->masters_skills;
-                } elseif (!empty($education->doctoral_course_degree) || !empty($education->doctoral_course)) {
-                    $rawSkillsString = $education->doctoral_skills;
-                }
-
-                // Format the skills into an array for tags rendering
-                if (!empty($rawSkillsString)) {
-                    if (is_array($rawSkillsString)) {
-                        $skillsArray = $rawSkillsString;
-                        $rawSkillsString = implode(', ', $skillsArray);
-                    } else {
-                        $skillsArray = array_filter(array_map('trim', explode(',', $rawSkillsString)));
+                    $doctoral = $education->doctoral_course ?? $education->doctoral_course_degree ?? null;
+                    if (!empty($doctoral)) {
+                        $completedCourses['Doctoral Degree'] = $doctoral;
                     }
                 }
-            }
-        @endphp
 
-        @if($education && (!empty($completedCourses) || !empty($skillsArray)))
-            <div class="bg-white border border-[#e2e8f0] rounded-2xl p-6 relative shadow-xs">
+                // 2. Fetch skills dynamically based on populated courses in Educationals
+                $skillsArray = [];
+                $rawSkillsString = '';
 
-                <!-- Trigger edit modal, passing only the mapped skills to Alpine.js -->
-                <button @click="openEditModal('{{ addslashes($rawSkillsString ?? '') }}')"
-                        class="absolute top-6 right-6 text-[#475569] hover:text-[#1e2d56] transition-colors focus:outline-none"
-                        aria-label="Edit entry">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                    </svg>
-                </button>
+                if ($education) {
+                    if (!empty($education->vocational_course)) {
+                        $rawSkillsString = $education->vocational_skills;
+                    } elseif (!empty($education->course_degree) || !empty($education->degree_course)) {
+                        $rawSkillsString = $education->bachelor_skills;
+                    } elseif (!empty($education->postgrad_course_degree) || !empty($education->postgrad_degree_course)) {
+                        $rawSkillsString = $education->masters_skills;
+                    } elseif (!empty($education->doctoral_course_degree) || !empty($education->doctoral_course)) {
+                        $rawSkillsString = $education->doctoral_skills;
+                    }
 
-                <h3 class="text-xl font-bold text-[#1e2d56] mb-4">Academic Profile</h3>
+                    // Format the skills into an array for tags rendering
+                    if (!empty($rawSkillsString)) {
+                        if (is_array($rawSkillsString)) {
+                            $skillsArray = $rawSkillsString;
+                            $rawSkillsString = implode(', ', $skillsArray);
+                        } else {
+                            $skillsArray = array_filter(array_map('trim', explode(',', $rawSkillsString)));
+                        }
+                    }
+                }
+            @endphp
 
-                <!-- Loop & Display Courses found in Educationals -->
-                @if(!empty($completedCourses))
-                    <div class="border-t border-slate-100 py-4 space-y-3">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Courses / Degrees Obtained</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            @foreach($completedCourses as $levelName => $courseName)
-                                <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col justify-center">
-                                    <span class="text-[10px] font-bold uppercase tracking-wider text-[#2b3a8f] mb-0.5">
-                                        {{ $levelName }}
-                                    </span>
-                                    <span class="text-sm font-semibold text-slate-700">
-                                        {{ $courseName }}
-                                    </span>
-                                </div>
-                            @endforeach
+            @if($education && (!empty($completedCourses) || !empty($skillsArray)))
+                <div class="bg-white border border-[#e2e8f0] rounded-2xl p-6 relative shadow-xs">
+
+                    <!-- Trigger edit modal, passing only the mapped skills to Alpine.js -->
+                    <button @click="openEditModal('{{ addslashes($rawSkillsString ?? '') }}')"
+                            class="absolute top-6 right-6 text-[#475569] hover:text-[#1e2d56] transition-colors focus:outline-none"
+                            aria-label="Edit entry">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                        </svg>
+                    </button>
+
+                    <h3 class="text-xl font-bold text-[#1e2d56] mb-4">Academic Profile</h3>
+
+                    <!-- Loop & Display Courses found in Educationals -->
+                    @if(!empty($completedCourses))
+                        <div class="border-t border-slate-100 py-4 space-y-3">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Courses / Degrees Obtained</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                @foreach($completedCourses as $levelName => $courseName)
+                                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col justify-center">
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-[#2b3a8f] mb-0.5">
+                                            {{ $levelName }}
+                                        </span>
+                                        <span class="text-sm font-semibold text-slate-700">
+                                            {{ $courseName }}
+                                        </span>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
-                @endif
+                    @endif
 
-                <!-- Nested Skills Tags -->
-                @if(!empty($skillsArray))
-                    <div class="border-t border-slate-100 pt-4">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Skills Acquired</h4>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach($skillsArray as $skill)
-                                <span class="px-3.5 py-1.5 bg-[#f4f6f9] text-[#2c3e50] rounded-full text-xs font-medium transition hover:bg-[#eaf0f6] cursor-pointer">
-                                    {{ $skill }}
-                                </span>
-                            @endforeach
+                    <!-- Nested Skills Tags -->
+                    @if(!empty($skillsArray))
+                        <div class="border-t border-slate-100 pt-4">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Skills Acquired</h4>
+                            <div class="flex flex-wrap gap-2">
+                                @foreach($skillsArray as $skill)
+                                    <span class="px-3.5 py-1.5 bg-[#f4f6f9] text-[#2c3e50] rounded-full text-xs font-medium transition hover:bg-[#eaf0f6] cursor-pointer">
+                                        {{ $skill }}
+                                    </span>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
-                @endif
-            </div>
-        @else
-            <!-- Fallback empty state -->
-            <div class="text-center py-8 border border-dashed border-slate-200 rounded-2xl">
-                <p class="text-sm text-slate-400">No courses or skills records found.</p>
-            </div>
-        @endif
+                    @endif
+                </div>
+            @else
+                <!-- Fallback empty state -->
+                <div class="text-center py-8 border border-dashed border-slate-200 rounded-2xl">
+                    <p class="text-sm text-slate-400">No courses or skills records found.</p>
+                </div>
+            @endif
+        </div>
     </div>
-</div>
 
     <!-- Personal Summary Section Card -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">

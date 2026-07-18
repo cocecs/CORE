@@ -37,7 +37,12 @@ class UpdateWorkDetailsRequest extends FormRequest
             'fourps' => 'nullable|string|max:1',
             'fourps_houshold_id' => 'nullable|string|max:20',
             'exploring_job' => 'nullable|array',
-            'distance_job' => 'nullable|string|max:1',
+            'pref_occ' => 'nullable|string|max:255',
+            'work_location' => 'nullable|string|max:9',
+            'province' => 'nullable|string|max:60',
+            'town' => 'nullable|integer|max:60',
+            'latitude' => 'nullable',
+            'longitude' => 'nullable',
             'job_roles' => 'nullable|string|max:1',
             'job_shift' => 'nullable|array',
         ];

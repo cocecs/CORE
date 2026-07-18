@@ -27,6 +27,13 @@
                 <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Assigned Region / Location</span>
                 <span class="text-sm font-medium text-gray-800">{{ $job->barangay }}, {{ $job->town }}, {{ $job->province }}</span>
             </div>
+            <!-- Added: Salary / Compensation Display -->
+            <div>
+                <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Salary / Compensation</span>
+                <span class="text-sm font-medium text-gray-800">
+                    {{ $job->salary_range ? '₱' . number_format($job->salary_range, 2) : 'Not Specified' }}
+                </span>
+            </div>
             <div>
                 <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Applicants:</span>
                 <span class="text-sm font-medium text-gray-800">{{ $jobApp }}</span>

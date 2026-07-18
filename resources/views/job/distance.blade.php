@@ -1,14 +1,21 @@
 <x-app-layout>
 <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="flex flex-col justify-between items-center mb-6">
-        @if ($errors->any())
-            @error('exploring_job')
-                <h2 class="text-1xl font-semibold text-red-600">* {{ $message }}</h2>
-            @enderror
-        @else
-            <h2 class="text-1xl font-semibold text-blue-700">Prefered Work Location</h2>
-        @endif
-    </div>
+    @if (session('error'))
+        <!-- Displays the redirect()->with('error', ...) message -->
+        <h2 class="text-1xl font-semibold text-red-600">* {{ session('error') }}</h2>
+
+    @elseif ($errors->any())
+        <!-- Displays specific validation errors if they exist -->
+        @error('exploring_job')
+            <h2 class="text-1xl font-semibold text-red-600">* {{ $message }}</h2>
+        @enderror
+
+    @else
+        <!-- Default heading when there are no errors -->
+        <h2 class="text-1xl font-semibold text-blue-700">Prefered Work Location</h2>
+    @endif
+</div>
     <div class="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
         <div class="p-6">
         <form action="{{ route('work_location', $user->idno) }}" method="POST">
@@ -18,7 +25,7 @@
 
                 <div>
                     <label class="cursor-pointer bg-white ">
-                        <input type="radio" class="peer sr-only" name="work_location" value="1" required/>
+                        <input type="radio" class="peer sr-only" name="work_location" value="Local" required/>
 
                         <div class="w-full max-w-xl rounded-t-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
                             <div class="flex flex-col gap-1">
@@ -103,7 +110,7 @@
                         </div>
                     </label>
                     <label class="cursor-pointer bg-white ">
-                        <input type="radio" class="peer sr-only" name="work_location" value="2" required/>
+                        <input type="radio" class="peer sr-only" name="work_location" value="Overseas" required/>
 
                         <div class="w-full max-w-xl rounded-t-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
                             <div class="flex flex-col gap-1">

@@ -33,7 +33,13 @@ return new class extends Migration
             $table->string('fourps', 1)->nullable();
             $table->string('fourps_houshold_id', 20)->nullable();
             $table->json('exploring_job')->nullable();
-            $table->string('distance_job',1)->nullable();
+            $table->string('pref_occ', 9)->nullable();
+            $table->string('work_location', 8)->nullable();
+            $table->string('province', 50)->nullable();
+            $table->string('town', 50)->nullable();
+            $table->decimal('latitude', 10, 7);
+            $table->decimal('longitude', 10, 7);
+            $table->string('specific_location', 60)->nullable();
             $table->string('job_roles',1)->nullable();
             $table->json('job_shift')->nullable();
             $table->timestamps();
