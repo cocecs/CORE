@@ -14,128 +14,133 @@
         @endif
     </div>
 </div>
-<form action="{{ route('emp.store') }}" method="POST">
+<form action="{{ route('adtv_storeEmployer') }}" method="POST">
 @csrf
 <div class="flex items-center justify-center">
   <div class="mx-auto w-full max-w-md px-6">
     <div class="flex flex-col gap-4">
         <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
+            <!-- Company Name -->
             <label for="company_name" class="block text-sm font-medium text-gray-700 mb-1">Company Name <span class="text-red-700">*</span></label>
-                <input type="text" name="company_name" id="company_name"
-                    class="block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('company_name') ? 'border-red-500' : 'border-gray-300' }}">
-            </label>
+            <input type="text" name="company_name" id="company_name"
+                class="block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('company_name') ? 'border-red-500' : 'border-gray-300' }}">
+
+            <!-- TIN -->
             <label for="tin" class="block text-sm font-medium text-gray-700 mb-1 mt-3">TIN</label>
-                <input type="text" id="tin" name="tin" maxlength="15"
-                    class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-            </label>
+            <input type="text" id="tin" name="tin" maxlength="15"
+                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
 
-            <label for="type_of_business" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Type of Business</label>
-                <input type="text" id="type_of_business" name="type_of_business" maxlength="15"
-                    class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-            </label>
+            <!-- EMAIL -->
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-1 mt-3">EMAIL <span class="text-red-700">*</span></label>
+                <input type="email" id="email" name="email"
+                    class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('email') ? 'border-red-500' : 'border-gray-300' }}">
 
+            <!-- Type of Business -->
+            <label for="type_of_business" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Type of Business <span class="text-red-700">*</span></label>
+            <input type="text" id="type_of_business" name="type_of_business" maxlength="15"
+                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
         </div>
         <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
             <div>
 
-                        <div>
-                            <label for="province" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Province <span class="text-red-700">*</span></label>
-                            <select id="province" name="province"
-                            class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('province') border-red-500 @enderror" required>
-                                <option value="" >Select Province</option>
-                            </select>
-                        </div>
+                <div>
+                    <label for="province" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Province <span class="text-red-700">*</span></label>
+                    <select id="province" name="province"
+                    class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('province') border-red-500 @enderror" required>
+                        <option value="" >Select Province</option>
+                    </select>
+                </div>
 
-                        <div>
-                            <label for="town" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Town <span class="text-red-700">*</span></label>
-                            <select id="town" name="town"
-                            class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('town') border-red-500 @enderror"required disabled>
-                                <option value="">Select Town/City</option>
-                            </select>
-                        </div>
+                <div>
+                    <label for="town" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Town <span class="text-red-700">*</span></label>
+                    <select id="town" name="town"
+                    class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('town') border-red-500 @enderror"required disabled>
+                        <option value="">Select Town/City</option>
+                    </select>
+                </div>
 
-                        <div>
-                            <label for="barangay" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Barangay <span class="text-red-700">*</span></label>
-                            <select id="barangay" name="brgy" required disabled
-                            class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('brgy') border-red-500 @enderror">
-                                <option value="">Select Barangay</option>
-                            </select>
-                        </div>
-                    </div>
-                    <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        const provinceSelect = document.getElementById('province');
-                        const townSelect = document.getElementById('town');
-                        const barangaySelect = document.getElementById('barangay');
+                <div>
+                    <label for="barangay" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Barangay <span class="text-red-700">*</span></label>
+                    <select id="barangay" name="brgy" required disabled
+                    class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('brgy') border-red-500 @enderror">
+                        <option value="">Select Barangay</option>
+                    </select>
+                </div>
+            </div>
+            <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const provinceSelect = document.getElementById('province');
+                const townSelect = document.getElementById('town');
+                const barangaySelect = document.getElementById('barangay');
 
-                        // Use Blade syntax to generate absolute base URLs natively
-                        const provincesUrl = "{{ url('/api/provinces') }}";
-                        const townsUrl     = "{{ url('/api/towns') }}";
-                        const barangaysUrl = "{{ url('/api/barangays') }}";
+                // Use Blade syntax to generate absolute base URLs natively
+                const provincesUrl = "{{ url('/api/provinces') }}";
+                const townsUrl     = "{{ url('/api/towns') }}";
+                const barangaysUrl = "{{ url('/api/barangays') }}";
 
-                        // 1. Fetch Provinces
-                        fetch(provincesUrl)
-                            .then(res => {
-                                if (!res.ok) throw new Error('Network response error');
-                                return res.json();
-                            })
-                            .then(provinces => {
-                                provinces.forEach(province => {
-                                    let opt = document.createElement('option');
-                                    opt.value = province;
-                                    opt.textContent = province;
-                                    provinceSelect.appendChild(opt);
-                                });
-                            })
-                            .catch(err => console.error('Error fetching provinces:', err));
-
-                        // 2. When Province Changes
-                        provinceSelect.addEventListener('change', function () {
-                            const province = this.value;
-
-                            townSelect.innerHTML = '<option value="">Select Town/City</option>';
-                            barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-                            townSelect.disabled = true;
-                            barangaySelect.disabled = true;
-
-                            if (!province) return;
-
-                            fetch(`${townsUrl}?province=${encodeURIComponent(province)}`)
-                                .then(res => res.json())
-                                .then(towns => {
-                                    towns.forEach(t => {
-                                        let opt = document.createElement('option');
-                                        opt.value = t.id;
-                                        opt.textContent = t.town;
-                                        townSelect.appendChild(opt);
-                                    });
-                                    townSelect.disabled = false;
-                                });
+                // 1. Fetch Provinces
+                fetch(provincesUrl)
+                    .then(res => {
+                        if (!res.ok) throw new Error('Network response error');
+                        return res.json();
+                    })
+                    .then(provinces => {
+                        provinces.forEach(province => {
+                            let opt = document.createElement('option');
+                            opt.value = province;
+                            opt.textContent = province;
+                            provinceSelect.appendChild(opt);
                         });
+                    })
+                    .catch(err => console.error('Error fetching provinces:', err));
 
-                        // 3. When Town Changes
-                        townSelect.addEventListener('change', function () {
-                            const townId = this.value;
+                // 2. When Province Changes
+                provinceSelect.addEventListener('change', function () {
+                    const province = this.value;
 
-                            barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-                            barangaySelect.disabled = true;
+                    townSelect.innerHTML = '<option value="">Select Town/City</option>';
+                    barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+                    townSelect.disabled = true;
+                    barangaySelect.disabled = true;
 
-                            if (!townId) return;
+                    if (!province) return;
 
-                            fetch(`${barangaysUrl}?town_id=${townId}`)
-                                .then(res => res.json())
-                                .then(barangays => {
-                                    barangays.forEach(b => {
-                                        let opt = document.createElement('option');
-                                        opt.value = b.id;
-                                        opt.textContent = b.barangay;
-                                        barangaySelect.appendChild(opt);
-                                    });
-                                    barangaySelect.disabled = false;
-                                });
+                    fetch(`${townsUrl}?province=${encodeURIComponent(province)}`)
+                        .then(res => res.json())
+                        .then(towns => {
+                            towns.forEach(t => {
+                                let opt = document.createElement('option');
+                                opt.value = t.id;
+                                opt.textContent = t.town;
+                                townSelect.appendChild(opt);
+                            });
+                            townSelect.disabled = false;
                         });
-                    });
-                    </script>
+                });
+
+                // 3. When Town Changes
+                townSelect.addEventListener('change', function () {
+                    const townId = this.value;
+
+                    barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+                    barangaySelect.disabled = true;
+
+                    if (!townId) return;
+
+                    fetch(`${barangaysUrl}?town_id=${townId}`)
+                        .then(res => res.json())
+                        .then(barangays => {
+                            barangays.forEach(b => {
+                                let opt = document.createElement('option');
+                                opt.value = b.id;
+                                opt.textContent = b.barangay;
+                                barangaySelect.appendChild(opt);
+                            });
+                            barangaySelect.disabled = false;
+                        });
+                });
+            });
+            </script>
 
             <!-- Address -->
             <div>
@@ -150,11 +155,11 @@
                 <label for="tel" class="block text-sm font-medium text-gray-700 mb-1">Telephone # </label>
                     <input type="text" name="tel" id="tel"
                         class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 ">
-                </label>
+
                 <label for="phone" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Phone #</label>
                     <input type="text" id="phone" name="phone"
                         class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
-                </label>
+
             </div>
         </div>
         <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
@@ -162,15 +167,15 @@
             <label for="representative_name" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Representative Name <span class="text-red-700">*</span></label>
                 <input type="text" id="representative_name" name="representative_name"
                     class="block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('representative_name') ? 'border-red-500' : 'border-gray-300' }}">
-            </label>
+
             <label for="mobile" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Mobile # <span class="text-red-700">*</span></label>
                 <input type="text" id="mobile" name="mobile"
                     class="block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('mobile') ? 'border-red-500' : 'border-gray-300' }}">
-            </label>
+
             <label for="designation" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Designation <span class="text-red-700">*</span></label>
                 <input type="text" id="designation" name="designation"
                     class="block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('designation') ? 'border-red-500' : 'border-gray-300' }}">
-            </label>
+
         </div>
     </div>
   </div>

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\User;
+use App\Models\Course;
 use App\Http\Requests\StoreWorkDetailsRequest;
 use App\Http\Requests\UpdateWorkDetailsRequest;
 use App\Models\WorkDetails;
@@ -279,4 +279,5 @@ class WorkDetailsController extends Controller
 
         return redirect()->route('recommended')->with('success', 'User details saved successfully.');
     }
+
 }

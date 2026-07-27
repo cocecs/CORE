@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -14,7 +15,8 @@ use App\Models\UserDetails;
 use App\Models\Employer;
 use App\Models\JobPosting;
 use App\Models\JobApplication;
-use App\Http\Requests\StoreUserDetailsRequest;
+use App\Models\EducationalDetail;
+use App\Models\Barangay;
 
 class AdminAccountController extends Controller
 {
@@ -31,7 +33,7 @@ class AdminAccountController extends Controller
         $user = User::where('idno', auth()->user()->idno)->first();
         return view('adtv.nu', compact('user'));
     }
-    public function adtv_storeEmployer()
+    public function adtv_createEmployer()
     {
         $user = User::where('idno', auth()->user()->idno)->first();
         return view('adtv.emp', compact('user'));
@@ -145,6 +147,68 @@ class AdminAccountController extends Controller
             ->route('adtv_listUsers') // Change this route to wherever you want the admin to go next
             ->with('status', 'User and personal details created successfully!');
     }
+    public function adtv_storeEmployer(Request $request)
+    {
+        // 1. Validate inputs (Removed 'password' from request rules since it's auto-generated)
+        $validatedData = $request->validate([
+            'email'               => ['required', 'email', 'max:50', 'unique:users,email'],
+            'company_name'        => ['required', 'string', 'max:50'],
+            'type_of_business'    => ['nullable', 'string', 'max:50'],
+            'province'            => ['required', 'string', 'max:20'],
+            'town'                => ['required'], // ID passed from dropdown
+            'brgy'                => ['required'], // ID passed from dropdown
+            'address_details'     => ['nullable', 'string', 'max:50'],
+            'representative_name' => ['required', 'string', 'max:50'],
+            'mobile'              => ['required', 'string', 'max:50'],
+            'designation'         => ['required', 'string', 'max:50'],
+            'tin'                 => ['nullable', 'string', 'max:15'],
+            'about'               => ['nullable', 'string'],
+        ]);
+
+        // 2. Fetch town and barangay names
+        $town = DB::table('towns')->where('id', $validatedData['town'])->value('town');
+        $barangay = DB::table('barangays')->where('id', $validatedData['brgy'])->value('barangay');
+
+        $validatedData['town'] = $town ?? $validatedData['town'];
+        $validatedData['brgy'] = $barangay ?? $validatedData['brgy'];
+
+        // 3. Execute Transaction
+        DB::transaction(function () use ($validatedData) {
+            // Generate a single random password
+            $plainPassword = Str::password(10);
+
+            // Create User
+            $user = User::create([
+                'email'    => $validatedData['email'],
+                'password' => Hash::make($plainPassword),
+                'usertype' => 'employer',
+                // 'idno'  => 'EMP-' . Str::random(6), // <-- Ensure idno is populated if not auto-generated in model
+            ]);
+
+            // Create Employer profile
+            Employer::create([
+                'idno'                => $user->idno, // Make sure User model generates/has idno
+                'email'               => $validatedData['email'],
+                'company_name'        => $validatedData['company_name'],
+                'type_of_business'    => $validatedData['type_of_business'] ?? null,
+                'province'            => $validatedData['province'],
+                'town'                => substr($validatedData['town'], 0, 20), // Truncated to fit varchar(20)
+                'brgy'                => substr($validatedData['brgy'], 0, 20), // Truncated to fit varchar(20)
+                'address_details'     => $validatedData['address_details'] ?? null,
+                'representative_name' => $validatedData['representative_name'],
+                'mobile'              => $validatedData['mobile'],
+                'designation'         => $validatedData['designation'],
+                'tin'                 => $validatedData['tin'] ?? null,
+                'about'               => $validatedData['about'] ?? null,
+            ]);
+
+            // TODO: Send $plainPassword to $user->email via Mail/Notification
+        });
+
+        return redirect()
+            ->back()
+            ->with('success', 'Employer details stored successfully!');
+    }
     public function listJobs()
     {
         // Fetch all job postings sorted by newest
@@ -179,7 +243,8 @@ class AdminAccountController extends Controller
 
         $user = $application->user;
         $userDetails = $user->details;
+        $educationalDetails = EducationalDetail::where('idno', $idno)->get();
 
-        return view('adtv.appl', compact('application', 'user', 'userDetails'));
+        return view('adtv.appl', compact('application', 'user', 'userDetails', 'educationalDetails'));
     }
 }

@@ -341,14 +341,14 @@ document.addEventListener('DOMContentLoaded', function () {
     <!-- 2-COLUMN MAIN LAYOUT SPLIT -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-        <!-- RED SECTION: PROFILE MATRIX & GEOSPATIAL ANALYSIS -->
+        <!-- BLUE SECTION: PROFILE MATRIX & GEOSPATIAL ANALYSIS -->
         <div>
-            <div class="mb-4 pb-2 border-b-2 border-red-400">
+            <div class="mb-4 pb-2 border-b-2 border-blue-400">
                 <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                    <span class="h-3 w-3 rounded-full bg-red-500"></span>
-                    Profile Matrix & Geospatial Results
+                    <span class="h-3 w-3 rounded-full bg-blue-500"></span>
+                    Jobs matched to your skills / near you
                 </h2>
-                <p class="text-xs text-gray-500">Matched to your academic qualifications and organized strictly by physical proximity.</p>
+                <p class="text-xs text-gray-500">Matched to your skills/background and ordered by closest distance.</p>
             </div>
 
             @if($jobs->isEmpty())
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', function () {
             @else
                 <div class="space-y-4">
                     @foreach($jobs as $job)
-                        <div class="bg-white border-l-4 border-red-400 border-t border-r border-b border-gray-200 rounded-r-xl p-5 shadow-sm hover:shadow transition">
+                        <div class="bg-white border-l-4 border-blue-400 border-t border-r border-b border-gray-200 rounded-r-xl p-5 shadow-sm hover:shadow transition">
                             <div class="flex justify-between items-start gap-2">
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-900 leading-snug">{{ $job->job_title }}</h3>
@@ -366,7 +366,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                         {{ isset($job->area_of_expertise) ? strtoupper($job->area_of_expertise) : 'GENERAL' }}
                                     </p>
                                 </div>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-red-800 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-blue-800 whitespace-nowrap">
                                     {{ round($job->distance, 1) }} km away
                                 </span>
                             </div>
@@ -379,7 +379,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                             <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
                                 <span class="text-xs text-gray-400">Posted {{ \Carbon\Carbon::parse($job->created_at)->diffForHumans() }}</span>
-                                <a href="/recd/{{ $job->job_id }}" class="text-xs font-semibold text-red-600 hover:text-red-800">
+                                <a href="/recd/{{ $job->job_id }}" class="text-xs font-semibold text-blue-600 hover:text-blue-400">
                                     View Details &rarr;
                                 </a>
                             </div>
@@ -390,20 +390,16 @@ document.addEventListener('DOMContentLoaded', function () {
         </div>
 
         <!-- GREEN SECTION: BEHAVIORAL COLLABORATIVE FILTERING -->
-        <div>
-            <div class="mb-4 pb-2 border-b-2 border-green-400">
-                <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                    <span class="h-3 w-3 rounded-full bg-green-500"></span>
-                    People Also Viewed (Collaborative)
-                </h2>
-                <p class="text-xs text-gray-500">Discovered countrywide via interaction footprint logic of peers sharing common search behaviors.</p>
-            </div>
-
-            @if($collaborativeJobs->isEmpty())
-                <div class="bg-gray-50 border border-gray-200 text-gray-500 p-4 rounded-xl text-sm">
-                    Interact with vacancies across the platform to activate dynamic collaborative profiling recommendations.
+        @if($collaborativeJobs->isNotEmpty())
+            <div>
+                <div class="mb-4 pb-2 border-b-2 border-green-400">
+                    <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                        <span class="h-3 w-3 rounded-full bg-green-500"></span>
+                        People Also Viewed (Collaborative)
+                    </h2>
+                    <p class="text-xs text-gray-500">Recommended jobs based on what other applicants with similar searches are checking out.</p>
                 </div>
-            @else
+
                 <div class="space-y-4">
                     @foreach($collaborativeJobs as $job)
                         <div class="bg-white border-l-4 border-green-400 border-t border-r border-b border-gray-200 rounded-r-xl p-5 shadow-sm hover:shadow transition">
@@ -434,8 +430,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                     @endforeach
                 </div>
-            @endif
-        </div>
+            </div>
+        @endif
 
     </div>
 </div>

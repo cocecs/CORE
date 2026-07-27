@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Educational;
+use App\Models\EducationalDetail;
 use App\Models\User;
 use App\Http\Requests\StoreEducationalRequest;
 use App\Http\Requests\UpdateEducationalRequest;
@@ -90,7 +91,7 @@ class EducationalController extends Controller
                 $courseIdToSave = $request->input('course_vocational');
                 if ($courseIdToSave) {
                     $course = Course::find($courseIdToSave);
-                    $levelToSave = $course ? strtoupper($course->display_name) : 'VOCATIONAL';
+                    $levelToSave = $course ? $course->display_name : 'VOCATIONAL';
                 } else {
                     $levelToSave = 'VOCATIONAL';
                 }
@@ -101,18 +102,18 @@ class EducationalController extends Controller
                 $courseIdToSave = $request->input('course_associate');
                 if ($courseIdToSave) {
                     $course = Course::find($courseIdToSave);
-                    $levelToSave = $course ? strtoupper($course->display_name) : 'ASSOCIATE DEGREE';
+                    $levelToSave = $course ? $course->display_name : 'ASSOCIATE DEGREE';
                 } else {
                     $levelToSave = 'ASSOCIATE DEGREE';
                 }
-                $courseColumn = 'course_degree';
+                $courseColumn = 'course_associate';
                 $courseValue  = $levelToSave;
                 break;
             case '5': // Bachelor's Degree
                 $courseIdToSave = $request->input('course_bachelor');
                 if ($courseIdToSave) {
                     $course = Course::find($courseIdToSave);
-                    $levelToSave = $course ? strtoupper($course->display_name) : "BACHELOR'S DEGREE";
+                    $levelToSave = $course ? $course->display_name : "BACHELOR'S DEGREE";
                 } else {
                     $levelToSave = "BACHELOR'S DEGREE";
                 }
@@ -123,7 +124,7 @@ class EducationalController extends Controller
                 $courseIdToSave = $request->input('course_masters');
                 if ($courseIdToSave) {
                     $course = Course::find($courseIdToSave);
-                    $levelToSave = $course ? strtoupper($course->display_name) : "MASTERS";
+                    $levelToSave = $course ? $course->display_name : "MASTERS";
                 } else {
                     $levelToSave = "MASTERS";
                 }
@@ -134,7 +135,7 @@ class EducationalController extends Controller
                 $courseIdToSave = $request->input('course_doctoral');
                 if ($courseIdToSave) {
                     $course = Course::find($courseIdToSave);
-                    $levelToSave = $course ? strtoupper($course->display_name) : "DOCTORATE";
+                    $levelToSave = $course ? $course->display_name : "DOCTORATE";
                 } else {
                     $levelToSave = "DOCTORATE";
                 }
@@ -155,9 +156,11 @@ class EducationalController extends Controller
 
         // 2. Perform a clean SQL INSERT into the educationals table for the course
         if ($courseColumn && $courseValue) {
-            Educational::create([
+            EducationalDetail::create([
                 'idno'        => $idno,
-                $courseColumn => $courseValue
+                // $courseColumn => $courseValue,
+                'educ_level' => $courseColumn,
+                'course_name' => $levelToSave,
             ]);
         }
 

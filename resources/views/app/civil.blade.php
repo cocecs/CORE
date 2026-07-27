@@ -24,7 +24,7 @@
     <div class="flex flex-col gap-4">
 
       <label class="cursor-pointer">
-        <input type="radio" class="peer sr-only" name="civil_status" value="s"/>
+        <input type="radio" class="peer sr-only" name="civil_status" value="SINGLE"/>
         <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
           <div class="flex flex-col gap-1">
             <div class="flex items-center justify-between">
@@ -38,7 +38,7 @@
       </label>
 
       <label class="cursor-pointer">
-        <input type="radio" class="peer sr-only" name="civil_status" value="m"/>
+        <input type="radio" class="peer sr-only" name="civil_status" value="MARRIED"/>
         <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
           <div class="flex flex-col gap-1">
             <div class="flex items-center justify-between">
@@ -52,7 +52,7 @@
       </label>
 
       <label class="cursor-pointer">
-        <input type="radio" class="peer sr-only" name="civil_status" value="w"/>
+        <input type="radio" class="peer sr-only" name="civil_status" value="WIDOWED"/>
         <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
           <div class="flex flex-col gap-1">
             <div class="flex items-center justify-between">
@@ -66,7 +66,7 @@
       </label>
 
       <label class="cursor-pointer">
-        <input type="radio" class="peer sr-only" name="civil_status" value="ls"/>
+        <input type="radio" class="peer sr-only" name="civil_status" value="LEGALLY SEPARATED"/>
         <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
           <div class="flex flex-col gap-1">
             <div class="flex items-center justify-between">
@@ -79,7 +79,7 @@
         </div>
       </label>
       <label class="cursor-pointer">
-        <input type="radio" class="peer sr-only" name="civil_status" value="a"/>
+        <input type="radio" class="peer sr-only" name="civil_status" value="ANNULLED"/>
         <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
           <div class="flex flex-col gap-1">
             <div class="flex items-center justify-between">

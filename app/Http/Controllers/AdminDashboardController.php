@@ -44,7 +44,7 @@ class AdminDashboardController extends Controller
                 $ageBrackets['18-30']++;
             } elseif ($age >= 31 && $age <= 50) {
                 $ageBrackets['31-50']++;
-            } else {
+            } elseif ($age >= 51) {
                 $ageBrackets['51+']++;
             }
         }

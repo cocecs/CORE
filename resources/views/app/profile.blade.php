@@ -70,7 +70,7 @@
             <div class="space-y-4">
                 <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Contact & Location</h3>
                 <div class="space-y-3">
-                    @if($user->barangay || $user->town || $user->province)
+                    @if($userB->barangay_name || $userB->town_name || $userB->province)
                         <div class="flex items-start gap-3 text-sm text-slate-600">
                             <div class="p-1 bg-slate-50 rounded-lg text-slate-400 mt-0.5">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
@@ -81,7 +81,11 @@
                             <div>
                                 <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Address</p>
                                 <p class="font-medium text-slate-700 mt-0.5">
-                                    {{ implode(', ', array_filter([$user->barangay, $user->town, $user->province])) }}
+                                    {{ implode(', ', array_filter([
+                                        $userB->barangay_name ?  $userB->barangay_name : null,
+                                        $userB->town_name,
+                                        $userB->province
+                                    ])) }}
                                 </p>
                             </div>
                         </div>
@@ -178,111 +182,127 @@
 
         <!-- Course & Skills Card -->
         <div class="space-y-6">
-            @php
-                // 1. Extract and organize completed courses purely from the Educationals record
-                $completedCourses = [];
-                if ($education) {
-                    if (!empty($education->vocational_course)) {
-                        $completedCourses['Vocational Course'] = $education->vocational_course;
-                    }
+        @php
+            // Map database educ_level values to user-friendly titles
+            $levelLabels = [
+                'vocational_course'      => 'Vocational Course',
+                'course_associate'       => 'Associate Degree',
+                'course_degree'          => 'Bachelor / Degree Course',
+                'postgrad_course_degree' => 'Postgraduate Degree',
+                'doctoral_course_degree' => 'Doctoral Degree',
+            ];
 
-                    $degree = $education->degree_course ?? $education->course_degree ?? null;
-                    if (!empty($degree)) {
-                        $completedCourses['Degree Course'] = $degree;
-                    }
+            // Ensure $educationalDetails is an iterable collection
+            $educationalRecords = $educationalDetails instanceof \Illuminate\Support\Collection
+                ? $educationalDetails
+                : collect([$educationalDetails])->filter();
 
-                    $postgrad = $education->postgrad_degree_course ?? $education->postgrad_course_degree ?? null;
-                    if (!empty($postgrad)) {
-                        $completedCourses['Postgraduate Degree'] = $postgrad;
-                    }
+            // Separate records into courses list and skills pool
+            $coursesList = [];
+            $skillsArray = [];
 
-                    $doctoral = $education->doctoral_course ?? $education->doctoral_course_degree ?? null;
-                    if (!empty($doctoral)) {
-                        $completedCourses['Doctoral Degree'] = $doctoral;
-                    }
+            foreach ($educationalRecords as $detail) {
+                // Collect course information
+                if (!empty($detail->course_name)) {
+                    $levelKey = $detail->educ_level ?? 'course_degree';
+                    $levelName = $levelLabels[$levelKey] ?? 'Degree Course';
+
+                    $coursesList[] = [
+                        'level'          => $levelName,
+                        'course_name'    => $detail->course_name,
+                        'school'         => $detail->school ?? null,
+                        'year_graduated' => $detail->year_graduated ?? null,
+                    ];
                 }
 
-                // 2. Fetch skills dynamically based on populated courses in Educationals
-                $skillsArray = [];
-                $rawSkillsString = '';
-
-                if ($education) {
-                    if (!empty($education->vocational_course)) {
-                        $rawSkillsString = $education->vocational_skills;
-                    } elseif (!empty($education->course_degree) || !empty($education->degree_course)) {
-                        $rawSkillsString = $education->bachelor_skills;
-                    } elseif (!empty($education->postgrad_course_degree) || !empty($education->postgrad_degree_course)) {
-                        $rawSkillsString = $education->masters_skills;
-                    } elseif (!empty($education->doctoral_course_degree) || !empty($education->doctoral_course)) {
-                        $rawSkillsString = $education->doctoral_skills;
-                    }
-
-                    // Format the skills into an array for tags rendering
-                    if (!empty($rawSkillsString)) {
-                        if (is_array($rawSkillsString)) {
-                            $skillsArray = $rawSkillsString;
-                            $rawSkillsString = implode(', ', $skillsArray);
-                        } else {
-                            $skillsArray = array_filter(array_map('trim', explode(',', $rawSkillsString)));
-                        }
+                // Extract and aggregate comma-separated skills across all entries
+                if (!empty($detail->skills)) {
+                    if (is_array($detail->skills)) {
+                        $skillsArray = array_merge($skillsArray, $detail->skills);
+                    } else {
+                        $extracted = array_filter(array_map('trim', explode(',', $detail->skills)));
+                        $skillsArray = array_merge($skillsArray, $extracted);
                     }
                 }
-            @endphp
+            }
 
-            @if($education && (!empty($completedCourses) || !empty($skillsArray)))
-                <div class="bg-white border border-[#e2e8f0] rounded-2xl p-6 relative shadow-xs">
+            // Clean & de-duplicate aggregated skills
+            $skillsArray = array_unique($skillsArray);
+            $rawSkillsString = implode(', ', $skillsArray);
+        @endphp
 
-                    <!-- Trigger edit modal, passing only the mapped skills to Alpine.js -->
-                    <button @click="openEditModal('{{ addslashes($rawSkillsString ?? '') }}')"
-                            class="absolute top-6 right-6 text-[#475569] hover:text-[#1e2d56] transition-colors focus:outline-none"
-                            aria-label="Edit entry">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                        </svg>
-                    </button>
+        @if(!empty($coursesList) || !empty($skillsArray))
+            <div class="bg-white border border-[#e2e8f0] rounded-2xl p-6 relative shadow-xs">
 
-                    <h3 class="text-xl font-bold text-[#1e2d56] mb-4">Academic Profile</h3>
+                <!-- Optional: Edit Trigger Button -->
+                <button @click="openEditModal('{{ addslashes($rawSkillsString ?? '') }}')"
+                        class="absolute top-6 right-6 text-[#475569] hover:text-[#1e2d56] transition-colors focus:outline-none"
+                        aria-label="Edit details">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                    </svg>
+                </button>
 
-                    <!-- Loop & Display Courses found in Educationals -->
-                    @if(!empty($completedCourses))
-                        <div class="border-t border-slate-100 py-4 space-y-3">
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Courses / Degrees Obtained</h4>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                @foreach($completedCourses as $levelName => $courseName)
-                                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col justify-center">
-                                        <span class="text-[10px] font-bold uppercase tracking-wider text-[#2b3a8f] mb-0.5">
-                                            {{ $levelName }}
+                <h3 class="text-xl font-bold text-[#1e2d56] mb-4">Academic Profile</h3>
+
+                <!-- 1. Display All Courses for this IDNO -->
+                @if(!empty($coursesList))
+                    <div class="border-t border-slate-100 py-4 space-y-3">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                Courses / Degrees Obtained ({{ count($coursesList) }})
+                            </h4>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            @foreach($coursesList as $course)
+                                <div class="bg-slate-50 border border-slate-100 rounded-xl p-3.5 flex flex-col justify-between">
+                                    <div>
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-[#2b3a8f] mb-1 block">
+                                            {{ $course['level'] }}
                                         </span>
-                                        <span class="text-sm font-semibold text-slate-700">
-                                            {{ $courseName }}
-                                        </span>
+                                        <h5 class="text-sm font-semibold text-slate-800">
+                                            {{ $course['course_name'] }}
+                                        </h5>
                                     </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
 
-                    <!-- Nested Skills Tags -->
-                    @if(!empty($skillsArray))
-                        <div class="border-t border-slate-100 pt-4">
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Skills Acquired</h4>
-                            <div class="flex flex-wrap gap-2">
-                                @foreach($skillsArray as $skill)
-                                    <span class="px-3.5 py-1.5 bg-[#f4f6f9] text-[#2c3e50] rounded-full text-xs font-medium transition hover:bg-[#eaf0f6] cursor-pointer">
-                                        {{ $skill }}
-                                    </span>
-                                @endforeach
-                            </div>
+                                    <!-- Display optional school / year info if present -->
+                                    @if($course['school'] || $course['year_graduated'])
+                                        <div class="mt-2 pt-2 border-t border-slate-200/60 flex items-center justify-between text-xs text-slate-500">
+                                            <span>{{ $course['school'] ?? 'N/A' }}</span>
+                                            @if($course['year_graduated'])
+                                                <span class="font-medium text-slate-600">{{ $course['year_graduated'] }}</span>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
                         </div>
-                    @endif
-                </div>
-            @else
-                <!-- Fallback empty state -->
-                <div class="text-center py-8 border border-dashed border-slate-200 rounded-2xl">
-                    <p class="text-sm text-slate-400">No courses or skills records found.</p>
-                </div>
-            @endif
-        </div>
+                    </div>
+                @endif
+
+                <!-- 2. Display All Associated Skills -->
+                @if(!empty($skillsArray))
+                    <div class="border-t border-slate-100 pt-4">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Skills Acquired</h4>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($skillsArray as $skill)
+                                <span class="px-3.5 py-1.5 bg-[#f4f6f9] text-[#2c3e50] rounded-full text-xs font-medium transition hover:bg-[#eaf0f6]">
+                                    {{ $skill }}
+                                </span>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+            </div>
+        @else
+            <!-- Fallback Empty State -->
+            <div class="text-center py-8 border border-dashed border-slate-200 rounded-2xl">
+                <p class="text-sm text-slate-400">No educational course records found for this ID number.</p>
+            </div>
+        @endif
+    </div>
     </div>
 
     <!-- Personal Summary Section Card -->
@@ -433,15 +453,32 @@
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
-                <form action="#" method="POST" class="space-y-4 p-6">
+                <form class="space-y-4 p-6" action="{{ route('course_skills', $user->idno) }}" method="POST">
                     @csrf
                     <template x-if="modalType === 'edit'">
-                        <input type="hidden" name="_method" value="PUT">
+                        {{-- <input type="hidden" name="_method" value="PUT"> --}}
                     </template>
                     <div>
-                        <label for="degree" class="block text-xs font-semibold uppercase tracking-wider text-[#64748b] mb-1">Degree / Course</label>
-                        <input type="text" name="degree" id="degree" x-model="educationForm.degree" required
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 text-sm font-medium text-slate-800 focus:border-[#2b3a8f] focus:bg-white focus:ring-1 focus:ring-[#2b3a8f] transition-all p-2.5">
+                        <label for="job_category" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Category of Job <span class="text-red-700">*</span></label>
+                        <select id="job_category" name="job_category"
+                            class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('job_category') ? 'border-red-500 ring-red-500' : '' }}">
+                            <option value=""></option>
+                            @foreach($expertise as $item)
+                                <option value="{{ $item->id }}">{{ $item->area_of_expertise }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1 mt-3">
+                            Course <span class="text-red-700">*</span>
+                        </label>
+                        <div id="courses-container" class="block w-full rounded-md shadow-sm border bg-white max-h-48 overflow-y-auto p-3 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500
+                            @error('course_id') border-red-500 @else border-gray-300 @enderror">
+                            <p class="text-sm text-gray-400">Select a Job Category first...</p>
+                        </div>
+                        @error('course_id')
+                            <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div>
                         <label for="school" class="block text-xs font-semibold uppercase tracking-wider text-[#64748b] mb-1">School / University</label>
@@ -455,11 +492,144 @@
                     </div>
                     <div>
                         <label for="course_skills" class="block text-xs font-semibold uppercase tracking-wider text-[#64748b] mb-1">Skills Gained in this Course (Comma Separated)</label>
-                        <textarea name="course_skills" id="course_skills" x-model="educationForm.skills_raw" rows="3" placeholder="e.g. Graphic Design, Photography, Web Programming"
-                            class="w-full rounded-xl border border-slate-200 bg-slate-50 text-sm font-medium text-slate-800 focus:border-[#2b3a8f] focus:bg-white focus:ring-1 focus:ring-[#2b3a8f] transition-all p-2.5 resize-none"></textarea>
-                        <p class="text-xs text-slate-400 mt-1.5">Separate entries with commas. For instance: <em>Laravel, Tailwind CSS, Blade</em>.</p>
-                    </div>
 
+                        <div id="skills-container" class="block w-full rounded-md shadow-sm border bg-white max-h-48 overflow-y-auto p-3 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500
+                            @error('skills_required') border-red-500 @else border-gray-300 @enderror">
+                            <p class="text-sm text-gray-400">Select a Job Category first...</p>
+                        </div>
+                        @error('skills_required')
+                            <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <script>
+                        // 1. Grab elements from the DOM
+                        const jobCategoryDropdown = document.getElementById('job_category');
+                        const skillsContainer = document.getElementById('skills-container');
+                        const coursesContainer = document.getElementById('courses-container');
+
+                        // Helper: Converts "computer system" to "Computer System"
+                        function titleCase(str) {
+                            return str.toLowerCase()
+                                .split(' ')
+                                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                .join(' ');
+                        }
+
+                        // Helper: Safely generates a unique ID string by removing spaces/special characters
+                        function cleanId(string) {
+                            return string.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                        }
+
+                        // 2. Listen for "Areas of Expertise" dropdown changes
+                        jobCategoryDropdown.addEventListener('change', function() {
+                            const expertiseId = this.value;
+
+                            // If nothing is selected, display empty placeholders and stop
+                            if (!expertiseId) {
+                                skillsContainer.innerHTML = '<p class="text-sm text-gray-400">Select a Job Category first...</p>';
+                                coursesContainer.innerHTML = '<p class="text-sm text-gray-400">Select a Job Category first...</p>';
+                                return;
+                            }
+
+                            // Show a temporary loading state
+                            skillsContainer.innerHTML = '<p class="text-sm text-gray-500 animate-pulse">Loading skills...</p>';
+                            coursesContainer.innerHTML = '<p class="text-sm text-gray-500 animate-pulse">Loading courses...</p>';
+
+                            // --- FETCH SKILLS (Checkboxes Intact) ---
+                            fetch(`/get-skills/${expertiseId}`)
+                                .then(response => response.json())
+                                .then(skills => {
+                                    skillsContainer.innerHTML = ''; // Clear container
+
+                                    if (skills.length === 0) {
+                                        skillsContainer.innerHTML = '<p class="text-sm text-gray-500">No skills available for this category.</p>';
+                                        return;
+                                    }
+
+                                    skills.forEach((skill, index) => {
+                                        const uniqueId = `skill-${cleanId(skill)}-${index}`;
+
+                                        const div = document.createElement('div');
+                                        div.className = 'flex items-center mb-2 last:mb-0';
+
+                                        const checkbox = document.createElement('input');
+                                        checkbox.type = 'checkbox';
+                                        checkbox.id = uniqueId;
+                                        checkbox.name = 'skills_required[]';
+                                        checkbox.value = skill;
+                                        checkbox.className = 'h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer';
+
+                                        const label = document.createElement('label');
+                                        label.htmlFor = uniqueId;
+                                        label.className = 'ml-2 text-sm text-gray-700 cursor-pointer select-none';
+                                        label.textContent = titleCase(skill);
+
+                                        div.appendChild(checkbox);
+                                        div.appendChild(label);
+                                        skillsContainer.appendChild(div);
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching skills:', error);
+                                    skillsContainer.innerHTML = '<p class="text-sm text-red-500">Failed to load skills.</p>';
+                                });
+
+                            // --- FETCH COURSES (Converted to Dropdown Select) ---
+                            fetch(`/get-courses/${expertiseId}`)
+                                .then(response => response.json())
+                                .then(courses => {
+                                    coursesContainer.innerHTML = ''; // Clear container
+
+                                    if (courses.length === 0) {
+                                        coursesContainer.innerHTML = '<p class="text-sm text-gray-500">No courses available for this category.</p>';
+                                        return;
+                                    }
+
+                                    // Create the dropdown select element
+                                    const select = document.createElement('select');
+                                    select.name = 'course_id[]';
+                                    select.id = 'course_id';
+                                    select.className = 'block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2 px-3';
+
+                                    // Default placeholder option
+                                    const defaultOption = document.createElement('option');
+                                    defaultOption.value = '';
+                                    defaultOption.textContent = '-- Select Course --';
+                                    select.appendChild(defaultOption);
+
+                                    // Group courses by their educ_level property
+                                    const groupedCourses = courses.reduce((groups, course) => {
+                                        const level = course.educ_level || 'Other';
+                                        if (!groups[level]) {
+                                            groups[level] = [];
+                                        }
+                                        groups[level].push(course);
+                                        return groups;
+                                    }, {});
+
+                                    // Build <optgroup> elements for each education level
+                                    Object.keys(groupedCourses).forEach(level => {
+                                        const optGroup = document.createElement('optgroup');
+                                        optGroup.label = titleCase(level);
+
+                                        groupedCourses[level].forEach(course => {
+                                            const option = document.createElement('option');
+                                            option.value = course.id;
+                                            option.textContent = course.display_name;
+                                            optGroup.appendChild(option);
+                                        });
+
+                                        select.appendChild(optGroup);
+                                    });
+
+                                    coursesContainer.appendChild(select);
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching courses:', error);
+                                    coursesContainer.innerHTML = '<p class="text-sm text-red-500">Failed to load courses.</p>';
+                                });
+                        });
+                    </script>
                     <div class="flex items-center justify-end gap-3 pt-4 mt-6 border-t border-slate-100">
                         <button type="button" @click="openEducationModal = false" class="px-4 py-2 text-sm font-semibold text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 active:bg-slate-100 transition-colors">Cancel</button>
                         <button type="submit" class="px-5 py-2 text-sm font-semibold text-white bg-[#2b3a8f] rounded-xl hover:bg-[#202c70] transition-colors shadow-sm">Save Course & Skills</button>

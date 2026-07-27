@@ -16,352 +16,352 @@
 </div>
 <form id="locationForm" action="{{ route('job_post', $user->idno) }}" method="POST">
 @csrf
-<div class="flex items-center justify-center">
-  <div class="mx-auto w-full max-w-md px-6">
-    <div class="flex flex-col gap-4">
-        <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
-    <!-- Type of Job -->
-    <label for="job_type" class="block text-sm font-medium text-gray-700 mb-1">Type of Job <span class="text-red-700">*</span></label>
-    <select name="job_type"
-        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('job_type') ? 'border-red-500 ring-red-500' : '' }}">
-        <option value=""></option>
-        <option value="Full Time">Full Time</option>
-        <option value="Part Time">Part Time</option>
-        <option value="Contract / Freelance">Contract / Freelance</option>
-        <option value="Temporary / Seasonal">Temporary / Seasonal</option>
-    </select>
-    @error('job_type')
-        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
-    @enderror
-
-    <!-- Category of Job -->
-    <label for="job_category" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Category of Job <span class="text-red-700">*</span></label>
-    <select id="job_category" name="job_category"
-        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('job_category') ? 'border-red-500 ring-red-500' : '' }}">
-        <option value=""></option>
-        @foreach($expertise as $item)
-            <option value="{{ $item->id }}">{{ $item->area_of_expertise }}</option>
-        @endforeach
-    </select>
-    @error('job_category')
-        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
-    @enderror
-
-    <!-- Course Selection Box -->
-    <label class="block text-sm font-medium text-gray-700 mb-1 mt-3">
-        Course <span class="text-red-700">*</span>
-    </label>
-    <div id="courses-container" class="block w-full rounded-md shadow-sm border bg-white max-h-48 overflow-y-auto p-3 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500
-        @error('course_id') border-red-500 @else border-gray-300 @enderror">
-        <p class="text-sm text-gray-400">Select a Job Category first...</p>
-    </div>
-    @error('course_id')
-        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
-    @enderror
-
-    <!-- Skills Required Selection Box -->
-    <label class="block text-sm font-medium text-gray-700 mb-1 mt-3">
-        Skills Required <span class="text-red-700">*</span>
-    </label>
-    <div id="skills-container" class="block w-full rounded-md shadow-sm border bg-white max-h-48 overflow-y-auto p-3 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500
-        @error('skills_required') border-red-500 @else border-gray-300 @enderror">
-        <p class="text-sm text-gray-400">Select a Job Category first...</p>
-    </div>
-    @error('skills_required')
-        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
-    @enderror
-</div>
-        <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
-            <div>
-                <label for="province" class="block text-sm font-medium text-gray-700 mb-1 mt-3"><b>LOCATION OF JOB</b></label>
-                <div>
-                    <label for="province" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Province <span class="text-red-700">*</span></label>
-                    <select id="province" name="province"
-                    class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('province') border-red-500 @enderror" required>
-                        <option value="" >Select Province</option>
+    <div class="flex items-center justify-center">
+        <div class="mx-auto w-full max-w-md px-6">
+            <div class="flex flex-col gap-4">
+                <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
+                    <!-- Type of Job -->
+                    <label for="job_type" class="block text-sm font-medium text-gray-700 mb-1">Type of Job <span class="text-red-700">*</span></label>
+                    <select name="job_type"
+                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('job_type') ? 'border-red-500 ring-red-500' : '' }}">
+                        <option value=""></option>
+                        <option value="Full Time">Full Time</option>
+                        <option value="Part Time">Part Time</option>
+                        <option value="Contract / Freelance">Contract / Freelance</option>
+                        <option value="Temporary / Seasonal">Temporary / Seasonal</option>
                     </select>
-                </div>
+                    @error('job_type')
+                        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                    @enderror
 
-                <div>
-                    <label for="town" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Town <span class="text-red-700">*</span></label>
-                    <select id="town" name="town"
-                    class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('town') border-red-500 @enderror" required disabled>
-                        <option value="">Select Town/City</option>
+                    <!-- Category of Job -->
+                    <label for="job_category" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Category of Job <span class="text-red-700">*</span></label>
+                    <select id="job_category" name="job_category"
+                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('job_category') ? 'border-red-500 ring-red-500' : '' }}">
+                        <option value=""></option>
+                        @foreach($expertise as $item)
+                            <option value="{{ $item->id }}">{{ $item->area_of_expertise }}</option>
+                        @endforeach
                     </select>
+                    @error('job_category')
+                        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                    @enderror
+
+                    <!-- Course Selection Box -->
+                    <label class="block text-sm font-medium text-gray-700 mb-1 mt-3">
+                        Course <span class="text-red-700">*</span>
+                    </label>
+                    <div id="courses-container" class="block w-full rounded-md shadow-sm border bg-white max-h-48 overflow-y-auto p-3 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500
+                        @error('course_id') border-red-500 @else border-gray-300 @enderror">
+                        <p class="text-sm text-gray-400">Select a Job Category first...</p>
+                    </div>
+                    @error('course_id')
+                        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                    @enderror
+
+                    <!-- Skills Required Selection Box -->
+                    <label class="block text-sm font-medium text-gray-700 mb-1 mt-3">
+                        Skills Required <span class="text-red-700">*</span>
+                    </label>
+                    <div id="skills-container" class="block w-full rounded-md shadow-sm border bg-white max-h-48 overflow-y-auto p-3 focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500
+                        @error('skills_required') border-red-500 @else border-gray-300 @enderror">
+                        <p class="text-sm text-gray-400">Select a Job Category first...</p>
+                    </div>
+                    @error('skills_required')
+                        <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                    @enderror
                 </div>
+                <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
+                    <div>
+                        <label for="province" class="block text-sm font-medium text-gray-700 mb-1 mt-3"><b>LOCATION OF JOB</b></label>
+                        <div>
+                            <label for="province" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Province <span class="text-red-700">*</span></label>
+                            <select id="province" name="province"
+                            class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('province') border-red-500 @enderror" required>
+                                <option value="" >Select Province</option>
+                            </select>
+                        </div>
 
-                <div>
-                    <label for="barangay" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Barangay <span class="text-red-700">*</span></label>
-                    <select id="barangay" name="barangay"
-                    class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('brgy') border-red-500 @enderror" required disabled>
-                        <option value="">Select Barangay</option>
-                    </select>
-                </div>
-            </div>
-            <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const provinceSelect = document.getElementById('province');
-                const townSelect = document.getElementById('town');
-                const barangaySelect = document.getElementById('barangay');
+                        <div>
+                            <label for="town" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Town <span class="text-red-700">*</span></label>
+                            <select id="town" name="town"
+                            class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('town') border-red-500 @enderror" required disabled>
+                                <option value="">Select Town/City</option>
+                            </select>
+                        </div>
 
-                // Use Blade syntax to generate absolute base URLs natively
-                const provincesUrl = "{{ url('/api/provinces') }}";
-                const townsUrl     = "{{ url('/api/towns') }}";
-                const barangaysUrl = "{{ url('/api/barangays') }}";
+                        <div>
+                            <label for="barangay" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Barangay <span class="text-red-700">*</span></label>
+                            <select id="barangay" name="barangay"
+                            class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 @error('brgy') border-red-500 @enderror" required disabled>
+                                <option value="">Select Barangay</option>
+                            </select>
+                        </div>
+                    </div>
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const provinceSelect = document.getElementById('province');
+                        const townSelect = document.getElementById('town');
+                        const barangaySelect = document.getElementById('barangay');
 
-                // 1. Fetch Provinces
-                fetch(provincesUrl)
-                    .then(res => {
-                        if (!res.ok) throw new Error('Network response error');
-                        return res.json();
-                    })
-                    .then(provinces => {
-                        provinces.forEach(province => {
-                            let opt = document.createElement('option');
-                            opt.value = province;
-                            opt.textContent = province;
-                            provinceSelect.appendChild(opt);
+                        // Use Blade syntax to generate absolute base URLs natively
+                        const provincesUrl = "{{ url('/api/provinces') }}";
+                        const townsUrl     = "{{ url('/api/towns') }}";
+                        const barangaysUrl = "{{ url('/api/barangays') }}";
+
+                        // 1. Fetch Provinces
+                        fetch(provincesUrl)
+                            .then(res => {
+                                if (!res.ok) throw new Error('Network response error');
+                                return res.json();
+                            })
+                            .then(provinces => {
+                                provinces.forEach(province => {
+                                    let opt = document.createElement('option');
+                                    opt.value = province;
+                                    opt.textContent = province;
+                                    provinceSelect.appendChild(opt);
+                                });
+                            })
+                            .catch(err => console.error('Error fetching provinces:', err));
+
+                        // 2. When Province Changes
+                        provinceSelect.addEventListener('change', function () {
+                            const province = this.value;
+
+                            townSelect.innerHTML = '<option value="">Select Town/City</option>';
+                            barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+                            townSelect.disabled = true;
+                            barangaySelect.disabled = true;
+
+                            if (!province) return;
+
+                            fetch(`${townsUrl}?province=${encodeURIComponent(province)}`)
+                                .then(res => res.json())
+                                .then(towns => {
+                                    towns.forEach(t => {
+                                        let opt = document.createElement('option');
+                                        opt.value = t.id;
+                                        opt.textContent = t.town;
+                                        townSelect.appendChild(opt);
+                                    });
+                                    townSelect.disabled = false;
+                                });
                         });
-                    })
-                    .catch(err => console.error('Error fetching provinces:', err));
 
-                // 2. When Province Changes
-                provinceSelect.addEventListener('change', function () {
-                    const province = this.value;
+                        // 3. When Town Changes
+                        townSelect.addEventListener('change', function () {
+                            const townId = this.value;
 
-                    townSelect.innerHTML = '<option value="">Select Town/City</option>';
-                    barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-                    townSelect.disabled = true;
-                    barangaySelect.disabled = true;
+                            barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+                            barangaySelect.disabled = true;
 
-                    if (!province) return;
+                            if (!townId) return;
 
-                    fetch(`${townsUrl}?province=${encodeURIComponent(province)}`)
-                        .then(res => res.json())
-                        .then(towns => {
-                            towns.forEach(t => {
-                                let opt = document.createElement('option');
-                                opt.value = t.id;
-                                opt.textContent = t.town;
-                                townSelect.appendChild(opt);
-                            });
-                            townSelect.disabled = false;
+                            fetch(`${barangaysUrl}?town_id=${townId}`)
+                                .then(res => res.json())
+                                .then(barangays => {
+                                    barangays.forEach(b => {
+                                        let opt = document.createElement('option');
+                                        // CHANGE THIS LINE: set the value to the ID instead of the string name
+                                        opt.value = b.id;
+                                        opt.textContent = b.barangay;
+                                        barangaySelect.appendChild(opt);
+                                    });
+                                    barangaySelect.disabled = false;
+                                });
                         });
-                });
+                    });
+                    </script>
+                    <script>
+                        // 1. Grab elements from the DOM
+                        const jobCategoryDropdown = document.getElementById('job_category');
+                        const skillsContainer = document.getElementById('skills-container');
+                        const coursesContainer = document.getElementById('courses-container');
 
-                // 3. When Town Changes
-                townSelect.addEventListener('change', function () {
-                    const townId = this.value;
+                        // Helper: Converts "computer system" to "Computer System"
+                        function titleCase(str) {
+                            return str.toLowerCase()
+                                .split(' ')
+                                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                .join(' ');
+                        }
 
-                    barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-                    barangaySelect.disabled = true;
+                        // Helper: Safely generates a unique ID string by removing spaces/special characters
+                        function cleanId(string) {
+                            return string.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+                        }
 
-                    if (!townId) return;
+                        // 2. Listen for "Areas of Expertise" dropdown changes
+                        jobCategoryDropdown.addEventListener('change', function() {
+                            const expertiseId = this.value;
 
-                    fetch(`${barangaysUrl}?town_id=${townId}`)
-                        .then(res => res.json())
-                        .then(barangays => {
-                            barangays.forEach(b => {
-                                let opt = document.createElement('option');
-                                // CHANGE THIS LINE: set the value to the ID instead of the string name
-                                opt.value = b.id;
-                                opt.textContent = b.barangay;
-                                barangaySelect.appendChild(opt);
-                            });
-                            barangaySelect.disabled = false;
-                        });
-                });
-            });
-            </script>
-            <script>
-                // 1. Grab elements from the DOM
-                const jobCategoryDropdown = document.getElementById('job_category');
-                const skillsContainer = document.getElementById('skills-container');
-                const coursesContainer = document.getElementById('courses-container');
-
-                // Helper: Converts "computer system" to "Computer System"
-                function titleCase(str) {
-                    return str.toLowerCase()
-                        .split(' ')
-                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                        .join(' ');
-                }
-
-                // Helper: Safely generates a unique ID string by removing spaces/special characters
-                function cleanId(string) {
-                    return string.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
-                }
-
-                // 2. Listen for "Areas of Expertise" dropdown changes
-                jobCategoryDropdown.addEventListener('change', function() {
-                    const expertiseId = this.value;
-
-                    // If nothing is selected, display empty placeholders and stop
-                    if (!expertiseId) {
-                        skillsContainer.innerHTML = '<p class="text-sm text-gray-400">Select a Job Category first...</p>';
-                        coursesContainer.innerHTML = '<p class="text-sm text-gray-400">Select a Job Category first...</p>';
-                        return;
-                    }
-
-                    // Show a temporary loading state
-                    skillsContainer.innerHTML = '<p class="text-sm text-gray-500 animate-pulse">Loading skills...</p>';
-                    coursesContainer.innerHTML = '<p class="text-sm text-gray-500 animate-pulse">Loading courses...</p>';
-
-                    // --- FETCH SKILLS ---
-                    fetch(`/get-skills/${expertiseId}`)
-                        .then(response => response.json())
-                        .then(skills => {
-                            skillsContainer.innerHTML = ''; // Clear container
-
-                            if (skills.length === 0) {
-                                skillsContainer.innerHTML = '<p class="text-sm text-gray-500">No skills available for this category.</p>';
+                            // If nothing is selected, display empty placeholders and stop
+                            if (!expertiseId) {
+                                skillsContainer.innerHTML = '<p class="text-sm text-gray-400">Select a Job Category first...</p>';
+                                coursesContainer.innerHTML = '<p class="text-sm text-gray-400">Select a Job Category first...</p>';
                                 return;
                             }
 
-                            skills.forEach((skill, index) => {
-                                const uniqueId = `skill-${cleanId(skill)}-${index}`;
+                            // Show a temporary loading state
+                            skillsContainer.innerHTML = '<p class="text-sm text-gray-500 animate-pulse">Loading skills...</p>';
+                            coursesContainer.innerHTML = '<p class="text-sm text-gray-500 animate-pulse">Loading courses...</p>';
 
-                                const div = document.createElement('div');
-                                div.className = 'flex items-center mb-2 last:mb-0';
+                            // --- FETCH SKILLS ---
+                            fetch(`/get-skills/${expertiseId}`)
+                                .then(response => response.json())
+                                .then(skills => {
+                                    skillsContainer.innerHTML = ''; // Clear container
 
-                                const checkbox = document.createElement('input');
-                                checkbox.type = 'checkbox';
-                                checkbox.id = uniqueId;
-                                checkbox.name = 'skills_required[]';
-                                checkbox.value = skill;
-                                checkbox.className = 'h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer';
+                                    if (skills.length === 0) {
+                                        skillsContainer.innerHTML = '<p class="text-sm text-gray-500">No skills available for this category.</p>';
+                                        return;
+                                    }
 
-                                const label = document.createElement('label');
-                                label.htmlFor = uniqueId;
-                                label.className = 'ml-2 text-sm text-gray-700 cursor-pointer select-none';
-                                label.textContent = titleCase(skill);
+                                    skills.forEach((skill, index) => {
+                                        const uniqueId = `skill-${cleanId(skill)}-${index}`;
 
-                                div.appendChild(checkbox);
-                                div.appendChild(label);
-                                skillsContainer.appendChild(div);
-                            });
-                        })
-                        .catch(error => {
-                            console.error('Error fetching skills:', error);
-                            skillsContainer.innerHTML = '<p class="text-sm text-red-500">Failed to load skills.</p>';
-                        });
+                                        const div = document.createElement('div');
+                                        div.className = 'flex items-center mb-2 last:mb-0';
 
-                    // --- FETCH & GROUP COURSES ---
-                    fetch(`/get-courses/${expertiseId}`)
-                        .then(response => response.json())
-                        .then(courses => {
-                            coursesContainer.innerHTML = ''; // Clear container
+                                        const checkbox = document.createElement('input');
+                                        checkbox.type = 'checkbox';
+                                        checkbox.id = uniqueId;
+                                        checkbox.name = 'skills_required[]';
+                                        checkbox.value = skill;
+                                        checkbox.className = 'h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer';
 
-                            if (courses.length === 0) {
-                                coursesContainer.innerHTML = '<p class="text-sm text-gray-500">No courses available for this category.</p>';
-                                return;
-                            }
+                                        const label = document.createElement('label');
+                                        label.htmlFor = uniqueId;
+                                        label.className = 'ml-2 text-sm text-gray-700 cursor-pointer select-none';
+                                        label.textContent = titleCase(skill);
 
-                            // Group courses by their educ_level property
-                            const groupedCourses = courses.reduce((groups, course) => {
-                                const level = course.educ_level || 'Other';
-                                if (!groups[level]) {
-                                    groups[level] = [];
-                                }
-                                groups[level].push(course);
-                                return groups;
-                            }, {});
-
-                            // Iterate through the groups (Vocational, Associate, Bachelor, etc.)
-                            Object.keys(groupedCourses).forEach(level => {
-                                // Create a section wrapper for this education level
-                                const sectionGroup = document.createElement('div');
-                                sectionGroup.className = 'mb-4 last:mb-0';
-
-                                // Create a clean heading for the education level
-                                const heading = document.createElement('h4');
-                                heading.className = 'text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 mt-2 border-b border-gray-100 pb-1';
-                                heading.textContent = titleCase(level);
-                                sectionGroup.appendChild(heading);
-
-                                // Append checkboxes belonging to this group
-                                groupedCourses[level].forEach(course => {
-                                    const uniqueId = `course-${course.id}`;
-
-                                    const div = document.createElement('div');
-                                    div.className = 'flex items-center mb-2 last:mb-0 pl-1';
-
-                                    const checkbox = document.createElement('input');
-                                    checkbox.type = 'checkbox';
-                                    checkbox.id = uniqueId;
-                                    checkbox.name = 'course_id[]';
-                                    checkbox.value = course.id;
-                                    checkbox.className = 'h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer';
-
-                                    const label = document.createElement('label');
-                                    label.htmlFor = uniqueId;
-                                    label.className = 'ml-2 text-sm text-gray-700 cursor-pointer select-none';
-                                    label.textContent = course.display_name;
-
-                                    div.appendChild(checkbox);
-                                    div.appendChild(label);
-                                    sectionGroup.appendChild(div);
+                                        div.appendChild(checkbox);
+                                        div.appendChild(label);
+                                        skillsContainer.appendChild(div);
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching skills:', error);
+                                    skillsContainer.innerHTML = '<p class="text-sm text-red-500">Failed to load skills.</p>';
                                 });
 
-                                coursesContainer.appendChild(sectionGroup);
-                            });
-                        })
-                        .catch(error => {
-                            console.error('Error fetching courses:', error);
-                            coursesContainer.innerHTML = '<p class="text-sm text-red-500">Failed to load courses.</p>';
+                            // --- FETCH & GROUP COURSES ---
+                            fetch(`/get-courses/${expertiseId}`)
+                                .then(response => response.json())
+                                .then(courses => {
+                                    coursesContainer.innerHTML = ''; // Clear container
+
+                                    if (courses.length === 0) {
+                                        coursesContainer.innerHTML = '<p class="text-sm text-gray-500">No courses available for this category.</p>';
+                                        return;
+                                    }
+
+                                    // Group courses by their educ_level property
+                                    const groupedCourses = courses.reduce((groups, course) => {
+                                        const level = course.educ_level || 'Other';
+                                        if (!groups[level]) {
+                                            groups[level] = [];
+                                        }
+                                        groups[level].push(course);
+                                        return groups;
+                                    }, {});
+
+                                    // Iterate through the groups (Vocational, Associate, Bachelor, etc.)
+                                    Object.keys(groupedCourses).forEach(level => {
+                                        // Create a section wrapper for this education level
+                                        const sectionGroup = document.createElement('div');
+                                        sectionGroup.className = 'mb-4 last:mb-0';
+
+                                        // Create a clean heading for the education level
+                                        const heading = document.createElement('h4');
+                                        heading.className = 'text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 mt-2 border-b border-gray-100 pb-1';
+                                        heading.textContent = titleCase(level);
+                                        sectionGroup.appendChild(heading);
+
+                                        // Append checkboxes belonging to this group
+                                        groupedCourses[level].forEach(course => {
+                                            const uniqueId = `course-${course.id}`;
+
+                                            const div = document.createElement('div');
+                                            div.className = 'flex items-center mb-2 last:mb-0 pl-1';
+
+                                            const checkbox = document.createElement('input');
+                                            checkbox.type = 'checkbox';
+                                            checkbox.id = uniqueId;
+                                            checkbox.name = 'course_id[]';
+                                            checkbox.value = course.id;
+                                            checkbox.className = 'h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer';
+
+                                            const label = document.createElement('label');
+                                            label.htmlFor = uniqueId;
+                                            label.className = 'ml-2 text-sm text-gray-700 cursor-pointer select-none';
+                                            label.textContent = course.display_name;
+
+                                            div.appendChild(checkbox);
+                                            div.appendChild(label);
+                                            sectionGroup.appendChild(div);
+                                        });
+
+                                        coursesContainer.appendChild(sectionGroup);
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching courses:', error);
+                                    coursesContainer.innerHTML = '<p class="text-sm text-red-500">Failed to load courses.</p>';
+                                });
                         });
-                });
-            </script>
-            <!--input type="text" id="place_of_work" name="place_of_work" autocomplete="off" list="autocomplete-results"
-                    placeholder="Start typing your work location..."
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border">
+                    </script>
+                    <!--input type="text" id="place_of_work" name="place_of_work" autocomplete="off" list="autocomplete-results"
+                            placeholder="Start typing your work location..."
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border">
 
-            <datalist id="autocomplete-results"></datalist>
-            <input type="text" id="latitude" name="latitude">
-            <input type="text" id="longitude" name="longitude"-->
+                    <datalist id="autocomplete-results"></datalist>
+                    <input type="text" id="latitude" name="latitude">
+                    <input type="text" id="longitude" name="longitude"-->
 
-            {{-- <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 font-medium transition duration-150">
-                Save Workplace Location
-            </button> --}}
-            <!--div-- class="map mt-4"></!div-->
-        </div>
-        <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
-            <label for="sex_preference" class="block text-sm font-medium text-gray-700 mb-1">Sex Preference </label>
-                <select id="sex_preference" name="sex_preference"
-                class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                @error('sex_preference') border-red-500 @enderror>
-                <option value="0"></option>
-                <option value="1">Male</option>
-                <option value="2">Female</option>
-                <option value="3">Mixed</option>
-            </select>
-            </label>
-            <label for="num_positions" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Number of Positions <span class="text-red-700">*</span></label>
-                <input type="number" name="num_positions" id="num_positions"
-                    class="block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('num_positions') ? 'border-red-500' : 'border-gray-300' }}"
-                    min="1"
-                    value="{{ old('num_positions') }}">
-            </label>
-        </div>
-    </div>
-  </div>
-</div>
-
-<div class="flex items-center justify-center mb-6">
-    <div class="mx-auto max-w-6xl px-12">
-        <div class="mt-8 flex gap-3">
-            <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-md font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition">
-                Next
-            </button>
-
-            <button type="reset" class="px-6 py-2 bg-white text-gray-700 border border-gray-300 rounded-md font-semibold hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition">
-                Reset
-            </button>
-
-
+                    {{-- <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 font-medium transition duration-150">
+                        Save Workplace Location
+                    </button> --}}
+                    <!--div-- class="map mt-4"></!div-->
+                </div>
+                <div class="w-full max-w-xl rounded-md bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-sky-600 peer-checked:ring-blue-400 peer-checked:ring-offset-2">
+                    <label for="sex_preference" class="block text-sm font-medium text-gray-700 mb-1">Sex Preference </label>
+                        <select id="sex_preference" name="sex_preference"
+                        class="block w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+                        @error('sex_preference') border-red-500 @enderror>
+                        <option value="0"></option>
+                        <option value="1">Male</option>
+                        <option value="2">Female</option>
+                        <option value="3">Mixed</option>
+                    </select>
+                    </label>
+                    <label for="num_positions" class="block text-sm font-medium text-gray-700 mb-1 mt-3">Number of Positions <span class="text-red-700">*</span></label>
+                        <input type="number" name="num_positions" id="num_positions"
+                            class="block w-full rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 {{ $errors->has('num_positions') ? 'border-red-500' : 'border-gray-300' }}"
+                            min="1"
+                            value="{{ old('num_positions') }}">
+                    </label>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
+    <div class="flex items-center justify-center mb-6">
+        <div class="mx-auto max-w-6xl px-12">
+            <div class="mt-8 flex gap-3">
+                <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-md font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition">
+                    Next
+                </button>
+
+                <button type="reset" class="px-6 py-2 bg-white text-gray-700 border border-gray-300 rounded-md font-semibold hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition">
+                    Reset
+                </button>
+
+
+            </div>
+        </div>
+    </div>
 </form>
 
 </x-app-layout>

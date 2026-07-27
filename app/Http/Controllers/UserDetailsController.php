@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserDetails;
 use App\Models\WorkDetails;
 use App\Models\Educational;
+use App\Models\Expertise;
+use App\Models\Course;
+use App\Models\EducationalDetail;
 use App\Http\Requests\StoreUserDetailsRequest;
 use App\Http\Requests\UpdateUserDetailsRequest;
 use App\Http\Requests\UpdateUserSexRequest;
 use App\Http\Requests\UpdateUserGenderRequest;
 use App\Http\Requests\UpdateUserAboutRequest;
 use App\Http\Requests\UpdateUserCivilRequest;
-use App\Http\Requests\UpdateUserCourseRequest;
 
 class UserDetailsController extends Controller
 {
@@ -29,9 +32,22 @@ class UserDetailsController extends Controller
     public function profile()
     {
         $user = UserDetails::where('idno', auth()->user()->idno)->first();
+        $userB = DB::table('user_details')
+        ->leftJoin('barangays', 'user_details.brgy', '=', 'barangays.id') // adjust primary key column if needed
+        ->leftJoin('towns', 'user_details.town', '=', 'towns.id')         // adjust primary key column if needed
+        ->where('user_details.idno', auth()->user()->idno)
+        ->select(
+            'user_details.*',
+            'barangays.barangay as barangay_name',
+            'towns.town as town_name'
+        )
+        ->first();
+
+
         $work = WorkDetails::where('idno', auth()->user()->idno)->first();
-        $education = Educational::where('idno', auth()->user()->idno)->first();
-        return view('app.profile', compact('user', 'work', 'education'));
+        $educationalDetails = EducationalDetail::where('idno', auth()->user()->idno)->get();
+        $expertise = Expertise::all();
+        return view('app.profile', compact('user', 'userB', 'work', 'educationalDetails', 'expertise'));
     }
     /**
      * Show the form for creating a new resource.
@@ -294,8 +310,40 @@ class UserDetailsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(UserDetails $userDetails)
+    public function course_skills(Request $request)
     {
-        //
+        // 1. Validate payload
+        $validated = $request->validate([
+            'job_category'    => 'required|integer',
+            'course_id'       => 'required|array',
+            'course_id.*'     => 'integer',
+            'school'          => 'required|string|max:255',
+            'year'            => 'required|digits:4',
+            'skills_required' => 'nullable|array',
+        ]);
+
+        $idno = Auth::user()->idno ?? Auth::id();
+
+        // Format skills array into a clean string (e.g., "Laravel, VueJS, MySQL")
+        $skillsString = !empty($validated['skills_required'])
+            ? implode(', ', $validated['skills_required'])
+            : null;
+
+        // 2. Fetch the selected courses from database
+        $courses = Course::whereIn('id', $validated['course_id'])->get();
+
+        // 3. Insert a NEW ROW for each course added
+        foreach ($courses as $course) {
+            EducationalDetail::create([
+                'idno'           => $idno,
+                'educ_level'     => strtolower($course->educ_level ?? 'Other'),
+                'school'         => $validated['school'],
+                'course_name'    => $course->display_name ?? $course->name,
+                'year_graduated' => $validated['year'],
+                'skills'         => $skillsString,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Educational record added successfully!');
     }
 }

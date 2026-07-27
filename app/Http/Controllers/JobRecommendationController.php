@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\JobPosting;
 use App\Models\Expertise;
+use App\Models\EducationalDetail;
+use App\Models\UserDetails;
+use App\Models\WorkDetails;
 use App\Http\Requests\StoreJobApplyRequest;
 use App\Http\Requests\StoreJobSaveRequest;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -16,112 +18,16 @@ class JobRecommendationController extends Controller
      * Display the recommended job listings.
      */
 
-    // public function index(Request $request)
-    // {
-    //     // 1. Fetch user and validation checks
-    //     $applicant = \App\Models\UserDetails::where('idno', Auth::user()->idno)->first();
-    //     $workDetail = \App\Models\WorkDetails::where('idno', Auth::user()->idno)->first();
-    //     $jobPreference = \App\Models\JobPreference::where('idno', Auth::user()->idno)->first();
-
-    //     // Fetch educational profile to retrieve course fields
-    //     $educational = \Illuminate\Support\Facades\DB::table('educationals')
-    //         ->where('idno', Auth::user()->idno)
-    //         ->first();
-
-    //     if (!$applicant) {
-    //         return redirect()->route('address.index')->with('error', 'Please complete your profile first.');
-    //     }
-    //     if (!$educational) {
-    //         return redirect()->route('background.index')->with('error', 'Please complete your educational profile first.');
-    //     }
-    //     if (!$workDetail) {
-    //         return redirect()->route('expertise.process')->with('error', 'Please complete your skills profile first.');
-    //     }
-    //     if (is_null($workDetail->latitude) || is_null($workDetail->longitude)) {
-    //         return redirect()->route('distance.index')->with('error', 'Please update your coordinates.');
-    //     }
-
-    //     $applicantLat = $workDetail->latitude;
-    //     $applicantLng = $workDetail->longitude;
-
-    //     $showAll = $request->has('show_all');
-
-    //     // Check if the user is actively using the search/filter form
-    //     $isSearching = !$showAll && $request->hasAny(['job_type', 'course', 'province', 'town']);
-
-    //     // 2. Start Base Query (Location & Proximity Calculation)
-    //     $query = JobPosting::select('job_postings.*')
-    //         ->selectRaw("
-    //             ( 6371 * acos( cos( radians(?) ) * cos( radians( job_postings.latitude ) )
-    //             * cos( radians( job_postings.longitude ) - radians(?) ) + sin( radians(?) )
-    //             * sin( radians( job_postings.latitude ) ) ) ) AS distance
-    //         ", [$applicantLat, $applicantLng, $applicantLat]);
-
-    //     // 3. APPLY FILTERS (Active Search Mode)
-    //     if (!$showAll && $isSearching) {
-    //         if ($request->filled('job_type')) {
-    //             $query->where('job_postings.job_type', $request->input('job_type'));
-    //         }
-    //         if ($request->filled('course')) {
-    //             // Updated to search within JSON array structure using LIKE
-    //             $searchCourse = $request->input('course');
-    //             $query->where('job_postings.course', 'LIKE', '%' . $searchCourse . '%');
-    //         }
-    //         if ($request->filled('province')) {
-    //             $query->where('job_postings.province', $request->input('province'));
-    //         }
-    //         if ($request->filled('town')) {
-    //             $query->where('job_postings.town', $request->input('town'));
-    //         }
-    //     }
-
-    //     // 4. APPLY AUTOMATIC MATCHING (Standard Load Mode - when NOT searching and NOT showing all)
-    //     if (!$showAll && !$isSearching) {
-    //         // A. STRICT COURSE FILTERING (Match array to array)
-    //         // Collect all non-null courses from the applicant's educational profile
-    //         $applicantCourses = array_filter([
-    //             $educational->vocational_course ?? null,
-    //             $educational->course_degree ?? null,
-    //             $educational->postgrad_course_degree ?? null,
-    //             $educational->doctoral_course_degree ?? null
-    //         ]);
-
-    //         // Clean values: trim whitespaces and remove duplicates
-    //         $applicantCourses = array_unique(array_filter(array_map('trim', $applicantCourses)));
-
-    //         // Strict: Only display jobs where the job's course array matches one of the applicant's courses
-    //         if (!empty($applicantCourses)) {
-    //             $query->where(function ($q) use ($applicantCourses) {
-    //                 foreach ($applicantCourses as $course) {
-    //                     // Since job_postings.course is stored as a JSON array (e.g. ["Course A", "Course B"]),
-    //                     // using 'LIKE' finds the exact course name wrapped within the JSON string.
-    //                     $q->orWhere('job_postings.course', 'LIKE', '%' . $course . '%');
-    //                 }
-    //             });
-    //         } else {
-    //             // Optional fallback: If applicant has no courses filled, return nothing on strict load to maintain logic
-    //             $query->whereRaw('1 = 0');
-    //         }
-    //     }
-
-    //     // 5. Finalize Results (Strictly sorted by closest distance)
-    //     $jobs = $query->orderBy('distance', 'asc')->get();
-    //     $expertise = \App\Models\Expertise::all();
-    //     $courses = \Illuminate\Support\Facades\DB::table('courses')->select('display_name')->distinct()->get();
-
-    //     return view('rec', compact('jobs', 'courses', 'expertise'));
-    // }
     public function index(Request $request)
     {
         // 1. Fetch user and validation checks
-        $applicant = \App\Models\UserDetails::where('idno', Auth::user()->idno)->first();
-        $workDetail = \App\Models\WorkDetails::where('idno', Auth::user()->idno)->first();
-        $jobPreference = \App\Models\JobPreference::where('idno', Auth::user()->idno)->first();
+        $applicant = UserDetails::where('idno', Auth::user()->idno)->first();
+        $workDetail = WorkDetails::where('idno', Auth::user()->idno)->first();
 
         // Fetch educational profile to retrieve course fields
-        $educational = \Illuminate\Support\Facades\DB::table('educationals')
+        $educational = DB::table('educational_details')
             ->where('idno', Auth::user()->idno)
-            ->first();
+            ->get();
 
         if (!$applicant) {
             return redirect()->route('address.index')->with('error', 'Please complete your profile first.');
@@ -142,7 +48,7 @@ class JobRecommendationController extends Controller
         $isSearching = !$showAll && $request->hasAny(['job_type', 'course', 'province', 'town']);
 
         // ====================================================
-        // PIPELINE 1 (RED SECTION): PROFILE & GEOSPATIAL MATRIX
+        // COLUMN 1 (RED SECTION): PROFILE & GEOSPATIAL MATRIX
         // ====================================================
         $query = JobPosting::select('job_postings.*')
             ->selectRaw("
@@ -169,33 +75,40 @@ class JobRecommendationController extends Controller
         }
 
         // Apply Automatic Content Matching (Standard Load Mode)
-        if (!$showAll && !$isSearching) {
-            $applicantCourses = array_filter([
-                $educational->vocational_course ?? null,
-                $educational->course_degree ?? null,
-                $educational->postgrad_course_degree ?? null,
-                $educational->doctoral_course_degree ?? null
-            ]);
+        // Step 1: Retrieve all educational records for the user
+        // Step 1: Fetch all educational records for the applicant
+        $educationDetails = EducationalDetail::where('idno', Auth::user()->idno)->get();
 
-            $applicantCourses = array_unique(array_filter(array_map('trim', $applicantCourses)));
+if (!$showAll && !$isSearching) {
+    // Step 2: Pluck 'course_name', clean up strings, and remove duplicates
+    $applicantCourses = $educationDetails
+        ->pluck('course_name')
+        ->filter()
+        ->map(fn($course) => trim($course))
+        ->unique()
+        ->values()
+        ->toArray();
 
-            if (!empty($applicantCourses)) {
-                $query->where(function ($q) use ($applicantCourses) {
-                    foreach ($applicantCourses as $course) {
-                        $q->orWhere('job_postings.course', 'LIKE', '%' . $course . '%');
-                    }
-                });
-            } else {
-                $query->whereRaw('1 = 0'); // Fallback sequence logic protection
+    // Step 3: Match against the JSON array in job_postings
+    if (!empty($applicantCourses)) {
+        $query->where(function ($q) use ($applicantCourses) {
+            foreach ($applicantCourses as $course) {
+                // Checks if $course exists in the job_postings.course JSON array
+                $q->orWhereJsonContains('job_postings.course', $course);
             }
-        }
+        });
+    } else {
+        // Fallback protection: user has no courses listed
+        $query->whereRaw('1 = 0');
+    }
+}
 
         // Fetch Content-Geospatial Result Pipeline
         $profileMatchedJobs = $query->orderBy('distance', 'asc')->get();
 
 
         // ====================================================
-        // PIPELINE 2 (GREEN SECTION): COLLABORATIVE FILTERING
+        // COLUMN 2 (GREEN SECTION): COLLABORATIVE FILTERING
         // ====================================================
         $collaborativeJobs = collect();
         $userIdno = Auth::user()->idno; // Pulling idno tracking parameter string matching schema mappings
@@ -253,7 +166,7 @@ class JobRecommendationController extends Controller
 
         // Mapping collections seamlessly right back out to dashboard view parameters
         return view('rec', [
-            'jobs'              => $profileMatchedJobs, // Maps to Red Section variable loop hook
+            'jobs'              => $profileMatchedJobs, // Maps to blue Section variable loop hook
             'collaborativeJobs' => $collaborativeJobs,   // Maps to Green Section variable loop hook
             'courses'           => $courses,
             'expertise'         => $expertise
@@ -351,6 +264,9 @@ class JobRecommendationController extends Controller
     {
         $job = JobPosting::where('job_id', $job_id)->firstOrFail();
         $user = Auth::user();
-        return view('recp', compact('user', 'job'));
+        $educationalDetails = EducationalDetail::where('idno', auth()->user()->idno)->get();
+        $work = WorkDetails::where('idno', auth()->user()->idno)->first();
+        $expertise = Expertise::all();
+        return view('recp', compact('user', 'job', 'work', 'educationalDetails', 'expertise'));
     }
 }
