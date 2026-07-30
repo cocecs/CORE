@@ -79,29 +79,29 @@ class JobRecommendationController extends Controller
         // Step 1: Fetch all educational records for the applicant
         $educationDetails = EducationalDetail::where('idno', Auth::user()->idno)->get();
 
-if (!$showAll && !$isSearching) {
-    // Step 2: Pluck 'course_name', clean up strings, and remove duplicates
-    $applicantCourses = $educationDetails
-        ->pluck('course_name')
-        ->filter()
-        ->map(fn($course) => trim($course))
-        ->unique()
-        ->values()
-        ->toArray();
+        if (!$showAll && !$isSearching) {
+            // Step 2: Pluck 'course_name', clean up strings, and remove duplicates
+            $applicantCourses = $educationDetails
+                ->pluck('course_name')
+                ->filter()
+                ->map(fn($course) => trim($course))
+                ->unique()
+                ->values()
+                ->toArray();
 
-    // Step 3: Match against the JSON array in job_postings
-    if (!empty($applicantCourses)) {
-        $query->where(function ($q) use ($applicantCourses) {
-            foreach ($applicantCourses as $course) {
-                // Checks if $course exists in the job_postings.course JSON array
-                $q->orWhereJsonContains('job_postings.course', $course);
+            // Step 3: Match against the JSON array in job_postings
+            if (!empty($applicantCourses)) {
+                $query->where(function ($q) use ($applicantCourses) {
+                    foreach ($applicantCourses as $course) {
+                        // Checks if $course exists in the job_postings.course JSON array
+                        $q->orWhereJsonContains('job_postings.course', $course);
+                    }
+                });
+            } else {
+                // Fallback protection: user has no courses listed
+                $query->whereRaw('1 = 0');
             }
-        });
-    } else {
-        // Fallback protection: user has no courses listed
-        $query->whereRaw('1 = 0');
-    }
-}
+        }
 
         // Fetch Content-Geospatial Result Pipeline
         $profileMatchedJobs = $query->orderBy('distance', 'asc')->get();
@@ -175,8 +175,8 @@ if (!$showAll && !$isSearching) {
     public function details($job_id)
     {
         // 1. Fetch user details to get their latitude and longitude coordinates
-        $applicant = \App\Models\UserDetails::where('idno', Auth::user()->idno)->first();
-        $jobPreference = \App\Models\WorkDetails::where('idno', Auth::user()->idno)->first();
+        $applicant = UserDetails::where('idno', Auth::user()->idno)->first();
+        $jobPreference = WorkDetails::where('idno', Auth::user()->idno)->first();
 
         // Set fallback coordinates if the user profile doesn't exist to avoid breaks
         $applicantLat = $jobPreference->latitude;

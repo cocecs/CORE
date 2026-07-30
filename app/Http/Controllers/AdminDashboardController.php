@@ -219,4 +219,220 @@ class AdminDashboardController extends Controller
 
         return view('adtv.rp4', compact('placedApplicants', 'pesoName', 'reportMonth'));
     }
+    public function barangayReport()
+    {
+        // 1. Applications Count grouped by Job Posting Barangay (Work Location)
+        $jobBarangayStats = DB::table('job_applications')
+            ->join('job_postings', 'job_applications.job_id', '=', 'job_postings.job_id')
+            ->select(
+                'job_postings.province',
+                'job_postings.town',
+                'job_postings.barangay',
+                DB::raw('COUNT(job_applications.id) as total_applications')
+            )
+            ->groupBy('job_postings.province', 'job_postings.town', 'job_postings.barangay')
+            ->orderByDesc('total_applications')
+            ->get();
+
+        // applicant residence
+        // 1. Get the total NUMBER of UNIQUE barangays with hired applicants
+        $hiredBarangaysCount = DB::table('job_applications')
+            ->join('user_details', 'job_applications.user_id', '=', 'user_details.idno')
+            ->where('job_applications.status', 'hired')
+            ->whereNotNull('user_details.brgy')
+            ->distinct('user_details.brgy')
+            ->count('user_details.brgy');
+
+        // 2. Get a GROUPED list of total hired applicants per barangay (for tables/charts)
+        $hiredStatsByBarangay = DB::table('job_applications')
+            ->join('user_details', 'job_applications.user_id', '=', 'user_details.idno')
+            ->where('job_applications.status', 'hired')
+            ->select(
+                'user_details.province',
+                'user_details.town',
+                'user_details.brgy as barangay',
+                DB::raw('COUNT(job_applications.id) as total_hired')
+            )
+            ->groupBy('user_details.province', 'user_details.town', 'user_details.brgy')
+            ->orderByDesc('total_hired')
+            ->get();
+
+        // 2. Applications Count grouped by Applicant Home Barangay (User Address)
+        // If 'brgy' in user_details is an ID, join with your barangays reference table if available.
+        $applicantBarangayStats = DB::table('job_applications')
+            ->join('user_details', 'job_applications.user_id', '=', 'user_details.idno')
+            // Join towns table
+            ->leftJoin('towns', 'user_details.town', '=', 'towns.id')
+            // Join barangays table
+            ->leftJoin('barangays', 'user_details.brgy', '=', 'barangays.id')
+            ->select(
+                'user_details.province',
+                // Select town name or fallback to ID if null
+                DB::raw('COALESCE(towns.town, user_details.town) as town_name'),
+                // Select barangay name or fallback to ID if null
+                DB::raw('COALESCE(barangays.barangay, user_details.brgy) as barangay_name'),
+                DB::raw("SUM(CASE WHEN job_applications.status = 'applied' THEN 1 ELSE 0 END) as total_applied"),
+                DB::raw("SUM(CASE WHEN job_applications.status = 'hired' THEN 1 ELSE 0 END) as total_hired"),
+                DB::raw('COUNT(job_applications.id) as total_applications')
+            )
+            ->groupBy('user_details.province', 'towns.town', 'barangays.barangay', 'user_details.town', 'user_details.brgy')
+            ->orderByDesc('total_applications')
+            ->get();
+
+        // High-level summary metrics
+        $totalApplications = DB::table('job_applications')->count();
+        $totalJobBarangaysServed = $jobBarangayStats->count();
+
+        return view('adtv.rp5', compact(
+            'jobBarangayStats',
+            'applicantBarangayStats',
+            'totalApplications',
+            'totalJobBarangaysServed',
+            'hiredBarangaysCount'
+        ));
+    }
+    public function kpiReport()
+    {
+        // 1. Total Applications
+        $totalApplications = DB::table('job_applications')->count();
+
+        // 2. Pending/Applied Status Count
+        $totalApplied = DB::table('job_applications')
+            ->where('status', 'applied')
+            ->count();
+
+        // 3. Hired Status Count
+        $totalHired = DB::table('job_applications')
+            ->where('status', 'hired')
+            ->count();
+
+        // 4. Hiring Success Rate Percentage
+        $hiringRate = $totalApplications > 0
+            ? round(($totalHired / $totalApplications) * 100, 1)
+            : 0;
+
+        // 5. Top Applicant Origin Barangay
+        $topOriginBarangay = DB::table('job_applications')
+            ->join('user_details', 'job_applications.user_id', '=', 'user_details.idno')
+            ->leftJoin('barangays', 'user_details.brgy', '=', 'barangays.id')
+            ->select(
+                DB::raw('COALESCE(barangays.barangay, user_details.brgy) as barangay_name'),
+                DB::raw('COUNT(job_applications.id) as app_count')
+            )
+            ->groupBy('barangays.barangay', 'user_details.brgy')
+            ->orderByDesc('app_count')
+            ->first();
+
+        // 6. Top Work Location Barangay
+        $topJobBarangay = DB::table('job_applications')
+            ->join('job_postings', 'job_applications.job_id', '=', 'job_postings.id')
+            ->select(
+                'job_postings.barangay',
+                DB::raw('COUNT(job_applications.id) as app_count')
+            )
+            ->groupBy('job_postings.barangay')
+            ->orderByDesc('app_count')
+            ->first();
+
+        return view('adtv.rp6', compact(
+            'totalApplications',
+            'totalApplied',
+            'totalHired',
+            'hiringRate',
+            'topOriginBarangay',
+            'topJobBarangay'
+        ));
+    }
+    public function mobility()
+    {
+        // Cross-matching residence barangay vs job posting barangay
+        $mobilityStats = DB::table('job_applications')
+            ->join('user_details', 'job_applications.user_id', '=', 'user_details.idno')
+            ->leftJoin('barangays as res_brgy', 'user_details.brgy', '=', 'res_brgy.id')
+            ->join('job_postings', 'job_applications.job_id', '=', 'job_postings.id')
+            ->select(
+                DB::raw('COALESCE(res_brgy.barangay, user_details.brgy) as residence_barangay'),
+                'job_postings.barangay as work_barangay',
+                DB::raw("SUM(CASE WHEN job_applications.status = 'hired' THEN 1 ELSE 0 END) as total_hired"),
+                DB::raw('COUNT(job_applications.id) as total_applied')
+            )
+            ->groupBy('res_brgy.barangay', 'user_details.brgy', 'job_postings.barangay')
+            ->orderByDesc('total_hired')
+            ->get();
+
+        // Summary counts: Intra-Barangay vs Inter-Barangay placements
+        $intraBarangayHires = $mobilityStats->filter(fn($row) => $row->residence_barangay === $row->work_barangay)->sum('total_hired');
+        $interBarangayHires = $mobilityStats->filter(fn($row) => $row->residence_barangay !== $row->work_barangay)->sum('total_hired');
+
+        return view('adtv.rp7', compact('mobilityStats', 'intraBarangayHires', 'interBarangayHires'));
+    }
+    public function demographics()
+    {
+        // Distribution by Gender
+        $genderStats = DB::table('job_applications')
+            ->join('user_details', 'job_applications.user_id', '=', 'user_details.idno')
+            ->select(
+                DB::raw("COALESCE(user_details.sex, 'Unspecified') as sex"),
+                DB::raw('COUNT(job_applications.id) as total_applications'),
+                DB::raw("SUM(CASE WHEN job_applications.status = 'hired' THEN 1 ELSE 0 END) as total_hired")
+            )
+            ->groupBy('user_details.sex')
+            ->get();
+
+        // Distribution by Educational Attainment
+        $educationStats = DB::table('job_applications')
+            ->join('user_details', 'job_applications.user_id', '=', 'user_details.idno')
+            ->select(
+                DB::raw("COALESCE(user_details.educational_level, 'Unspecified') as educ_attainment"),
+                DB::raw('COUNT(job_applications.id) as total_applications'),
+                DB::raw("SUM(CASE WHEN job_applications.status = 'hired' THEN 1 ELSE 0 END) as total_hired")
+            )
+            ->groupBy('user_details.educational_level')
+            ->orderByDesc('total_applications')
+            ->get();
+
+        return view('adtv.rp8', compact('genderStats', 'educationStats'));
+    }
+    public function skillDemand()
+    {
+        // Job Demand by Sector / Category
+        $sectorStats = DB::table('job_postings')
+            ->leftJoin('job_applications', 'job_postings.id', '=', 'job_applications.job_id')
+            ->leftJoin('expertises', 'job_postings.job_category', '=', 'expertises.id') // Joined on table 'expertises'
+            ->select(
+                DB::raw("COALESCE(expertises.area_of_expertise, job_postings.job_category, 'General') as sector"),
+                DB::raw('COUNT(DISTINCT job_postings.id) as total_job_postings'),
+                DB::raw('COUNT(job_applications.id) as total_applications'),
+                DB::raw("SUM(CASE WHEN job_applications.status = 'hired' THEN 1 ELSE 0 END) as total_hired")
+            )
+            ->groupBy('job_postings.job_category', 'expertises.area_of_expertise')
+            ->orderByDesc('total_applications')
+            ->get();
+
+        return view('adtv.rp9', compact('sectorStats'));
+    }
+    public function analytics()
+    {
+        // Status distribution for Donut Chart
+        $statusCounts = DB::table('job_applications')
+            ->select('status', DB::raw('COUNT(*) as count'))
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
+        // Top 5 Barangays by Applications for Bar Chart
+        $topBarangays = DB::table('job_applications')
+            ->join('user_details', 'job_applications.user_id', '=', 'user_details.idno')
+            ->leftJoin('barangays', 'user_details.brgy', '=', 'barangays.id')
+            ->select(
+                DB::raw('COALESCE(barangays.barangay, user_details.brgy) as name'),
+                DB::raw('COUNT(job_applications.id) as total')
+            )
+            ->groupBy('barangays.barangay', 'user_details.brgy')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
+        return view('adtv.rp10', compact('statusCounts', 'topBarangays'));
+    }
 }

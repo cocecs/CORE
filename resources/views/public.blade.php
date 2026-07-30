@@ -1,15 +1,15 @@
-<x-guest-layout>
+<x-public-layout>
     <!-- Top Navigation Bar for Public Guests -->
     <nav class="bg-white border-b border-gray-200">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="/" class="text-xl font-bold text-indigo-600">PESO Job Portal</a>
+            <a href="/" class="text-xl font-bold text-indigo-600">Driving the engine of your career</a>
             <div class="flex items-center gap-3">
                 <a href="{{ route('login') }}" class="text-sm font-semibold text-gray-600 hover:text-indigo-600">Sign In</a>
                 <a href="{{ route('register') }}" class="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition">Create Account</a>
             </div>
         </div>
     </nav>
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-4 py-8 max-w-5xl">
         <!-- Guest Call to Action Banner -->
         <div class="mb-8 p-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl text-white shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
@@ -216,4 +216,4 @@
         });
     });
     </script>
-</x-guest-layout>
+</x-public-layout>

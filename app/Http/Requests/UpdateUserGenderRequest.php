@@ -22,7 +22,7 @@ class UpdateUserGenderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'gender' => 'required|string|max:15',
+            'gender' => 'nullable|string|max:15',
         ];
     }
 }

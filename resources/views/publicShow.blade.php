@@ -4,7 +4,9 @@
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <a href="/" class="text-xl font-bold text-indigo-600">PESO Job Portal</a>
             <div class="flex items-center gap-3">
-                <a href="{{ route('login') }}" class="text-sm font-semibold text-gray-600 hover:text-indigo-600">Sign In</a>
+                <a href="{{ route('login') }}" class="block w-full bg-white text-indigo-600 font-bold text-center py-2.5 px-4 rounded-xl text-sm shadow hover:bg-indigo-50 transition">
+                    Sign In to Apply
+                </a>
                 <a href="{{ route('register') }}" class="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition">Create Account</a>
             </div>
         </div>

@@ -83,6 +83,24 @@
                             <a href="{{ route('rp4') }}" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                 Applicants Placed
                             </a>
+                            <a href="{{ route('rp5') }}" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                Barangay Served
+                            </a>
+                            <a href="{{ route('rp6') }}" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                KPI Report
+                            </a>
+                            <a href="{{ route('rp7') }}" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                Cross-Barangay Matching
+                            </a>
+                            <a href="{{ route('rp8') }}" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                Demographic & Educational Breakdown
+                            </a>
+                            <a href="{{ route('rp9') }}" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                Job Sector & Skill Demand by Barangay
+                            </a>
+                            <a href="{{ route('rp10') }}" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                Interactive Features & Visualizations
+                            </a>
                         </nav>
 
                         <div class="p-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50">
@@ -98,14 +116,14 @@
                         </div>
 
                         <nav class="flex-1 p-4 space-y-1">
-                            <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-lg hover:bg-purple-50 hover:text-purple-700 dark:hover:bg-gray-700 transition-colors group">
+                            <a href="/dashboard" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-lg hover:bg-purple-50 hover:text-purple-700 dark:hover:bg-gray-700 transition-colors group">
                                 <svg class="mr-3 h-5 w-5 text-gray-400 group-hover:text-purple-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                                 </svg>
                                 Dashboard
                             </a>
 
-                            <a href="#" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-lg hover:bg-purple-50 hover:text-purple-700 dark:hover:bg-gray-700 transition-colors group">
+                            <a href="/par" class="flex items-center px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-lg hover:bg-purple-50 hover:text-purple-700 dark:hover:bg-gray-700 transition-colors group">
                                 <svg class="mr-3 h-5 w-5 text-gray-400 group-hover:text-purple-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>

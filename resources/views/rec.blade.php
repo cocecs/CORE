@@ -361,12 +361,15 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="bg-white border-l-4 border-blue-400 border-t border-r border-b border-gray-200 rounded-r-xl p-5 shadow-sm hover:shadow transition">
                             <div class="flex justify-between items-start gap-2">
                                 <div>
-                                    <h3 class="text-lg font-semibold text-gray-900 leading-snug">{{ $job->job_title }}</h3>
+                                    <h3 class="text-lg font-semibold text-gray-900 leading-snug mb-2">{{ $job->job_title }}</h3>
+
                                     <p class="text-xs text-gray-500 font-medium tracking-wide">
-                                        {{ isset($job->area_of_expertise) ? strtoupper($job->area_of_expertise) : 'GENERAL' }}
+                                        <span class="font-semibold text-gray-700">JOB SUMMARY:</span>
+                                        {{ !empty($job->job_summary) ? trim(strip_tags(html_entity_decode($job->job_summary))) : 'GENERAL' }}
+
                                     </p>
                                 </div>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-50 text-blue-800 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-800 whitespace-nowrap">
                                     {{ round($job->distance, 1) }} km away
                                 </span>
                             </div>
@@ -374,7 +377,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <div class="mt-3 flex flex-wrap gap-2 text-xs text-gray-500">
                                 <div><span class="font-medium text-gray-700">Type:</span> {{ $job->job_type }}</div>
                                 <span class="text-gray-300">•</span>
-                                <div><span class="font-medium text-gray-700">Loc:</span> {{ $job->barangay }}, {{ $job->town }}, {{ $job->province }}</div>
+                                <div><span class="font-medium text-gray-700">Work Location:</span> {{ $job->barangay }}, {{ $job->town }}, {{ $job->province }}</div>
                             </div>
 
                             <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
@@ -407,7 +410,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-900 leading-snug">{{ $job->job_title }}</h3>
                                     <p class="text-xs text-gray-500 font-medium tracking-wide">
-                                        {{ isset($job->area_of_expertise) ? strtoupper($job->area_of_expertise) : 'GENERAL' }}
+                                        <span class="font-semibold text-gray-700">Job Summary:</span>
+                                        {{ !empty($job->job_summary) ? strtoupper(trim(strip_tags(html_entity_decode($job->job_summary)))) : 'GENERAL' }}
                                     </p>
                                 </div>
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-800 whitespace-nowrap">
@@ -418,7 +422,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <div class="mt-3 flex flex-wrap gap-2 text-xs text-gray-500">
                                 <div><span class="font-medium text-gray-700">Type:</span> {{ $job->job_type }}</div>
                                 <span class="text-gray-300">•</span>
-                                <div><span class="font-medium text-gray-700">Loc:</span> {{ $job->barangay }}, {{ $job->town }}, {{ $job->province }}</div>
+                                <div><span class="font-medium text-gray-700">Work Location:</span> {{ $job->barangay }}, {{ $job->town }}, {{ $job->province }}</div>
                             </div>
 
                             <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">

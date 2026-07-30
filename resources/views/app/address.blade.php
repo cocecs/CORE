@@ -62,8 +62,8 @@
                         const barangaySelect = document.getElementById('barangay');
 
                         // Use Blade syntax to generate absolute base URLs natively
-                        const provincesUrl = "{{ url('/api/provinces') }}";
                         const townsUrl     = "{{ url('/api/towns') }}";
+                        const provincesUrl = "{{ url('/api/provinces') }}";
                         const barangaysUrl = "{{ url('/api/barangays') }}";
 
                         // 1. Fetch Provinces

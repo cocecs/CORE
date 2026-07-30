@@ -36,25 +36,28 @@ class PublicJobController extends Controller
             ->select('course as display_name')
             ->whereNotNull('course')
             ->distinct()
+            ->inRandomOrder()
             ->get();
 
         return view('public', compact('jobs', 'courses'));
     }
     public function show($id)
     {
-        // Fetch job details and join related tables for public/guest display
         $job = JobPosting::select(
                 'job_postings.*',
                 'expertises.area_of_expertise',
                 'barangays.barangay',
-                'towns.town',
+                'towns.town'
             )
             ->leftJoin('expertises', 'job_postings.job_category', '=', 'expertises.id')
-            ->leftJoin('barangays', 'job_postings.barangay', '=', 'barangays.id') // adjust foreign keys if needed
+            ->leftJoin('barangays', 'job_postings.barangay', '=', 'barangays.id')
             ->leftJoin('towns', 'job_postings.town', '=', 'towns.id')
             ->where('job_postings.job_id', $id)
             ->orWhere('job_postings.id', $id)
             ->firstOrFail();
+
+        // Set the intended redirect URL after successful login directly to /recd/{job_id}
+        session()->put('url.intended', url("/recd/{$job->job_id}"));
 
         return view('publicShow', compact('job'));
     }

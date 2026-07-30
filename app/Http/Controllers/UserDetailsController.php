@@ -263,7 +263,7 @@ class UserDetailsController extends Controller
         $validatedData = $request->validated();
         $userAddress = UserDetails::where('idno', $idno)->firstOrFail();
         $userAddress->update($validatedData);
-        return redirect()->route('gender.index')->with('success', 'User details saved successfully.');
+        return redirect()->route('civil.index')->with('success', 'User details saved successfully.');
 
     }
     public function updateGender(UpdateUserGenderRequest $request, $idno)

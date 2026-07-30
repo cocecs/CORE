@@ -219,6 +219,7 @@ class AdminAccountController extends Controller
 
         return view('adtv.loj', compact('jobs', 'totalJobs'));
     }
+
     public function jobDetails($job_id)
     {
         $jobApp = JobApplication::where('job_id', $job_id)->count();

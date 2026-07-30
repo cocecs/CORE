@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Landing Page
+// Route::redirect('/', '/public');
 Route::get('/', function () {
     return view('welcome');
 });
@@ -39,6 +40,7 @@ Route::get('/', function () {
 // Public job views for guest users
 Route::get('/public', [PublicJobController::class, 'index'])->name('public.jobs');
 Route::get('/publicShow/{id}', [PublicJobController::class, 'show'])->name('public.show');
+Route::get('/jobs/{id}', [PublicJobController::class, 'show'])->name('jobs.show');
 
 /*
 |--------------------------------------------------------------------------
@@ -61,10 +63,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware('auth')->group(function () {
 
-    /* --- Public APIs / Location Helpers --- */
-    Route::get('/api/provinces', [LocationController::class, 'getProvinces']);
-    Route::get('/api/towns', [LocationController::class, 'getTowns']);
-    Route::get('/api/barangays', [LocationController::class, 'getBarangays']);
 
     /* --- User Demographics & Basic Details --- */
     Route::get('/app', [UserDetailsController::class, 'index'])->name('details.index');
@@ -142,6 +140,10 @@ Route::middleware('auth')->group(function () {
     // Dynamic Helper APIs
     Route::get('/get-skills/{expertiseId}', [JobPostingController::class, 'getSkillsByExpertise']);
     Route::get('/get-courses/{expertiseId}', [EmployerController::class, 'getCourses']);
+    /* --- Public APIs / Location Helpers --- */
+    Route::get('/api/provinces', [LocationController::class, 'getProvinces']);
+    Route::get('/api/towns', [LocationController::class, 'getTowns']);
+    Route::get('/api/barangays', [LocationController::class, 'getBarangays']);
 
     /* --- Admin & PESO Management --- */
     Route::get('/adtv', [AdminAccountController::class, 'index'])->name('adtv.index');
@@ -157,11 +159,23 @@ Route::middleware('auth')->group(function () {
     Route::get('/adtv/loa/{job_id}', [AdminAccountController::class, 'jobApplicants'])->name('jobApplicants');
     Route::get('/adtv/appl/{idno}/{job_id}', [AdminAccountController::class, 'applProfile'])->name('applProfile');
 
+
     /* --- Admin Reports & LMI Analysis --- */
     Route::get('/adtv/rp', [AdminDashboardController::class, 'index'])->name('adtvDashboard');
     Route::get('/adtv/rp2', [AdminDashboardController::class, 'rp2'])->name('rp2');
     Route::get('/adtv/rp3', [AdminDashboardController::class, 'rp3'])->name('rp3');
     Route::get('/adtv/rp4', [AdminDashboardController::class, 'rp4'])->name('rp4');
+    Route::get('/adtv/rp5', [AdminDashboardController::class, 'barangayReport'])->middleware(['auth'])->name('rp5');
+    Route::get('/adtv/rp6', [AdminDashboardController::class, 'kpiReport'])->name('rp6');
+
+    // Migration / Mobility Analysis (Cross-Barangay Matching)
+    Route::get('/adtv/rp7', [AdminDashboardController::class, 'mobility'])->name('rp7');
+    // Demographic & Educational Breakdown
+    Route::get('/adtv/rp8', [AdminDashboardController::class, 'demographics'])->name('rp8');
+    // Job Sector & Skill Demand by Barangay
+    Route::get('/adtv/rp9', [AdminDashboardController::class, 'skillDemand'])->name('rp9');
+    // Interactive Features & Visualizations
+    Route::get('/adtv/rp10', [AdminDashboardController::class, 'analytics'])->name('rp10');
 
     /* --- Profile Management --- */
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
