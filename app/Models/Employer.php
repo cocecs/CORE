@@ -22,6 +22,7 @@ class Employer extends Model
         'mobile',
         'designation',
         'tin',
+        'company_logo',
         'about',
     ];
     public function account(): BelongsTo

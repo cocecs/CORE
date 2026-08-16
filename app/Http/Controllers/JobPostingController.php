@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreJobPostingRequest;
 use App\Http\Requests\UpdateJobPostingRequest;
+use App\Http\Requests\UpdateEmployerRequest;
 use App\Models\JobPosting;
 use App\Models\User;
+use App\Models\Employer;
 use App\Models\Expertise;
 use App\Models\JobApplication;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class JobPostingController extends Controller
 {
@@ -94,39 +98,117 @@ class JobPostingController extends Controller
     //     return response()->json(array_values($skillsArray));
     // }
     // For your /get-skills/{id} route
-public function getSkillsByExpertise($expertiseId)
-{
-    $expertise = Expertise::find($expertiseId);
+    public function getSkillsByExpertise($expertiseId)
+    {
+        $expertise = Expertise::find($expertiseId);
 
-    if (!$expertise) {
-        return response()->json([]);
+        if (!$expertise) {
+            return response()->json([]);
+        }
+
+        // Safely unpack the JSON skills column
+        $skillsArray = is_array($expertise->skills)
+            ? $expertise->skills
+            : json_decode($expertise->skills, true);
+
+        if (!is_array($skillsArray)) {
+            $skillsArray = [];
+        }
+
+        // Return the flat array directly so JS loops over it smoothly
+        return response()->json(array_values($skillsArray));
     }
 
-    // Safely unpack the JSON skills column
-    $skillsArray = is_array($expertise->skills)
-        ? $expertise->skills
-        : json_decode($expertise->skills, true);
+    // For your /get-courses/{id} route
+    public function getCoursesByExpertise($expertiseId)
+    {
+        $expertise = Expertise::with('courses')->find($expertiseId);
 
-    if (!is_array($skillsArray)) {
-        $skillsArray = [];
+        if (!$expertise) {
+            return response()->json([]);
+        }
+
+        // Return the plain collection (the updated frontend JavaScript handles grouping)
+        return response()->json($expertise->courses);
+    }
+    public function emp_comp()
+    {
+        $user = User::where('idno', auth()->user()->idno)->first();
+
+        // Retrieve the employer record corresponding to the authenticated user
+        $employer = Employer::where('idno', auth()->user()->idno)->first();
+
+        // Fallback if record doesn't exist yet
+        if (!$employer) {
+            $employer = new Employer();
+        }
+
+        return view('par.emp', compact('user', 'employer'));
     }
 
-    // Return the flat array directly so JS loops over it smoothly
-    return response()->json(array_values($skillsArray));
-}
+    /**
+     * Store or update the employer details.
+     */
+    public function update_emp_comp(UpdateEmployerRequest $request)
+    {
+        $validatedData = $request->validated();
 
-// For your /get-courses/{id} route
-public function getCoursesByExpertise($expertiseId)
-{
-    $expertise = Expertise::with('courses')->find($expertiseId);
 
-    if (!$expertise) {
-        return response()->json([]);
+        if (!empty($validatedData['town'])) {
+            $townRecord = DB::table('towns')
+                ->where('id', $validatedData['town'])
+                ->select('town')
+                ->first();
+
+            // Replace the ID with the string name
+            $validatedData['town'] = $townRecord ? $townRecord->town : null;
+        }
+
+        // 3. Fetch the barangay name and coordinates from the barangays table
+        if (!empty($validatedData['brgy'])) {
+            $barangayRecord = DB::table('barangays')
+                ->where('id', $validatedData['brgy'])
+                ->select('barangay')
+                ->first();
+
+            if ($barangayRecord) {
+                $validatedData['brgy'] = $barangayRecord->barangay;
+
+            }
+        }
+
+        // 4. Fetch existing employer record or initialize a new instance
+        $employer = Employer::firstOrNew(['idno' => auth()->user()->idno]);
+
+        // 5. Handle file upload for company_logo if present
+        if ($request->hasFile('company_logo')) {
+            // Delete old logo file if it exists
+            if ($employer->company_logo && Storage::disk('public')->exists($employer->company_logo)) {
+                Storage::disk('public')->delete($employer->company_logo);
+            }
+
+            $idno = auth()->user()->idno;
+            $file = $request->file('company_logo');
+
+            // Get original file extension (e.g., png, jpg)
+            $extension = $file->getClientOriginalExtension();
+
+            // Construct new filename (e.g., "EMP-1001.png")
+            $fileName = $idno . '.' . $extension;
+
+            // Save with the custom filename to 'storage/app/public/logos'
+            $path = $file->storeAs('logos', $fileName, 'public');
+
+            $validatedData['company_logo'] = $path;
+        }
+
+        // 6. Fill and save database record
+        $employer->fill($validatedData);
+        $employer->idno = auth()->user()->idno; // Ensure ID link is maintained
+        $employer->save();
+
+        return redirect()->back()->with('success', 'Employer profile updated successfully.');
     }
-
-    // Return the plain collection (the updated frontend JavaScript handles grouping)
-    return response()->json($expertise->courses);
-}
     public function emp_post()
     {
         $expertise = Expertise::all();

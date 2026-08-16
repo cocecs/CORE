@@ -125,6 +125,8 @@ Route::middleware('auth')->group(function () {
 
     /* --- Employer Portal --- */
     Route::get('/par', [JobPostingController::class, 'index'])->name('par.index');
+    Route::get('/par/emp', [JobPostingController::class, 'emp_comp'])->name('emp.comp');
+    Route::put('/par/emp/{idno}', [JobPostingController::class, 'update_emp_comp'])->name('update_emp_comp');
     Route::get('/par/post', [JobPostingController::class, 'emp_post'])->name('emp.post');
     Route::post('/par/post/{idno}', [JobPostingController::class, 'job_post'])->name('job_post');
     Route::get('/par/postc/{job_id}', [JobPostingController::class, 'emp_postc'])->name('emp_postc');

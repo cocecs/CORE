@@ -22,6 +22,19 @@ class UpdateEmployerRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'company_name' => 'nullable|string|max:50',
+            'type_of_business' => 'nullable|string',
+            'province' => 'nullable|string|max:20',
+            'town' => 'nullable|string|max:20',
+            'brgy' => 'nullable|string|max:20',
+            'address_details' => 'nullable|string|max:50',
+            'tel' => 'nullable|string|max:15',
+            'phone' => 'nullable|string|max:15',
+            'representative_name' => 'nullable|string|max:50',
+            'mobile' => 'nullable|string|max:50',
+            'designation' => 'nullable|string|max:50',
+            'tin' => 'nullable|string|max:15',
+            'company_logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'about' => 'nullable|string',
         ];
     }

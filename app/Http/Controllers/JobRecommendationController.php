@@ -7,6 +7,7 @@ use App\Models\Expertise;
 use App\Models\EducationalDetail;
 use App\Models\UserDetails;
 use App\Models\WorkDetails;
+use App\Models\Employer;
 use App\Http\Requests\StoreJobApplyRequest;
 use App\Http\Requests\StoreJobSaveRequest;
 use Illuminate\Support\Facades\Auth;
@@ -50,11 +51,12 @@ class JobRecommendationController extends Controller
         // ====================================================
         // COLUMN 1 (RED SECTION): PROFILE & GEOSPATIAL MATRIX
         // ====================================================
-        $query = JobPosting::select('job_postings.*')
+        $query = JobPosting::select('job_postings.*', 'employers.company_name')
+            ->leftJoin('employers', 'job_postings.idno', '=', 'employers.idno')
             ->selectRaw("
                 ( 6371 * acos( cos( radians(?) ) * cos( radians( job_postings.latitude ) )
                 * cos( radians( job_postings.longitude ) - radians(?) ) + sin( radians(?) )
-                * sin( radians( job_postings.latitude ) ) ) ) AS distance
+                * sin( radians( job_postings.latitude ) ) ) ) AS distance, employers.company_logo
             ", [$applicantLat, $applicantLng, $applicantLat]);
 
         // Apply Active Filters (Search Mode Override)
@@ -169,7 +171,7 @@ class JobRecommendationController extends Controller
             'jobs'              => $profileMatchedJobs, // Maps to blue Section variable loop hook
             'collaborativeJobs' => $collaborativeJobs,   // Maps to Green Section variable loop hook
             'courses'           => $courses,
-            'expertise'         => $expertise
+            'expertise'         => $expertise,
         ]);
     }
     public function details($job_id)

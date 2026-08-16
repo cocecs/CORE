@@ -26,7 +26,8 @@ return new class extends Migration
             $table->string('representative_name',50)->nullable();
             $table->string('mobile',50)->nullable();
             $table->string('designation',50)->nullable();
-            $table->string('tin',15);
+            $table->string('tin',15)->nullable();
+            $table->string('company_logo')->nullable();
             $table->string('about')->nullable();
             $table->timestamps();
         });

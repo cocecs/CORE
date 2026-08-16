@@ -359,25 +359,42 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="space-y-4">
                     @foreach($jobs as $job)
                         <div class="bg-white border-l-4 border-blue-400 border-t border-r border-b border-gray-200 rounded-r-xl p-5 shadow-sm hover:shadow transition">
-                            <div class="flex justify-between items-start gap-2">
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900 leading-snug mb-2">{{ $job->job_title }}</h3>
+                            <div class="flex items-start gap-4">
+                                <!-- Main Content Area -->
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex justify-between items-start gap-2">
+                                        <div>
+                                            <div class="mt-3 flex flex-wrap gap-2 text-xs text-gray-500">
+                                                <span class="inline-flex items-center rounded-full text-xs font-semibold bg-blue-50 text-blue-800 whitespace-nowrap">
+                                                    {{ round($job->distance, 1) }} km away
+                                                </span>
+                                                <span class="text-gray-700">•</span>
+                                                <span class="font-small font-semibold text-gray-700">{{ $job->barangay }}, {{ $job->town }}, {{ $job->province }}</span>
+                                            </div>
+                                            <!-- Job Title & Company Name -->
+                                            <h3 class="text-lg font-semibold text-gray-900 leading-snug mb-0.5">{{ $job->job_title }}</h3>
+                                            <p class="text-sm font-medium text-gray-600 mb-2">{{ $job->company_name ?? 'N/A' }}</p>
 
-                                    <p class="text-xs text-gray-500 font-medium tracking-wide">
-                                        <span class="font-semibold text-gray-700">JOB SUMMARY:</span>
-                                        {{ !empty($job->job_summary) ? trim(strip_tags(html_entity_decode($job->job_summary))) : 'GENERAL' }}
+                                            <p class="text-xs text-gray-500 font-medium tracking-wide">
+                                                <span class="font-semibold text-gray-700">JOB SUMMARY:</span>
+                                                {{ !empty($job->job_summary) ? trim(strip_tags(html_entity_decode($job->job_summary))) : 'GENERAL' }}
+                                            </p>
 
-                                    </p>
+                                        </div>
+                                        <div class="w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
+                                            @if(!empty($job->company_logo) && Storage::disk('public')->exists($job->company_logo))
+                                                <img src="{{ Storage::url($job->company_logo) }}" alt="{{ $job->company_name ?? 'Company Logo' }}" class="w-full h-full object-cover">
+                                            @else
+                                                <img src="{{ asset('images/company-logo/default-logo.jpg') }}" alt="Default Logo" class="w-full h-full object-cover">
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-3 flex flex-wrap gap-2 text-xs text-gray-500">
+                                        <div><span class="font-medium text-gray-700">Type:</span> {{ $job->job_type }}</div>
+
+                                    </div>
                                 </div>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-800 whitespace-nowrap">
-                                    {{ round($job->distance, 1) }} km away
-                                </span>
-                            </div>
-
-                            <div class="mt-3 flex flex-wrap gap-2 text-xs text-gray-500">
-                                <div><span class="font-medium text-gray-700">Type:</span> {{ $job->job_type }}</div>
-                                <span class="text-gray-300">•</span>
-                                <div><span class="font-medium text-gray-700">Work Location:</span> {{ $job->barangay }}, {{ $job->town }}, {{ $job->province }}</div>
                             </div>
 
                             <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">

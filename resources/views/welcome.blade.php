@@ -16,14 +16,14 @@
             <nav class="flex items-center justify-end gap-3">
 
                 {{-- Public Jobs Route Button --}}
-                @if (Route::has('public.jobs'))
+                {{-- @if (Route::has('public.jobs'))
                     <a
                         href="{{ route('public.jobs') }}"
                         class="inline-block px-4 py-1.5 dark:text-[#EDEDEC] text-[#1b1b18] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-md text-sm font-medium transition-colors"
                     >
                         Browse Jobs
                     </a>
-                @endif
+                @endif --}}
 
                 @auth
                     <a
