@@ -46,7 +46,7 @@ class JobRecommendationController extends Controller
         $applicantLat = $workDetail->latitude;
         $applicantLng = $workDetail->longitude;
         $showAll = $request->has('show_all');
-        $isSearching = !$showAll && $request->hasAny(['job_type', 'course', 'province', 'town']);
+        $isSearching = !$showAll && $request->hasAny(['job_type', 'course', 'job_category', 'province', 'town']);
 
         // ====================================================
         // COLUMN 1 (RED SECTION): PROFILE & GEOSPATIAL MATRIX
@@ -59,7 +59,7 @@ class JobRecommendationController extends Controller
                 * sin( radians( job_postings.latitude ) ) ) ) AS distance, employers.company_logo
             ", [$applicantLat, $applicantLng, $applicantLat]);
 
-        // Apply Active Filters (Search Mode Override)
+        // Apply Active Filters (Manual Search Mode)
         if (!$showAll && $isSearching) {
             if ($request->filled('job_type')) {
                 $query->where('job_postings.job_type', $request->input('job_type'));
@@ -67,6 +67,9 @@ class JobRecommendationController extends Controller
             if ($request->filled('course')) {
                 $searchCourse = $request->input('course');
                 $query->where('job_postings.course', 'LIKE', '%' . $searchCourse . '%');
+            }
+            if ($request->filled('job_category')) {
+                $query->where('job_postings.job_category', $request->input('job_category'));
             }
             if ($request->filled('province')) {
                 $query->where('job_postings.province', $request->input('province'));
@@ -77,12 +80,10 @@ class JobRecommendationController extends Controller
         }
 
         // Apply Automatic Content Matching (Standard Load Mode)
-        // Step 1: Retrieve all educational records for the user
-        // Step 1: Fetch all educational records for the applicant
         $educationDetails = EducationalDetail::where('idno', Auth::user()->idno)->get();
 
         if (!$showAll && !$isSearching) {
-            // Step 2: Pluck 'course_name', clean up strings, and remove duplicates
+            // Step A: Pluck applicant's courses
             $applicantCourses = $educationDetails
                 ->pluck('course_name')
                 ->filter()
@@ -91,16 +92,34 @@ class JobRecommendationController extends Controller
                 ->values()
                 ->toArray();
 
-            // Step 3: Match against the JSON array in job_postings
+            // Step B: Resolve expertise_ids (Job Categories) linked to user's courses
+            // courses.display_name = user_details.educational_level / educational_details.course_name
+            $applicantCategoryIds = [];
             if (!empty($applicantCourses)) {
-                $query->where(function ($q) use ($applicantCourses) {
-                    foreach ($applicantCourses as $course) {
-                        // Checks if $course exists in the job_postings.course JSON array
-                        $q->orWhereJsonContains('job_postings.course', $course);
+                $applicantCategoryIds = DB::table('courses')
+                    ->whereIn('display_name', $applicantCourses)
+                    ->pluck('expertise_id')
+                    ->filter()
+                    ->unique()
+                    ->toArray();
+            }
+
+            // Step C: Match against course JSON OR job_category
+            if (!empty($applicantCourses) || !empty($applicantCategoryIds)) {
+                $query->where(function ($q) use ($applicantCourses, $applicantCategoryIds) {
+                    // Match by Course (JSON Contains)
+                    if (!empty($applicantCourses)) {
+                        foreach ($applicantCourses as $course) {
+                            $q->orWhereJsonContains('job_postings.course', $course);
+                        }
+                    }
+
+                    // OR Match by Job Category ID (expertises.id = job_postings.job_category)
+                    if (!empty($applicantCategoryIds)) {
+                        $q->orWhereIn('job_postings.job_category', $applicantCategoryIds);
                     }
                 });
             } else {
-                // Fallback protection: user has no courses listed
                 $query->whereRaw('1 = 0');
             }
         }
@@ -113,9 +132,8 @@ class JobRecommendationController extends Controller
         // COLUMN 2 (GREEN SECTION): COLLABORATIVE FILTERING
         // ====================================================
         $collaborativeJobs = collect();
-        $userIdno = Auth::user()->idno; // Pulling idno tracking parameter string matching schema mappings
+        $userIdno = Auth::user()->idno;
 
-        // Step A: Capture explicit interaction arrays left behind by current user
         $savedJobIds = DB::table('job_saves')->where('user_id', $userIdno)->pluck('job_id')->toArray();
         $interviewJobIds = DB::table('job_interviewees')->where('user_id', $userIdno)->pluck('job_id')->toArray();
         $appliedJobIds = DB::table('job_applications')->where('user_id', $userIdno)->pluck('job_id')->toArray();
@@ -123,8 +141,6 @@ class JobRecommendationController extends Controller
         $userHistoryJobIds = array_unique(array_merge($savedJobIds, $interviewJobIds, $appliedJobIds));
 
         if (!empty($userHistoryJobIds)) {
-            // Step B: Form dynamic collaborative tracking table via UNION strings
-            // explicit interaction scoring configurations (+1 Save, +3 Interview, +5 Application/Hired)
             $unifiedInteractions = DB::table('job_saves')
                 ->select('user_id', 'job_id', DB::raw('1 as score'))
                 ->unionAll(
@@ -134,25 +150,22 @@ class JobRecommendationController extends Controller
                     DB::table('job_applications')->select('user_id', 'job_id', DB::raw('5 as score'))
                 );
 
-            // Step C: Run inner co-occurrence query matrix comparing interaction tracks
             $recommendedItemScores = DB::table(DB::raw("({$unifiedInteractions->toSql()}) as target_history"))
                 ->mergeBindings($unifiedInteractions)
                 ->join(DB::raw("({$unifiedInteractions->toSql()}) as peer_history"), 'target_history.user_id', '=', 'peer_history.user_id')
                 ->mergeBindings($unifiedInteractions)
                 ->select('peer_history.job_id', DB::raw('SUM(peer_history.score) as co_occurrence_score'))
                 ->whereIn('target_history.job_id', $userHistoryJobIds)
-                ->whereNotIn('peer_history.job_id', $userHistoryJobIds) // Exclude items already touched by user
+                ->whereNotIn('peer_history.job_id', $userHistoryJobIds)
                 ->groupBy('peer_history.job_id')
                 ->orderByDesc('co_occurrence_score')
-                ->take(4) // Pull the top 4 highly correlated items across the system
+                ->take(4)
                 ->pluck('job_id')
                 ->toArray();
 
             if (!empty($recommendedItemScores)) {
-                // Wrap each string ID in single quotes for the raw SQL string
                 $orderedIdsString = "'" . implode("','", $recommendedItemScores) . "'";
 
-                // Step D: Retrieve details directly without applying any geospatial radius limits
                 $collaborativeJobs = JobPosting::whereIn('job_id', $recommendedItemScores)
                     ->orderByRaw("FIELD(job_id, {$orderedIdsString})")
                     ->get();
@@ -161,15 +174,50 @@ class JobRecommendationController extends Controller
 
 
         // ====================================================
+        // COLUMN 2 ADDITIONS: NEW ADDED JOBS & MOST SAVED JOBS
+        // ====================================================
+
+        // 1. Newly Added Jobs
+        $newlyAddedJobs = JobPosting::select('job_postings.*', 'employers.company_name', 'employers.company_logo')
+            ->leftJoin('employers', 'job_postings.idno', '=', 'employers.idno')
+            ->latest('job_postings.created_at')
+            ->take(5)
+            ->get();
+
+        // 2. Most Saved Jobs
+        $mostSavedJobIds = DB::table('job_saves')
+            ->select('job_id', DB::raw('COUNT(id) as total_saves'))
+            ->groupBy('job_id')
+            ->orderByDesc('total_saves')
+            ->take(5)
+            ->pluck('job_id')
+            ->toArray();
+
+        $mostSavedJobs = collect();
+        if (!empty($mostSavedJobIds)) {
+            $orderedSavedIds = "'" . implode("','", $mostSavedJobIds) . "'";
+            $mostSavedJobs = JobPosting::select('job_postings.*', 'employers.company_name', 'employers.company_logo')
+                ->leftJoin('employers', 'job_postings.idno', '=', 'employers.idno')
+                ->whereIn('job_postings.job_id', $mostSavedJobIds)
+                ->orderByRaw("FIELD(job_postings.job_id, {$orderedSavedIds})")
+                ->get();
+        }
+
+
+        // ====================================================
         // FINAL DATA PACKAGING
         // ====================================================
-        $expertise = Expertise::all();
+        $expertise = Expertise::orderBy('id', 'desc')
+            ->with(['courses' => fn($q) => $q->orderBy('id', 'desc')])
+            ->get();
+
         $courses = DB::table('courses')->select('display_name')->distinct()->get();
 
-        // Mapping collections seamlessly right back out to dashboard view parameters
         return view('rec', [
-            'jobs'              => $profileMatchedJobs, // Maps to blue Section variable loop hook
-            'collaborativeJobs' => $collaborativeJobs,   // Maps to Green Section variable loop hook
+            'jobs'              => $profileMatchedJobs,
+            'collaborativeJobs' => $collaborativeJobs,
+            'newlyAddedJobs'    => $newlyAddedJobs,
+            'mostSavedJobs'     => $mostSavedJobs,
             'courses'           => $courses,
             'expertise'         => $expertise,
         ]);
