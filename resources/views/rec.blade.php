@@ -140,7 +140,7 @@
                                         <span class="font-semibold text-gray-700 truncate">{{ $job->barangay ?? '' }}, {{ $job->town }}</span>
                                     </div>
                                     <h3 class="text-base font-semibold text-gray-900 leading-snug mb-0.5 truncate">{{ $job->job_title }}</h3>
-                                    <p class="text-xs font-medium text-gray-600 mb-2 truncate">{{ $job->company_name ?? 'N/A' }}</p>
+                                    <p class="text-xs font-semibold text-gray-700 mb-2 truncate">{{ $job->company_name ?? 'N/A' }}</p>
 
                                     <p class="text-xs text-gray-500 line-clamp-2">
                                         <span class="font-semibold text-gray-700">SUMMARY:</span>

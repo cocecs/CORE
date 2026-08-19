@@ -180,6 +180,7 @@ class JobRecommendationController extends Controller
         // 1. Newly Added Jobs
         $newlyAddedJobs = JobPosting::select('job_postings.*', 'employers.company_name', 'employers.company_logo')
             ->leftJoin('employers', 'job_postings.idno', '=', 'employers.idno')
+            ->where('job_postings.created_at', '>=', now()->subWeek())
             ->latest('job_postings.created_at')
             ->take(5)
             ->get();
